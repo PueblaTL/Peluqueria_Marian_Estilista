@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marian Estilista | Peluquería & Colorimetría Profesional</title>
+  <meta name="description"
+    content="Salón de peluquería y colorimetría de alta gama en Recoleta. Cortes de autor, balayage, colorimetría, peinados y reserva de turnos online.">
+
+  <!-- Favicon -->
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C5A880'><path d='M6 3a3 3 0 0 0-3 3v2a3 3 0 0 0 3 3 3 3 0 0 0 2.22-.98l4.08 4.08a3 3 0 0 0-2.3 2.9 3 3 0 1 0 3-3 2.98 2.98 0 0 0-.9-2.22l4.08-4.08A3 3 0 0 0 21 8V6a3 3 0 0 0-3-3 3 3 0 0 0-2.82 2H9.82A3 3 0 0 0 6 3z'/></svg>">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+  <!-- ==========================================
+       HEADER & NAVBAR
+       ========================================== -->
+  <header class="site-header">
+    <div class="container header-container">
+      <!-- Logo -->
+      <a href="index.html" class="brand-logo">
+        <div class="brand-symbol">M</div>
+        <div class="brand-text">
+          <span class="brand-name">Mariano Estilista</span>
+          <span class="brand-tag">Peluquería & Colorimetría</span>
+        </div>
+      </a>
+
+      <!-- Menú Principal -->
+      <nav class="main-nav">
+        <a href="#inicio" class="nav-link active">Inicio</a>
+        <a href="#servicios" class="nav-link">Servicios</a>
+        <a href="#galeria" class="nav-link">Galería</a>
+        <a href="#aboutme" class="nav-link">Sobre Mi</a>
+        <a href="#curso" class="nav-link">Academia & Curso</a>
+        <a href="#contacto" class="nav-link">Contacto</a>
+      </nav>
+
+      <!-- Acciones de Cabecera -->
+      <div class="header-actions">
+        <a href="pages/admin.html" class="admin-link" title="Ir al Panel Administrativo">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          <span>Admin</span>
+        </a>
+        <a href="pages/reservas.html" class="btn btn-primary btn-sm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <span>Reservar turno</span>
+        </a>
+        <button class="mobile-toggle" aria-label="Abrir menú de navegación">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================
+       HERO SECTION
+       ========================================== -->
+  <section id="inicio" class="hero-section">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <div class="hero-rating-pill">
+          <div class="hero-stars">★★★★★</div>
+          <span>4.9 / 5 • Salón Destacado en Recoleta</span>
+        </div>
+        <h1 class="hero-title">
+          El arte de realzar tu <span class="highlight">belleza y estilo</span> personal
+        </h1>
+        <p class="hero-description">
+          En <strong>Marian Estilista</strong> combinamos las técnicas europeas más vanguardistas de corte, colorimetría
+          y
+          colorimetría clásica con una atención personalizada y productos orgánicos de primera línea.
+        </p>
+        <div class="hero-cta-group">
+          <a href="pages/reservas.html" class="btn btn-primary btn-lg">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            Reservar turno online
+          </a>
+          <a href="#servicios" class="btn btn-secondary btn-lg">
+            Ver servicios y precios
+          </a>
+        </div>
+        <div class="hero-features">
+          <div class="hero-feat-item">
+            <span class="hero-feat-number">+10</span>
+            <span class="hero-feat-text">Años de trayectoria</span>
+          </div>
+          <div class="hero-feat-item">
+            <span class="hero-feat-number">+5.000</span>
+            <span class="hero-feat-text">Clientes satisfechos</span>
+          </div>
+          <div class="hero-feat-item">
+            <span class="hero-feat-number">100%</span>
+            <span class="hero-feat-text">Productos premium</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="hero-img-wrapper">
+          <img src="https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=800&q=80"
+            alt="Peluquería y Estilo Élite Studio" class="hero-main-img" />
+        </div>
+        <div class="hero-floating-card">
+          <div class="hero-floating-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </div>
+          <div>
+            <div class="hero-floating-title">Atención con Turno Previo</div>
+            <div class="hero-floating-subtitle">Sin esperas ni demoras</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SERVICIOS SECTION
+       ========================================== -->
+  <section id="servicios" class="services-section section-spacing">
+    <div class="container">
+      <div class="section-header">
+        <span class="tag-badge">Nuestra Carta de Servicios</span>
+        <h2 class="section-title">Experiencias creadas para tu estilo</h2>
+        <p class="section-subtitle">Precios claros, duración estimada y los profesionales más destacados de Buenos
+          Aires.</p>
+      </div>
+
+      <div class="services-grid">
+
+        <!-- Servicio 1: Corte Femenino -->
+        <article class="service-card">
+          <div class="service-img-wrap">
+            <img src="https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=600&q=80"
+              alt="Corte Femenino" class="service-img" />
+            <span class="service-category-badge">Corte & Estilo</span>
+          </div>
+          <div class="service-body">
+            <div class="service-meta-top">
+              <span class="service-price">$12.000</span>
+              <span class="service-duration">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                45 min
+              </span>
+            </div>
+            <h3 class="service-title">Corte Femenino</h3>
+            <p class="service-desc">Diagnóstico capilar personalizado, lavado relajante con masaje craneal, corte de
+              puntas o cambio de look total y brushing o secado natural.</p>
+            <div class="service-footer">
+              <a href="pages/reservas.html?servicio=srv-2" class="btn btn-secondary" style="width: 100%;">
+                Reservar turno
+              </a>
+            </div>
+          </div>
+        </article>
+
+
+        <!-- Servicio 2: Coloración Global -->
+        <article class="service-card">
+          <div class="service-img-wrap">
+            <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80"
+              alt="Coloración Global" class="service-img" />
+            <span class="service-category-badge">Colorimetría</span>
+          </div>
+          <div class="service-body">
+            <div class="service-meta-top">
+              <span class="service-price">$60.000</span>
+              <span class="service-duration">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                90 min
+              </span>
+            </div>
+            <h3 class="service-title">Coloración Global</h3>
+            <p class="service-desc">Tintura completa de raíz a puntas con productos orgánicos y libres de amoníaco que
+              protegen la fibra capilar, aportan brillo y sellan la cutícula.</p>
+            <div class="service-footer">
+              <a href="pages/reservas.html?servicio=srv-4" class="btn btn-secondary" style="width: 100%;">
+                Reservar turno
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Servicio 3: Mechas & Balayage -->
+        <article class="service-card">
+          <div class="service-img-wrap">
+            <img src="assets/images/balayage_miel.png" alt="Mechas & Balayage" class="service-img" />
+            <span class="service-category-badge">Colorimetría</span>
+          </div>
+          <div class="service-body">
+            <div class="service-meta-top">
+              <span class="service-price">$70.000</span>
+              <span class="service-duration">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                120 min
+              </span>
+            </div>
+            <h3 class="service-title">Mechas & Balayage</h3>
+            <p class="service-desc">Técnica francesa de iluminación degradada a mano alzada. Incluye matización tonal,
+              baño de luz gloss, tratamiento nutritivo y peinado con ondas.</p>
+            <div class="service-footer">
+              <a href="pages/reservas.html?servicio=srv-3" class="btn btn-secondary" style="width: 100%;">
+                Reservar turno
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Servicio 4: Peinado & Styling -->
+        <article class="service-card">
+          <div class="service-img-wrap">
+            <img src="https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=600&q=80"
+              alt="Peinado & Styling" class="service-img" />
+            <span class="service-category-badge">Eventos & Fiestas</span>
+          </div>
+          <div class="service-body">
+            <div class="service-meta-top">
+              <span class="service-price">$40.000</span>
+              <span class="service-duration">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                60 min
+              </span>
+            </div>
+            <h3 class="service-title">Peinado & Styling</h3>
+            <p class="service-desc">Peinados de fiesta, recogidos vanguardistas, ondas al agua o semirrecogidos con
+              fijación duradera y acabado brillante para eventos y novias.</p>
+            <div class="service-footer">
+              <a href="pages/reservas.html?servicio=srv-4" class="btn btn-secondary" style="width: 100%;">
+                Reservar turno
+              </a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       GALERÍA DE TRABAJOS
+       ========================================== -->
+  <section id="galeria" class="gallery-section section-spacing">
+    <div class="container">
+      <div class="section-header">
+        <span class="tag-badge">Galería de Estilos</span>
+        <h2 class="section-title">Transformaciones reales en nuestro salón</h2>
+        <p class="section-subtitle">Descubre algunos de los resultados logrados por nuestro equipo de estilistas.</p>
+      </div>
+
+      <div class="gallery-filters">
+        <button class="filter-btn active" data-filter="all">Todos</button>
+        <button class="filter-btn" data-filter="Coloración">Coloración</button>
+        <button class="filter-btn" data-filter="Alisados">Alisados</button>
+        <button class="filter-btn" data-filter="Corte">Cortes</button>
+        <button class="filter-btn" data-filter="Peinados">Peinados</button>
+      </div>
+
+      <div class="gallery-grid">
+        <div class="gallery-item" data-category="Coloración">
+          <img
+            src="https://plus.unsplash.com/premium_photo-1669675936132-cd68d8a1ac5f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8QmFsYXlhZ2UlMjBwcm9mZXNpb25hbHxlbnwwfHwwfHx8MA%3D%3D"
+            alt="Balayage Miel" class="gallery-img" />
+          <div class="gallery-overlay">
+            <span class="gallery-category">Coloración</span>
+            <h4 class="gallery-title">Balayage Miel & Golden Gloss</h4>
+          </div>
+        </div>
+
+        <div class="gallery-item" data-category="Alisados">
+          <img src="assets/images/alisado_6d.png" alt="Alisado" class="gallery-img" />
+          <div class="gallery-overlay">
+            <span class="gallery-category">Alisado</span>
+            <h4 class="gallery-title">Alisado Laser 6D</h4>
+          </div>
+        </div>
+
+        <div class="gallery-item" data-category="Corte">
+          <img
+            src="https://plus.unsplash.com/premium_photo-1669675935927-0ed8935e6600?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8Y29ydGUlMjBtdWplciUyMHBlbHVxdWVyaWF8ZW58MHx8MHx8fDA%3D"
+            alt="Corte Puntas" class="gallery-img" />
+          <div class="gallery-overlay">
+            <span class="gallery-category">Corte </span>
+            <h4 class="gallery-title">Corte de puntas</h4>
+          </div>
+        </div>
+
+        <div class="gallery-item" data-category="Peinados">
+          <img
+            src="https://images.unsplash.com/photo-1575287537815-ef82dd922198?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            alt="Recogido Bohemio" class="gallery-img" />
+          <div class="gallery-overlay">
+            <span class="gallery-category">Peinados</span>
+            <h4 class="gallery-title">Semirecogido trenzado</h4>
+          </div>
+        </div>
+
+        <div class="gallery-item" data-category="Coloración">
+          <img
+            src="https://images.unsplash.com/photo-1554519934-e32b1629d9ee?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y29sb3JhY2lvbiUyMHJ1YmlvJTIwY2VuaXphJTIwcGxhdGluYWRvfGVufDB8fDB8fHww"
+            alt="Rubio Ceniza" class="gallery-img" />
+          <div class="gallery-overlay">
+            <span class="gallery-category">Coloración</span>
+            <h4 class="gallery-title">Rubio Ceniza Platinado</h4>
+          </div>
+        </div>
+
+        <div class="gallery-item" data-category="Balayage">
+          <img
+            src="https://images.unsplash.com/photo-1638064432604-8da1fc75de09?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8QmFsYXlhZ2UlMjBwZWx1cXVlcmlhfGVufDB8fDB8fHww"
+            alt="Balayage" class="gallery-img" />
+          <div class="gallery-overlay">
+            <span class="gallery-category">Balayage</span>
+            <h4 class="gallery-title">Balayage Caramelo</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SOBRE MI 
+       ========================================== -->
+  <section id="aboutme" class="about-section section-spacing">
+    <div class="container about-grid">
+      <div class="about-images-composition">
+        <img src="assets/images/mariano.webp" alt="Marian Estilista" class="about-img-main" />
+        <img src="assets/images/ejemplo_imagen.jpg" alt="Detalle de estilismo" class="about-img-secondary" />
+        <div class="about-experience-badge">
+          <div class="about-exp-years">15+</div>
+          <div class="about-exp-label">Años de Excelencia</div>
+        </div>
+      </div>
+
+      <div class="about-content">
+        <span class="tag-badge">Sobre mí</span>
+        <h2 class="section-title">Más que un salón, un espacio de estilo y bienestar</h2>
+        <p class="about-lead">
+          Más que un salón, somos un lugar donde la técnica y la pasión se encuentran para transformar tu cabello en una
+          experiencia única.
+        </p>
+        <p class="about-text">
+          Con más de 15 años de excelencia, nos especializamos en colorimetría avanzada, peinados sociales y
+          tratamientos capilares que cuidan la salud de tu fibra mientras realzan tu estilo personal.
+        </p>
+        <p class="about-text">
+          Cada visita comienza con un diagnóstico de visagismo, porque creemos que tu rostro y tu estilo de vida merecen
+          un corte y un color diseñados a medida. Nos capacitamos constantemente en las capitales de la moda para
+          traerte las últimas tendencias, siempre con productos orgánicos y libres de amoníaco.
+        </p>
+
+        <div class="about-values-list">
+          <div class="about-val-item">
+            <div class="about-val-icon">✓</div>
+            <div>
+              <div class="about-val-title">Diagnóstico personalizado</div>
+              <div class="about-val-desc">Cortes y colores según tu rostro.</div>
+            </div>
+          </div>
+          <div class="about-val-item">
+            <div class="about-val-icon">✓</div>
+            <div>
+              <div class="about-val-title">Productos orgánicos</div>
+              <div class="about-val-desc">Fórmulas premium y seguras.</div>
+            </div>
+          </div>
+          <div class="about-val-item">
+            <div class="about-val-icon">✓</div>
+            <div>
+              <div class="about-val-title">Puntualidad absoluta</div>
+              <div class="about-val-desc">Respetamos tu tiempo sin demoras.</div>
+            </div>
+          </div>
+          <div class="about-val-item">
+            <div class="about-val-icon">✓</div>
+          </div>
+        </div>
+
+        <a href="pages/reservas.html" class="btn btn-primary">
+          Reservar Turno
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==========================================
+       CURSO DE PELUQUERÍA
+       ========================================== -->
+  <section id="curso" class="course-section section-spacing">
+    <div class="container">
+      <div class="section-header">
+        <span class="tag-badge light">Academia Marian Estilista</span>
+        <h2 class="section-title light">Curso Profesional de Peluquería</h2>
+        <p class="section-subtitle light">Formación completa con prácticas reales y certificación oficial.</p>
+      </div>
+
+      <div class="course-card-wrapper">
+        <div class="course-info">
+          <h3>Curso Integral de Peluquería & Estilismo</h3>
+          <div class="course-sub">De principiante a profesional certificado</div>
+          <p class="course-desc">
+            Aprende las técnicas más solicitadas del mercado: colorimetría, balayage, babylights, tratamientos capilares
+            y peinados sociales.
+            Todo con práctica presencial en salón y acompañamiento personalizado.
+          </p>
+
+          <div class="course-modules-list">
+            <div class="course-mod-item">✓ Colorimetría, tinturas y retoque de raíces</div>
+            <div class="course-mod-item">✓ Balayage, babylights y mechas</div>
+            <div class="course-mod-item">✓ Corrección de color y decoloración controlada</div>
+            <div class="course-mod-item">✓ Matización y técnicas de brillo</div>
+            <div class="course-mod-item">✓ Alisados, botox capilar y shock de keratina</div>
+            <div class="course-mod-item">✓ Tratamientos de hidratación, nutrición y reconstrucción</div>
+            <div class="course-mod-item">✓ Diagnóstico capilar y atención al cliente</div>
+          </div>
+        </div>
+
+        <div class="course-sidebar-box">
+          <div>
+            <div class="course-meta-pills">
+              <div class="course-meta-pill">
+                <div class="course-meta-label">Inicio</div>
+                <div class="course-meta-val">A confirmar</div>
+              </div>
+              <div class="course-meta-pill">
+                <div class="course-meta-label">Duración</div>
+                <div class="course-meta-val">5 meses</div>
+              </div>
+              <div class="course-meta-pill">
+                <div class="course-meta-label">Modalidad</div>
+                <div class="course-meta-val">Presencial en salón</div>
+              </div>
+              <div class="course-meta-pill">
+                <div class="course-meta-label">Certificación</div>
+                <div class="course-meta-val">Diploma oficial al finalizar</div>
+              </div>
+            </div>
+
+            <div class="course-quota-badge">
+              <span>⚠️ Cupos Limitados</span>
+              <strong>Inscripciones abiertas</strong>
+            </div>
+          </div>
+
+          <div class="course-pricing-area">
+            <div class="course-price-label">Inversión mensual</div>
+            <div class="course-price-amount">$350.000</div>
+            <a href="https://api.whatsapp.com/send?phone=5492920359074" class="btn btn-primary btn-lg"
+              style="width: 100%;">
+              Inscribirme por WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==========================================
+       UBICACIÓN & CONTACTO
+       ========================================== -->
+  <section id="contacto" class="location-contact-section section-spacing">
+    <div class="container">
+      <div class="section-header">
+        <span class="tag-badge">Visítanos & Contáctanos</span>
+        <h2 class="section-title">Estamos en el Galeria La Catedral, Bariloche</h2>
+        <p class="section-subtitle">Comunícate por cualquiera de nuestros canales o escríbenos tu consulta.</p>
+      </div>
+
+      <div class="loc-contact-grid">
+        <!-- Columna Izquierda: Información de Salón -->
+        <div class="info-cards-col">
+          <div class="contact-info-card">
+            <h4>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              Nuestra Dirección
+            </h4>
+            <p style="font-size: 1rem; color: var(--dark); font-weight: 600; margin-bottom: 6px;">Calle General Nicolás
+              Palacios 156</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">San Carlos de Bariloche, Río Negro</p>
+          </div>
+
+          <div class="contact-info-card">
+            <h4>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              Horarios de Atención
+            </h4>
+            <div class="hours-list">
+              <div class="hours-row">
+                <span>Martes a Viernes</span>
+                <strong>09:00 - 19:00 hs</strong>
+              </div>
+              <div class="hours-row">
+                <span>Sábados</span>
+                <strong>09:00 - 19:00 hs</strong>
+              </div>
+              <div class="hours-row closed">
+                <span>Domingos y Lunes</span>
+                <span>Cerrado</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="contact-info-card">
+            <h4>Canales Directos</h4>
+            <div class="contact-channels-grid">
+              <a href="https://wa.me/542920359074" target="_blank" class="channel-btn whatsapp">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path
+                    d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z">
+                  </path>
+                </svg>
+                WhatsApp Salón
+              </a>
+              <a href="https://www.instagram.com/marian.estilista.bariloche/" target="_blank"
+                class="channel-btn instagram">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+                @marian.estilista.bariloche
+              </a>
+              <a href="tel:+542920359074" class="channel-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path
+                    d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                  </path>
+                </svg>
+                (2920) 359074
+              </a>
+              <a href="mailto:marianestilista@gmail.com" class="channel-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+                Email Salón
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Columna Derecha: Mapa y Formulario -->
+        <div class="map-form-col">
+          <div class="map-placeholder-card">
+            <div class="map-pin-box">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <span>Marian Estilista • Galeria La Catedral, Bariloche</span>
+            </div>
+          </div>
+
+          <form id="fast-contact-form" class="fast-contact-form">
+            <h4 style="font-family: var(--font-serif); font-size: 1.25rem; color: var(--dark); margin-bottom: 16px;">
+              Envíanos un mensaje rápido
+            </h4>
+            <div class="form-group">
+              <label class="form-label" for="ct-nombre">Nombre y Apellido</label>
+              <input type="text" id="ct-nombre" class="form-control" placeholder="Ej: Carolina Rossi" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="ct-email">Correo Electrónico</label>
+              <input type="email" id="ct-email" class="form-control" placeholder="nombre@correo.com" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="ct-mensaje">Consulta o Mensaje</label>
+              <textarea id="ct-mensaje" class="form-control" placeholder="¿En qué podemos asesorarte?"
+                required></textarea>
+            </div>
+            <button type="submit" class="btn btn-dark" style="width: 100%;">
+              Enviar mensaje
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       FOOTER
+       ========================================== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand-logo">
+            <div class="brand-symbol">M</div>
+            <div class="brand-text">
+              <span class="brand-name">Marian Estilista</span>
+              <span class="brand-tag">Peluquería & Estilo</span>
+            </div>
+          </div>
+          <p class="footer-bio">
+            Salón de peluquería y colorimetría de alta gama. Pasión por la excelencia, diagnóstico capilar a
+            medida y resultados de revista.
+          </p>
+        </div>
+
+        <div>
+          <h5 class="footer-col-title">Navegación</h5>
+          <ul class="footer-links">
+            <li><a href="#inicio" class="footer-link">Inicio</a></li>
+            <li><a href="#servicios" class="footer-link">Servicios & Precios</a></li>
+            <li><a href="#galeria" class="footer-link">Galería de Trabajos</a></li>
+            <li><a href="#nosotros" class="footer-link">Sobre Nosotros</a></li>
+            <li><a href="#curso" class="footer-link">Academia & Cursos</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h5 class="footer-col-title">Servicios Populares</h5>
+          <ul class="footer-links">
+            <li><a href="pages/reservas.html?servicio=srv-5" class="footer-link">Mechas & Balayage</a></li>
+            <li><a href="pages/reservas.html?servicio=srv-2" class="footer-link">Corte Femenino</a></li>
+            <li><a href="pages/reservas.html?servicio=srv-4" class="footer-link">Coloración Global</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h5 class="footer-col-title">Administración</h5>
+          <p style="font-size: 0.88rem; color: var(--text-light); margin-bottom: 14px;">
+            Accede al panel de control interno para gestionar turnos, clientes y servicios.
+          </p>
+          <a href="pages/admin.html" class="btn btn-outline-white btn-sm">
+            Panel de Administración
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>© 2026 Marian Estilista. Todos los derechos reservados.</div>
+        <div style="color: var(--primary-light);">Diseñado con arquitectura modular lista para backend Spring Boot +
+          PostgreSQL.</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================
+       MODAL DE INSCRIPCIÓN AL CURSO
+       ========================================== -->
+  <div id="modal-inscripcion-curso" class="modal-backdrop">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h3 class="modal-title">Inscripción a curso completo de peluquería profesional</h3>
+        <button id="btn-close-curso-modal" class="modal-close-btn">&times;</button>
+      </div>
+      <form id="form-inscripcion-curso">
+        <div class="modal-body">
+          <p style="color: var(--text-muted); font-size: 0.92rem; margin-bottom: 20px;">
+            Estás a punto de inscribirte al <strong>Curso Profesional de Peluquería & Estilismo Integral</strong>.
+            Completa tus datos para reservar tu vacante.
+          </p>
+          <div class="form-group">
+            <label class="form-label" for="ins-nombre">Nombre y Apellido *</label>
+            <input type="text" id="ins-nombre" class="form-control" placeholder="Ej: Agustina Gómez" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ins-email">Correo Electrónico *</label>
+            <input type="email" id="ins-email" class="form-control" placeholder="agustina@gmail.com" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ins-telefono">Teléfono / WhatsApp *</label>
+            <input type="tel" id="ins-telefono" class="form-control" placeholder="11-4455-6677" required />
+          </div>
+          <div
+            style="background: var(--light-bg); padding: 14px; border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--dark); border: 1px solid var(--border-color);">
+            💰 <strong>Inversión:</strong> $350.000 (Incluye kit de herramientas y certificado oficial).
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" style="width: 100%;">
+            Confirmar Inscripción
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+</body>
+
+</html>
