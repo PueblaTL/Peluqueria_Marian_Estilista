@@ -1,23 +1,29 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel de Administración | Marian Estilista</title>
-  <meta name="description" content="Panel de administración y gestión para Marian Estilista: Dashboard de métricas, turnos con Mariano, clientes, catálogo de servicios, curso profesional e inscripciones.">
-  
+  <meta name="description"
+    content="Panel de administración y gestión para Marian Estilista: Dashboard de métricas, turnos con Mariano, clientes, catálogo de servicios, curso profesional e inscripciones.">
+
   <!-- Favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C5A880'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z'/></svg>">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C5A880'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z'/></svg>">
 
   <!-- Tipografía Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
 
   <!-- Estilos -->
   <link rel="stylesheet" href="../css/styles.css">
   <link rel="stylesheet" href="../css/admin.css">
 </head>
+
 <body class="admin-body">
 
   <!-- ==========================================
@@ -36,39 +42,72 @@
 
     <nav class="admin-nav-list">
       <div class="admin-nav-item active" data-tab="dashboard">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
         <span>Dashboard</span>
       </div>
 
       <div class="admin-nav-item" data-tab="turnos">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
         <span>Turnos</span>
       </div>
 
       <div class="admin-nav-item" data-tab="clientes">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
         <span>Clientes</span>
       </div>
 
       <div class="admin-nav-item" data-tab="servicios">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
         <span>Servicios</span>
       </div>
 
       <div class="admin-nav-item" data-tab="curso">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </svg>
         <span>Curso & Inscripciones</span>
       </div>
 
       <div class="admin-nav-item" data-tab="configuracion">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path
+            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+          </path>
+        </svg>
         <span>Configuración</span>
       </div>
     </nav>
 
     <div class="admin-sidebar-footer">
       <a href="../index.html" class="btn btn-outline-white btn-sm" style="width: 100%;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
         <span>Ver Sitio Web</span>
       </a>
     </div>
@@ -78,12 +117,16 @@
        CONTENEDOR PRINCIPAL
        ========================================== -->
   <div class="admin-main-wrapper">
-    
+
     <!-- TOPBAR -->
     <header class="admin-topbar">
       <div style="display: flex; align-items: center; gap: 14px;">
         <button id="admin-sidebar-toggle" class="mobile-toggle" style="display: none;" aria-label="Abrir menú">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
         </button>
         <h1 id="admin-topbar-title" class="admin-topbar-title">Dashboard General</h1>
       </div>
@@ -112,7 +155,12 @@
               <div class="kpi-trend">📅 Citas programadas</div>
             </div>
             <div class="kpi-icon-wrap">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
             </div>
           </div>
 
@@ -123,7 +171,10 @@
               <div class="kpi-trend" style="color: #B45309;">⚠️ Requieren confirmación</div>
             </div>
             <div class="kpi-icon-wrap pending">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
             </div>
           </div>
 
@@ -134,7 +185,10 @@
               <div class="kpi-trend" style="color: #047857;">✓ Atendidos con éxito</div>
             </div>
             <div class="kpi-icon-wrap completed">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
             </div>
           </div>
 
@@ -145,7 +199,10 @@
               <div class="kpi-trend" style="color: #1D4ED8;">👥 Base de datos</div>
             </div>
             <div class="kpi-icon-wrap clients">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+              </svg>
             </div>
           </div>
 
@@ -156,7 +213,10 @@
               <div class="kpi-trend">💰 Turnos confirmados/hechos</div>
             </div>
             <div class="kpi-icon-wrap revenue">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
             </div>
           </div>
 
@@ -167,7 +227,10 @@
               <div class="kpi-trend" style="color: var(--primary-dark);">🎓 Postulantes</div>
             </div>
             <div class="kpi-icon-wrap course-kpi">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+              </svg>
             </div>
           </div>
         </div>
@@ -176,15 +239,17 @@
         <div class="admin-prof-banner">
           <div class="prof-banner-content">
             <div class="prof-banner-avatar">
-              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80" alt="Mariano" />
+              <img src="../assets/images/mariano.webp" alt="Mariano" />
             </div>
             <div>
               <h3>Mariano — Profesional & Estilista Titular</h3>
-              <p>Atención exclusiva y personalizada en Marian Estilista • Galería La Catedral, San Carlos de Bariloche (+15 Años de Experiencia).</p>
+              <p>Atención exclusiva y personalizada en Marian Estilista • Galería La Catedral, San Carlos de Bariloche
+                (+15 Años de Experiencia).</p>
             </div>
           </div>
           <div class="prof-banner-actions">
-            <button class="btn btn-secondary btn-sm" onclick="window.adminDashboard.switchTab('turnos')">Ver Agenda de Turnos</button>
+            <button class="btn btn-secondary btn-sm" onclick="window.adminDashboard.switchTab('turnos')">Ver Agenda de
+              Turnos</button>
           </div>
         </div>
 
@@ -227,10 +292,11 @@
               <h3>Administración de Turnos</h3>
               <p class="card-subtitle">Gestiona, confirma, completa o cancela las citas de las clientas.</p>
             </div>
-            
+
             <div class="table-filters-row">
-              <input type="text" id="turnos-search-input" class="form-control form-control-sm" placeholder="🔍 Buscar clienta o servicio..." />
-              
+              <input type="text" id="turnos-search-input" class="form-control form-control-sm"
+                placeholder="🔍 Buscar clienta o servicio..." />
+
               <select id="turnos-status-filter" class="form-control form-control-sm">
                 <option value="todos">Todos los estados</option>
                 <option value="Pendiente">Pendiente</option>
@@ -403,7 +469,8 @@
             </div>
             <div class="form-group">
               <label>Ubicación</label>
-              <input type="text" class="form-control" value="Galería La Catedral, San Carlos de Bariloche – Salón Marian Estilista" readonly />
+              <input type="text" class="form-control"
+                value="Galería La Catedral, San Carlos de Bariloche – Salón Marian Estilista" readonly />
             </div>
             <div class="form-group">
               <label>Horarios de Atención</label>
@@ -421,8 +488,10 @@
 
           <div class="config-danger-zone">
             <h4>Zona de Restablecimiento</h4>
-            <p>Si deseas restaurar los servicios iniciales, turnos de demostración e inscripciones por defecto de Marian Estilista:</p>
-            <button id="btn-reset-demo-data" class="btn btn-secondary btn-sm" style="color: var(--danger); border-color: var(--danger); margin-top: 10px;">
+            <p>Si deseas restaurar los servicios iniciales, turnos de demostración e inscripciones por defecto de Marian
+              Estilista:</p>
+            <button id="btn-reset-demo-data" class="btn btn-secondary btn-sm"
+              style="color: var(--danger); border-color: var(--danger); margin-top: 10px;">
               🔄 Restablecer Datos de Demostración
             </button>
           </div>
@@ -447,7 +516,8 @@
 
           <div class="form-group">
             <label for="crud-service-nombre">Nombre del Servicio *</label>
-            <input type="text" id="crud-service-nombre" class="form-control" placeholder="Ej: Balayage Caramelo" required />
+            <input type="text" id="crud-service-nombre" class="form-control" placeholder="Ej: Balayage Caramelo"
+              required />
           </div>
 
           <div class="form-row-2">
@@ -463,14 +533,16 @@
             </div>
             <div class="form-group">
               <label for="crud-service-precio">Precio ($ ARS) *</label>
-              <input type="number" id="crud-service-precio" class="form-control" placeholder="Ej: 38000" min="0" required />
+              <input type="number" id="crud-service-precio" class="form-control" placeholder="Ej: 38000" min="0"
+                required />
             </div>
           </div>
 
           <div class="form-row-2">
             <div class="form-group">
               <label for="crud-service-duracion">Duración Estimada (Minutos) *</label>
-              <input type="number" id="crud-service-duracion" class="form-control" placeholder="Ej: 120" min="15" step="15" required />
+              <input type="number" id="crud-service-duracion" class="form-control" placeholder="Ej: 120" min="15"
+                step="15" required />
             </div>
             <div class="form-group">
               <label for="crud-service-activo">Estado</label>
@@ -483,12 +555,14 @@
 
           <div class="form-group">
             <label for="crud-service-desc">Descripción *</label>
-            <textarea id="crud-service-desc" class="form-control" rows="3" placeholder="Describe los beneficios y detalles del servicio..." required></textarea>
+            <textarea id="crud-service-desc" class="form-control" rows="3"
+              placeholder="Describe los beneficios y detalles del servicio..." required></textarea>
           </div>
 
           <div class="form-group">
             <label for="crud-service-img">URL de Imagen</label>
-            <input type="url" id="crud-service-img" class="form-control" placeholder="https://images.unsplash.com/..." />
+            <input type="url" id="crud-service-img" class="form-control"
+              placeholder="https://images.unsplash.com/..." />
           </div>
 
           <div class="modal-actions">
@@ -509,4 +583,5 @@
   <script src="../js/api.js"></script>
   <script src="../js/admin.js"></script>
 </body>
+
 </html>
