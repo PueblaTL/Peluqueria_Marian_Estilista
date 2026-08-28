@@ -2217,3 +2217,262 @@ textarea.form-control {
     grid-template-columns: 1fr;
   }
 }
+
+/* ==========================================================
+   RESPONSIVE HEADER
+   ========================================================== */
+
+@media (max-width: 900px) {
+
+  /* Header */
+  .site-header {
+    height: 72px;
+  }
+
+  .header-container {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  /* -----------------------------
+     LOGO
+     ----------------------------- */
+
+  .brand-logo {
+    gap: 0;
+  }
+
+  .brand-symbol {
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
+  }
+
+  /* Logo compacto en móvil */
+  .brand-logo {
+    gap: 8px;
+  }
+
+  .brand-symbol {
+    width: 38px;
+    height: 38px;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+  }
+
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .brand-name {
+    font-size: 0.95rem;
+    letter-spacing: 0.03em;
+  }
+
+  .brand-tag {
+    font-size: 0.55rem;
+    letter-spacing: 0.08em;
+  }
+
+  /* -----------------------------
+     NAVEGACIÓN DESKTOP
+     ----------------------------- */
+
+  .main-nav {
+    position: absolute;
+    top: 72px;
+    left: 0;
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+
+    background-color: rgba(250, 247, 240, 0.98);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    border-top: 1px solid rgba(216, 203, 184, 0.35);
+    border-bottom: 1px solid rgba(216, 203, 184, 0.45);
+
+    box-shadow: 0 10px 25px rgba(44, 33, 26, 0.08);
+
+    /* Cerrado */
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+
+    transition:
+      max-height 0.35s ease,
+      opacity 0.25s ease;
+  }
+
+  /* Menú abierto */
+  .main-nav.active {
+    max-height: 500px;
+    opacity: 1;
+  }
+
+  /* Links */
+  .nav-link {
+    display: block;
+    width: 100%;
+
+    padding: 16px 24px;
+
+    font-size: 0.95rem;
+
+    border-bottom: 1px solid rgba(216, 203, 184, 0.25);
+  }
+
+  .nav-link:last-child {
+    border-bottom: none;
+  }
+
+  /* Sacamos la animación de línea en móvil */
+  .nav-link::after {
+    display: none;
+  }
+
+  /* -----------------------------
+     ACCIONES
+     ----------------------------- */
+
+  .header-actions {
+    gap: 8px;
+  }
+
+  /* Admin compacto en móvil */
+  .admin-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 38px;
+    height: 38px;
+
+    padding: 0;
+
+    border-radius: 50%;
+  }
+
+  .admin-link span {
+    display: none;
+  }
+
+  .admin-link svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Botón reservar más compacto */
+  .header-actions .btn-primary {
+    padding: 9px 13px;
+    font-size: 0.78rem;
+  }
+
+  .header-actions .btn-primary svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  /* -----------------------------
+     BOTÓN HAMBURGUESA
+     ----------------------------- */
+
+  .mobile-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 40px;
+    height: 40px;
+
+    padding: 8px;
+
+    border-radius: 50%;
+
+    transition:
+      background-color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .mobile-toggle:hover {
+    background-color: var(--color-champagne);
+  }
+
+  .mobile-toggle:active {
+    transform: scale(0.92);
+  }
+
+}
+
+
+/* ==========================================================
+   CELULARES PEQUEÑOS
+   ========================================================== */
+
+@media (max-width: 480px) {
+
+  .brand-logo {
+    gap: 7px;
+  }
+
+  .brand-symbol {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+  }
+
+  .brand-name {
+    font-size: 0.85rem;
+  }
+
+  .brand-tag {
+    font-size: 0.48rem;
+    letter-spacing: 0.06em;
+  }
+
+
+
+  .site-header {
+    height: 68px;
+  }
+
+  .header-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .brand-symbol {
+    width: 38px;
+    height: 38px;
+    font-size: 1.2rem;
+  }
+
+  .main-nav {
+    top: 68px;
+  }
+
+  /* Reservar todavía más compacto */
+  .header-actions .btn-primary {
+    padding: 8px 10px;
+  }
+
+  .header-actions .btn-primary span {
+    display: none;
+  }
+
+  .header-actions .btn-primary svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .mobile-toggle {
+    width: 38px;
+    height: 38px;
+  }
+
+}
