@@ -109,7 +109,7 @@ class StorageService {
       descripcion: servicioDto.descripcion || "",
       precio: Number(servicioDto.precio) || 0,
       duracionMinutos: Number(servicioDto.duracionMinutos) || 60,
-      imagen: servicioDto.imagen || "https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=800&q=80",
+      imagen: servicioDto.imagen || "assets/images/balayage_miel.png",
       destacado: !!servicioDto.destacado,
       activo: servicioDto.activo !== undefined ? servicioDto.activo : true
     };
@@ -117,6 +117,7 @@ class StorageService {
     this._setItem(STORAGE_KEYS.SERVICIOS, servicios);
     return nuevo;
   }
+
 
   static async updateServicio(id, servicioDto) {
     const servicios = await this.getServicios();
@@ -188,7 +189,7 @@ class StorageService {
     }
     if (filtros.search) {
       const q = filtros.search.toLowerCase();
-      turnos = turnos.filter(t => 
+      turnos = turnos.filter(t =>
         (t.cliente?.nombre && t.cliente.nombre.toLowerCase().includes(q)) ||
         (t.cliente?.apellido && t.cliente.apellido.toLowerCase().includes(q)) ||
         (t.cliente?.telefono && t.cliente.telefono.includes(q)) ||
