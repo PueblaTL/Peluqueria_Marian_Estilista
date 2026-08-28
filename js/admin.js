@@ -204,7 +204,7 @@ class AdminDashboard {
             <span class="text-muted" style="font-size: 0.82rem;">${t.cliente?.telefono || ''}</span>
           </td>
           <td>${t.servicioNombre}</td>
-          <td><strong>Mariano</strong></td>
+          <td><strong>Marian</strong></td>
           <td><strong>$${Number(t.precio).toLocaleString("es-AR")}</strong></td>
           <td><span class="status-badge status-${t.estado.toLowerCase()}">${t.estado}</span></td>
           <td>
@@ -254,7 +254,7 @@ class AdminDashboard {
           <span class="text-muted" style="font-size: 0.8rem;">✉️ ${t.cliente?.email}</span>
         </td>
         <td><strong>${t.servicioNombre}</strong></td>
-        <td>Mariano</td>
+        <td>Marian</td>
         <td><strong>$${Number(t.precio).toLocaleString("es-AR")}</strong></td>
         <td><span class="status-badge status-${t.estado.toLowerCase()}">${t.estado}</span></td>
         <td>
@@ -339,9 +339,9 @@ class AdminDashboard {
         <td><span class="count-badge">${c.cantidadTurnos} ${c.cantidadTurnos === 1 ? 'turno' : 'turnos'}</span></td>
         <td>${c.ultimoTurno}</td>
         <td>
-          ${c.cantidadTurnos >= 3 
-            ? `<span class="badge-gold">👑 Clienta Frecuente</span>` 
-            : `<span class="badge-regular">Cliente Estándar</span>`}
+          ${c.cantidadTurnos >= 3
+        ? `<span class="badge-gold">👑 Clienta Frecuente</span>`
+        : `<span class="badge-regular">Cliente Estándar</span>`}
         </td>
       </tr>
     `).join("");
