@@ -355,10 +355,15 @@ class AdminDashboard {
 
     const servicios = await window.StorageService.getServicios();
 
-    this.serviciosGrid.innerHTML = servicios.map(s => `
+    this.serviciosGrid.innerHTML = servicios.map(s => {
+      const imgSrc = (s.imagen && !s.imagen.startsWith("http") && !s.imagen.startsWith("data:"))
+        ? (s.imagen.startsWith("../") ? s.imagen : `../${s.imagen}`)
+        : s.imagen;
+
+      return `
       <div class="admin-srv-card ${!s.activo ? 'inactive' : ''}">
         <div class="admin-srv-img-wrap">
-          <img src="${s.imagen}" alt="${s.nombre}" />
+          <img src="${imgSrc}" alt="${s.nombre}" />
           <span class="admin-srv-badge">${s.categoria || 'Servicio'}</span>
           ${!s.activo ? `<span class="admin-srv-inactive-badge">Inactivo</span>` : ''}
         </div>
@@ -381,7 +386,8 @@ class AdminDashboard {
           </div>
         </div>
       </div>
-    `).join("");
+    `;
+    }).join("");
   }
 
   openServiceModal(servicio = null) {

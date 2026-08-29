@@ -157,11 +157,13 @@ class BookingWizard {
     servicios.forEach(s => {
       const card = document.createElement("div");
       card.className = `booking-service-card ${this.state.servicio?.id === s.id ? 'selected' : ''}`;
-      card.setAttribute("data-service-id", s.id);
+      const imgSrc = (s.imagen && !s.imagen.startsWith("http") && !s.imagen.startsWith("data:"))
+        ? (s.imagen.startsWith("../") ? s.imagen : `../${s.imagen}`)
+        : s.imagen;
 
       card.innerHTML = `
         <div class="book-srv-img-wrap">
-          <img src="${s.imagen}" alt="${s.nombre}" loading="lazy" />
+          <img src="${imgSrc}" alt="${s.nombre}" loading="lazy" />
           <span class="book-srv-badge">${s.categoria || 'Servicio'}</span>
         </div>
         <div class="book-srv-body">

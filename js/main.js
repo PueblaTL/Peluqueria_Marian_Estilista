@@ -102,21 +102,37 @@ function initNavbar() {
     const lightboxTag = document.getElementById("lightbox-tag");
     const closeLightboxBtn = document.getElementById("btn-close-lightbox");
 
+    // Normalizador de texto para tolerar acentos y mayúsculas
+    const normalize = (str) => (str || "").toLowerCase().trim()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
     // Filtros por categoría
     if (filterBtns.length && galleryItems.length) {
       filterBtns.forEach(btn => {
         btn.addEventListener("click", () => {
-          filterBtns.forEach(b => b.classList.remove("active"));
+          filterBtns.forEach(b => {
+            b.classList.remove("active");
+            b.setAttribute("aria-selected", "false");
+          });
           btn.classList.add("active");
+          btn.setAttribute("aria-selected", "true");
 
-          const filterValue = btn.getAttribute("data-filter");
+          const filterRaw = btn.getAttribute("data-filter") || "";
+          const filterValue = normalize(filterRaw);
 
           galleryItems.forEach(item => {
-            const itemCategory = item.getAttribute("data-category");
-            if (filterValue === "all" || itemCategory === filterValue) {
-              item.style.display = "block";
-              item.style.animation = "fadeInStep 0.35s ease";
+            const itemCategoryRaw = item.getAttribute("data-category") || "";
+            const itemCategory = normalize(itemCategoryRaw);
+
+            const isAll = filterValue === "all" || filterValue === "todos" || filterValue === "";
+            const isMatch = isAll || itemCategory === filterValue || itemCategory.includes(filterValue);
+
+            if (isMatch) {
+              item.classList.remove("gallery-item--hidden");
+              item.style.display = "";
+              item.style.animation = "fadeInStep 0.35s ease forwards";
             } else {
+              item.classList.add("gallery-item--hidden");
               item.style.display = "none";
             }
           });
@@ -124,20 +140,23 @@ function initNavbar() {
       });
     }
 
-    // Lightbox al hacer clic en un item de la galería
+    // Lightbox al hacer clic en un item visible de la galería
     galleryItems.forEach(item => {
       item.addEventListener("click", () => {
+        if (item.classList.contains("gallery-item--hidden") || item.style.display === "none") {
+          return;
+        }
         const img = item.querySelector("img");
-        const title = item.querySelector("h4");
-        const desc = item.querySelector("p");
-        const tag = item.querySelector(".gallery-tag");
+        const title = item.querySelector("h4, .gallery-title");
+        const desc = item.querySelector("p, .gallery-desc");
+        const tag = item.querySelector(".gallery-tag, .gallery-category");
 
-        if (lightbox && lightboxImg) {
+        if (lightbox && lightboxImg && img) {
           lightboxImg.src = img.src;
-          lightboxImg.alt = img.alt;
-          if (lightboxTitle && title) lightboxTitle.textContent = title.textContent;
-          if (lightboxDesc && desc) lightboxDesc.textContent = desc.textContent;
-          if (lightboxTag && tag) lightboxTag.textContent = tag.textContent;
+          lightboxImg.alt = img.alt || "Trabajo Marian Estilista";
+          if (lightboxTitle) lightboxTitle.textContent = title ? title.textContent : "";
+          if (lightboxDesc) lightboxDesc.textContent = desc ? desc.textContent : "";
+          if (lightboxTag) lightboxTag.textContent = tag ? tag.textContent : "";
 
           lightbox.classList.add("active");
           lightbox.setAttribute("aria-hidden", "false");

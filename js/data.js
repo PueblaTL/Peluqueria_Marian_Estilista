@@ -43,82 +43,74 @@ const SEED_DATA = {
     activo: true
   },
 
-  // Catálogo Oficial de Servicios (7 Servicios Exclusivamente Femeninos)
+  // Catálogo Oficial de Servicios (5 Servicios Exclusivamente Femeninos)
   servicios: [
     {
       id: "srv-1",
-      nombre: "Mechas Babylight",
-      categoria: "Iluminación",
-      descripcion: "Técnica de iluminación sutil que aporta luminosidad y dimensión al cabello mediante reflejos delicados y naturales.",
-      precio: 78000,
+      nombre: "Alisado Láser 6D",
+      categoria: "Alisados",
+      descripcion: "Técnica avanzada de alisado y disciplina capilar. Incluye tratamiento termoactivo, sellado de la fibra, reducción del frizz y acabado ultra liso con brillo intenso.",
+      precio: 150000,
+      precioTexto: "$150.000 a $180.000",
       duracionMinutos: 150,
-      imagen: "https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=800&q=80",
+      imagen: "assets/images/alisado_6d.webp",
       destacado: true,
       activo: true
     },
     {
       id: "srv-2",
-      nombre: "Balayage",
+      nombre: "Mechas Balayage",
       categoria: "Iluminación",
-      descripcion: "Técnica de coloración que crea una iluminación progresiva y natural, adaptada a cada cabello.",
+      descripcion: "Técnica francesa de iluminación degradada a mano alzada. Incluye matización personalizada, baño de luz gloss, tratamiento nutritivo y peinado con ondas.",
       precio: 95000,
+      precioTexto: "$95.000",
       duracionMinutos: 180,
-      imagen: "../assets/images/balayage_miel.png",
+      imagen: "assets/images/mechas_balayage.webp",
       destacado: true,
       activo: true
     },
     {
       id: "srv-3",
-      nombre: "Tratamiento de Keratina",
-      categoria: "Tratamientos",
-      descripcion: "Tratamiento destinado a mejorar la apariencia, suavidad y manejabilidad del cabello.",
-      precio: 40000,
-      duracionMinutos: 90,
-      imagen: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80",
+      nombre: "Mechas Localizadas",
+      categoria: "Iluminación",
+      descripcion: "Técnica de iluminación estratégica para realzar zonas específicas del cabello y potenciar los rasgos del rostro. Incluye aclaración personalizada, matización tonal, tratamiento nutritivo y peinado.",
+      precio: 85000,
+      precioTexto: "$85.000",
+      duracionMinutos: 120,
+      imagen: "assets/images/mechas_localizadas.webp",
       destacado: true,
       activo: true
     },
     {
       id: "srv-4",
-      nombre: "Alisado 5D",
-      categoria: "Alisados",
-      descripcion: "Servicio de alisado profesional que brinda alineación de la fibra capilar, reducción total de frizz y brillo efecto espejo.",
-      precio: 98000,
-      duracionMinutos: 120,
-      imagen: "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&w=800&q=80",
+      nombre: "Mechas Babylight",
+      categoria: "Iluminación",
+      descripcion: "Técnica de iluminación ultrafina inspirada en los reflejos naturales del cabello. Incluye aclaración delicada, matización personalizada, baño de luz gloss, tratamiento nutritivo y peinado.",
+      precio: 88000,
+      precioTexto: "$88.000",
+      duracionMinutos: 150,
+      imagen: "assets/images/mechas_babylight_2.webp",
       destacado: true,
       activo: true
     },
     {
       id: "srv-5",
-      nombre: "Alisado 6D Laser",
-      categoria: "Alisados",
-      descripcion: "Servicio de alisado profesional de alta definición y máxima durabilidad, restaurando la sedosidad y vitalidad del cabello.",
-      precio: 105000,
-      duracionMinutos: 150,
-      imagen: "../assets/images/alisado_6d.png",
-      destacado: true,
-      activo: true
-    },
-    {
-      id: "srv-6",
-      nombre: "Peinados",
+      nombre: "Peinados para Eventos",
       categoria: "Peinados",
-      descripcion: "Peinados profesionales para eventos, ocasiones especiales y diferentes estilos.",
+      descripcion: "Peinados personalizados para quinceañeras, bodas, fiestas, celebraciones y ocasiones especiales. Diseños pensados para complementar el estilo, el vestido y la personalidad de cada clienta, buscando un resultado elegante, sofisticado y duradero.",
+      detalles: [
+        "Ondas y peinados sueltos",
+        "Recogidos elegantes",
+        "Semi recogidos",
+        "Peinados para 15 años",
+        "Peinados para fiestas",
+        "Peinados para novias",
+        "Peinados con trenzas"
+      ],
       precio: 48000,
+      precioTexto: "$48.000",
       duracionMinutos: 60,
       imagen: "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=800&q=80",
-      destacado: false,
-      activo: true
-    },
-    {
-      id: "srv-7",
-      nombre: "Coloración",
-      categoria: "Coloración",
-      descripcion: "Coloración y trabajos de color personalizados según el cabello y objetivo de cada clienta.",
-      precio: 65000,
-      duracionMinutos: 90,
-      imagen: "https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=800&q=80",
       destacado: true,
       activo: true
     }
@@ -190,67 +182,67 @@ const SEED_DATA = {
   galeria: [
     {
       id: "gal-1",
-      titulo: "Balayage Vainilla & Golden Gloss",
-      categoria: "balayage",
-      categoriaNombre: "Balayage",
-      imagen: "https://images.unsplash.com/photo-1605497788044-5a32c7078486?auto=format&fit=crop&w=900&q=80",
-      descripcion: "Degradé suave con matices beige manteca y acabado ultra luminoso."
+      titulo: "Mechas Balayage Miel & Golden Gloss",
+      categoria: "coloracion",
+      categoriaNombre: "Coloración",
+      imagen: "https://plus.unsplash.com/premium_photo-1669675936132-cd68d8a1ac5f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8QmFsYXlhZ2UlMjBwcm9mZXNpb25hbHxlbnwwfHwwfHx8MA%3D%3D",
+      descripcion: "Degradé suave a mano alzada con matices cálidos y acabado luminoso."
     },
     {
       id: "gal-2",
-      titulo: "Mechas Babylight Ceniza",
-      categoria: "babylights",
-      categoriaNombre: "Babylights",
-      imagen: "https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=900&q=80",
-      descripcion: "Micro-reflejos de alta densidad para máxima luminosidad y naturalidad."
+      titulo: "Alisado Láser 6D & Tratamiento Espejo",
+      categoria: "alisados",
+      categoriaNombre: "Alisados",
+      imagen: "assets/images/alisado_6d.png",
+      descripcion: "Alineación capilar termoactiva con sedosidad y cero encrespamiento."
     },
     {
       id: "gal-3",
-      titulo: "Alisado 6D Laser & Tratamiento Espejo",
-      categoria: "alisados",
-      categoriaNombre: "Alisados",
-      imagen: "https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=900&q=80",
-      descripcion: "Alineación capilar completa con sedosidad y cero encrespamiento."
+      titulo: "Corte y Perfilado de Puntas",
+      categoria: "corte",
+      categoriaNombre: "Corte",
+      imagen: "https://plus.unsplash.com/premium_photo-1669675935927-0ed8935e6600?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8Y29ydGUlMjBtdWplciUyMHBlbHVxdWVyaWF8ZW58MHx8MHx8fDA%3D",
+      descripcion: "Definición de capas y movimiento con sellado cuticular."
     },
     {
       id: "gal-4",
-      titulo: "Coloración Chocolate Profundo & Brillo",
-      categoria: "coloracion",
-      categoriaNombre: "Coloración",
-      imagen: "https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=900&q=80",
-      descripcion: "Cobertura perfecta y sellado cuticular con reflejos multidimensionales."
+      titulo: "Semirrecogido Trenzado para Eventos",
+      categoria: "peinados",
+      categoriaNombre: "Peinados",
+      imagen: "https://images.unsplash.com/photo-1575287537815-ef82dd922198?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      descripcion: "Diseño bohemio y sofisticado para quinceañeras y fiestas."
     },
     {
       id: "gal-5",
-      titulo: "Peinado de Fiesta Ondas Glam",
-      categoria: "peinados",
-      categoriaNombre: "Peinados",
-      imagen: "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=900&q=80",
-      descripcion: "Ondas marcadas y peinado sofisticado para galas y ocasiones especiales."
+      titulo: "Rubio Ceniza Platinado & Matización",
+      categoria: "coloracion",
+      categoriaNombre: "Coloración",
+      imagen: "https://images.unsplash.com/photo-1554519934-e32b1629d9ee?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y29sb3JhY2lvbiUyMHJ1YmlvJTIwY2VuaXphJTIwcGxhdGluYWRvfGVufDB8fDB8fHww",
+      descripcion: "Aclaración precisa y matización fría personalizada."
     },
     {
       id: "gal-6",
-      titulo: "Transformación Balayage Miel Caramelo",
-      categoria: "balayage",
-      categoriaNombre: "Balayage",
-      imagen: "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?auto=format&fit=crop&w=900&q=80",
-      descripcion: "Iluminación cálida en base castaña con contorno frontal iluminado."
+      titulo: "Balayage Caramelo & Contorno Frontal",
+      categoria: "coloracion",
+      categoriaNombre: "Coloración",
+      imagen: "https://images.unsplash.com/photo-1638064432604-8da1fc75de09?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8QmFsYXlhZ2UlMjBwZWx1cXVlcmlhfGVufDB8fDB8fHww",
+      descripcion: "Degradado cálido en base castaña con ondas naturales."
     },
     {
       id: "gal-7",
-      titulo: "Tratamiento de Keratina Reconstructivo",
-      categoria: "tratamientos",
-      categoriaNombre: "Tratamientos",
-      imagen: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=900&q=80",
-      descripcion: "Nutrición intensiva y recuperación de puntas resecas y porosas."
+      titulo: "Recogido de Gala para Novias y Fiestas",
+      categoria: "peinados",
+      categoriaNombre: "Peinados",
+      imagen: "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=800&q=80",
+      descripcion: "Peinado de alta costura con fijación duradera y acabado brillante."
     },
     {
       id: "gal-8",
-      titulo: "Alisado 5D Brillo Extremo",
+      titulo: "Sellado Térmico Láser 6D",
       categoria: "alisados",
       categoriaNombre: "Alisados",
-      imagen: "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=900&q=80",
-      descripcion: "Lacio impecable, manejable y con movimiento natural sin rigidez."
+      imagen: "assets/images/Alisado_6d_2 (2).jpeg",
+      descripcion: "Tratamiento termoactivo con brillo espejo y nutrición profunda."
     }
   ],
 
@@ -259,13 +251,13 @@ const SEED_DATA = {
     {
       id: "trn-1001",
       servicioId: "srv-2",
-      servicioNombre: "Balayage",
+      servicioNombre: "Mechas Balayage",
       profesionalId: "prof-1",
       profesionalNombre: "Mariano",
       fecha: new Date().toISOString().split("T")[0],
       hora: "10:00",
       duracionMinutos: 180,
-      precio: 45000,
+      precio: 95000,
       estado: "Confirmado",
       cliente: {
         nombre: "Camila",
@@ -278,14 +270,14 @@ const SEED_DATA = {
     },
     {
       id: "trn-1002",
-      servicioId: "srv-1",
+      servicioId: "srv-4",
       servicioNombre: "Mechas Babylight",
       profesionalId: "prof-1",
       profesionalNombre: "Mariano",
       fecha: new Date().toISOString().split("T")[0],
       hora: "15:00",
       duracionMinutos: 150,
-      precio: 38000,
+      precio: 88000,
       estado: "Pendiente",
       cliente: {
         nombre: "Luciana",
@@ -298,14 +290,14 @@ const SEED_DATA = {
     },
     {
       id: "trn-1003",
-      servicioId: "srv-5",
-      servicioNombre: "Alisado 6D Laser",
+      servicioId: "srv-1",
+      servicioNombre: "Alisado Láser 6D",
       profesionalId: "prof-1",
       profesionalNombre: "Mariano",
       fecha: new Date(Date.now() + 86400000).toISOString().split("T")[0],
       hora: "11:00",
       duracionMinutos: 150,
-      precio: 35000,
+      precio: 150000,
       estado: "Confirmado",
       cliente: {
         nombre: "Valentina",
@@ -319,13 +311,13 @@ const SEED_DATA = {
     {
       id: "trn-1004",
       servicioId: "srv-3",
-      servicioNombre: "Tratamiento de Keratina",
+      servicioNombre: "Mechas Localizadas",
       profesionalId: "prof-1",
       profesionalNombre: "Mariano",
       fecha: new Date(Date.now() - 86400000).toISOString().split("T")[0],
       hora: "16:00",
-      duracionMinutos: 90,
-      precio: 22000,
+      duracionMinutos: 120,
+      precio: 85000,
       estado: "Completado",
       cliente: {
         nombre: "Martina",

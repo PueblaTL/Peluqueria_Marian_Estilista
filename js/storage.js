@@ -7,9 +7,9 @@
  */
 
 const STORAGE_KEYS = {
-  SERVICIOS: "marian_servicios_v1",
+  SERVICIOS: "marian_servicios_v2",
   PROFESIONAL: "marian_profesional_v1",
-  TURNOS: "marian_turnos_v1",
+  TURNOS: "marian_turnos_v2",
   CURSO: "marian_curso_v1",
   INSCRIPCIONES: "marian_inscripciones_v1",
   NEGOCIO: "marian_negocio_v1"
