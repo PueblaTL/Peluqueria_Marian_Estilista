@@ -1,38 +1,170 @@
 /* --- 1. VARIABLES & DESIGN SYSTEM --- */
 :root {
   /* ======================================================
-     MARIAN ESTILISTA — Diseño monocromatico
+/* ==========================================================================
+   MARIAN ESTILISTA — MONOCHROMATIC DESIGN SYSTEM
+   Premium / Minimalist / Black & White
+   ========================================================================== */
 
+  :root {
+    /* ======================================================
+     CORE PALETTE (Tonos Cálidos, Elegantes y de Alto Contraste)
+     ====================================================== */
+    --color-black: #120A07;
+    /* Marrón ultra oscuro, casi negro puro para máximo contraste */
+    --color-black-soft: #21140E;
+    --color-charcoal: #362218;
+    --color-brown-dark: #2A170E;
 
-  --color-black: #0a0a0a;
-  /* Primary black — header, footer, strong text, CTA */
+    --color-gray-dark: #5C4B43;
+    --color-gray: #8A7C73;
+    --color-gray-light: #D1C7C0;
 
-  --color-black-soft: #151515;
-  /* Soft black — elevated dark surfaces */
+    --color-border: #D6C4B3;
+    --color-border-light: #EBE0D5;
 
-  --color-charcoal: #242424;
-  /* Charcoal — secondary dark elements */
+    --color-off-white: #FCF9F5;
+    --color-white: #FFFFFF;
+    --color-ivory: #F7F1E6;
+    --color-champagne: #EEDDCA;
+    --color-beige: #DDBDA0;
 
-  --color-gray-dark: #4a4a4a;
-  /* Dark gray — secondary text */
+    --color-gold: #B36B00;
+    /* Oro intenso y profundo para resaltar botones y detalles */
+    --color-gold-light: #D98C16;
 
-  --color-gray: #777777;
-  /* Neutral gray — muted text */
+    /* ======================================================
+     COLORES DE FONDO
+     ====================================================== */
+    --bg-page: var(--color-ivory);
+    --bg-section: var(--color-white);
+    --bg-section-alt: var(--color-off-white);
+    --bg-section-dark: var(--color-black);
+    --bg-card: var(--color-white);
+    --bg-panel: var(--color-champagne);
+    --bg-overlay: rgba(18, 10, 7, 0.85);
 
-  --color-gray-light: #b5b5b5;
-  /* Light gray — subtle UI elements */
+    /* ======================================================
+     BRAND / ACCENT
+     ====================================================== */
+    --primary: var(--color-gold);
+    --primary-hover: var(--color-gold-light);
+    --primary-dark: var(--color-black);
+    --primary-light: var(--color-beige);
+    --primary-soft: rgba(179, 107, 0, 0.08);
 
-  --color-border: #dedede;
-  /* Default borders */
+    --accent: var(--color-gold);
+    --accent-hover: var(--color-charcoal);
+    --accent-soft: rgba(179, 107, 0, 0.12);
 
-  --color-border-light: #eeeeee;
-  /* Very subtle borders */
+    /* ======================================================
+     COLORES DE TEXTO (Alto Contraste)
+     ====================================================== */
+    --text-main: var(--color-black);
+    --text-muted: var(--color-gray-dark);
+    --text-light: var(--color-gray);
+    --text-white: var(--color-white);
+    --text-on-dark: var(--color-off-white);
 
-  --color-off-white: #f8f8f8;
-  /* Soft background */
+    /* ======================================================
+     BORDERS
+     ====================================================== */
+    --border-brand: var(--color-border);
+    --border-brand-dark: rgba(179, 107, 0, 0.3);
+    --border-color: var(--color-border);
+    --border-light: var(--color-border-light);
 
-  --color-white: #ffffff;
-  /* Primary white */
+    /* ======================================================
+     TYPOGRAPHY
+     ====================================================== */
+
+    --font-serif: 'Playfair Display', Georgia, serif;
+
+    --font-sans:
+      'Plus Jakarta Sans',
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      sans-serif;
+
+    /* ======================================================
+     FONT WEIGHTS
+     ====================================================== */
+
+    --font-light: 300;
+    --font-regular: 400;
+    --font-medium: 500;
+    --font-semibold: 600;
+    --font-bold: 700;
+
+    /* ======================================================
+     SHADOWS
+     ====================================================== */
+
+    --shadow-sm:
+      0 2px 8px rgba(0, 0, 0, 0.04);
+
+    --shadow-md:
+      0 8px 24px rgba(0, 0, 0, 0.07);
+
+    --shadow-lg:
+      0 16px 40px rgba(0, 0, 0, 0.10);
+
+    /* ======================================================
+     RADIUS
+     ====================================================== */
+
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-full: 9999px;
+
+    /* ======================================================
+     SPACING
+     ====================================================== */
+
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+    --space-20: 5rem;
+
+    /* ======================================================
+     LAYOUT
+     ====================================================== */
+
+    --container-max: 1240px;
+
+    --container-padding:
+      clamp(1rem, 4vw, 2rem);
+
+    /* ======================================================
+     TRANSITIONS
+     ====================================================== */
+
+    --transition-fast: 0.18s ease;
+    --transition-normal: 0.28s ease;
+    --transition-smooth: 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* ======================================================
+     RESPONSIVE
+     ====================================================== */
+
+    --header-height: 76px;
+    --header-height-mobile: 68px;
+
+    --breakpoint-sm: 576px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 992px;
+    --breakpoint-xl: 1200px;
+  }
 
   /* ======================================================
      COLORES DE FONDO
@@ -126,15 +258,17 @@
      TIPOGRAFÍA
      ====================================================== */
 
-  --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-serif: 'Playfair Display',
+  Georgia,
+  'Times New Roman',
+  serif;
 
-  --font-sans:
-    'Plus Jakarta Sans',
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    sans-serif;
+  --font-sans: 'Plus Jakarta Sans',
+  system-ui,
+  -apple-system,
+  BlinkMacSystemFont,
+  'Segoe UI',
+  sans-serif;
 
   /* ======================================================
      Tamaños de fuentes
@@ -151,37 +285,29 @@
      Minimalist — very subtle depth
      ====================================================== */
 
-  --shadow-xs:
-    0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-xs: 0 1px 3px rgba(0, 0, 0, 0.04);
 
-  --shadow-sm:
-    0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
 
-  --shadow-md:
-    0 10px 30px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.08);
 
-  --shadow-lg:
-    0 20px 50px rgba(0, 0, 0, 0.10);
+  --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.10);
 
   /*
      Replaces the previous gold shadow.
      Kept for backward compatibility.
   */
-  --shadow-gold:
-    0 8px 24px rgba(0, 0, 0, 0.10);
+  --shadow-gold: 0 8px 24px rgba(0, 0, 0, 0.10);
 
   /* ======================================================
      TRANSITIONS
      ====================================================== */
 
-  --transition-fast:
-    0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 
-  --transition-normal:
-    0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 
-  --transition-smooth:
-    0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-smooth: 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 
   /* ======================================================
      BORDER RADIUS
@@ -226,8 +352,7 @@
      on large displays.
   */
 
-  --container-padding:
-    clamp(1rem, 4vw, 2rem);
+  --container-padding: clamp(1rem, 4vw, 2rem);
 
   /* ======================================================
      HEADER
@@ -578,6 +703,7 @@ h6 {
 }
 
 /* --- 5. HEADER & NAVBAR --- */
+
 .site-header {
   position: fixed;
   top: 0;
@@ -586,15 +712,17 @@ h6 {
   height: var(--header-height);
   z-index: 1000;
   transition: all var(--transition-normal);
-  background-color: rgba(250, 247, 240, 0.92);
+  /* Un tono beige/champagne más oscuro y cálido en lugar de blanco translúcido */
+  background-color: rgba(221, 190, 160, 0.432);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(216, 203, 184, 0.45);
+  border-bottom: 1px solid rgba(179, 107, 0, 0.15);
 }
 
 .site-header.scrolled {
-  background-color: rgba(250, 247, 240, 0.98);
-  box-shadow: 0 4px 20px rgba(44, 33, 26, 0.08);
+  /* Más oscuro y opaco al hacer scroll */
+  background-color: rgba(221, 186, 150, 0.397);
+  box-shadow: 0 4px 20px rgba(18, 10, 7, 0.12);
   height: 72px;
 }
 

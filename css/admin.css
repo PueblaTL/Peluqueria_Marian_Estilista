@@ -183,11 +183,30 @@
   justify-content: center;
 }
 
-.kpi-icon-wrap.pending { background-color: var(--warning-bg); color: var(--warning); }
-.kpi-icon-wrap.completed { background-color: var(--success-bg); color: var(--success); }
-.kpi-icon-wrap.clients { background-color: #EFF6FF; color: #1D4ED8; }
-.kpi-icon-wrap.revenue { background-color: #FEF3C7; color: #B45309; }
-.kpi-icon-wrap.course-kpi { background-color: var(--nude-rose); color: var(--primary-dark); }
+.kpi-icon-wrap.pending {
+  background-color: var(--warning-bg);
+  color: var(--warning);
+}
+
+.kpi-icon-wrap.completed {
+  background-color: var(--success-bg);
+  color: var(--success);
+}
+
+.kpi-icon-wrap.clients {
+  background-color: #EFF6FF;
+  color: #1D4ED8;
+}
+
+.kpi-icon-wrap.revenue {
+  background-color: #FEF3C7;
+  color: #B45309;
+}
+
+.kpi-icon-wrap.course-kpi {
+  background-color: var(--nude-rose);
+  color: var(--primary-dark);
+}
 
 /* --- BANNER PROFESIONAL --- */
 .admin-prof-banner {
@@ -309,12 +328,35 @@
   text-transform: uppercase;
 }
 
-.status-pendiente { background-color: var(--warning-bg); color: var(--warning); }
-.status-confirmado { background-color: var(--info-bg); color: var(--info); }
-.status-completado { background-color: var(--success-bg); color: var(--success); }
-.status-cancelado { background-color: var(--danger-bg); color: var(--danger); }
-.status-contactado { background-color: #E0E7FF; color: #4338CA; }
-.status-inscripto { background-color: var(--success-bg); color: var(--success); }
+.status-pendiente {
+  background-color: var(--warning-bg);
+  color: var(--warning);
+}
+
+.status-confirmado {
+  background-color: var(--info-bg);
+  color: var(--info);
+}
+
+.status-completado {
+  background-color: var(--success-bg);
+  color: var(--success);
+}
+
+.status-cancelado {
+  background-color: var(--danger-bg);
+  color: var(--danger);
+}
+
+.status-contactado {
+  background-color: #E0E7FF;
+  color: #4338CA;
+}
+
+.status-inscripto {
+  background-color: var(--success-bg);
+  color: var(--success);
+}
 
 /* Acciones en Tabla */
 .action-buttons-group {
@@ -332,17 +374,49 @@
   cursor: pointer;
 }
 
-.btn-pill-confirm { background-color: var(--info-bg); color: var(--info); border-color: var(--info); }
-.btn-pill-confirm:hover { background-color: var(--info); color: var(--white); }
+.btn-pill-confirm {
+  background-color: var(--info-bg);
+  color: var(--info);
+  border-color: var(--info);
+}
 
-.btn-pill-complete { background-color: var(--success-bg); color: var(--success); border-color: var(--success); }
-.btn-pill-complete:hover { background-color: var(--success); color: var(--white); }
+.btn-pill-confirm:hover {
+  background-color: var(--info);
+  color: var(--white);
+}
 
-.btn-pill-cancel { background-color: var(--warning-bg); color: var(--warning); border-color: var(--warning); }
-.btn-pill-cancel:hover { background-color: var(--warning); color: var(--white); }
+.btn-pill-complete {
+  background-color: var(--success-bg);
+  color: var(--success);
+  border-color: var(--success);
+}
 
-.btn-pill-delete { background-color: var(--danger-bg); color: var(--danger); border-color: var(--danger); }
-.btn-pill-delete:hover { background-color: var(--danger); color: var(--white); }
+.btn-pill-complete:hover {
+  background-color: var(--success);
+  color: var(--white);
+}
+
+.btn-pill-cancel {
+  background-color: var(--warning-bg);
+  color: var(--warning);
+  border-color: var(--warning);
+}
+
+.btn-pill-cancel:hover {
+  background-color: var(--warning);
+  color: var(--white);
+}
+
+.btn-pill-delete {
+  background-color: var(--danger-bg);
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.btn-pill-delete:hover {
+  background-color: var(--danger);
+  color: var(--white);
+}
 
 .btn-action {
   width: 30px;
@@ -357,9 +431,20 @@
   font-weight: bold;
 }
 
-.btn-act-confirm:hover { background-color: var(--info); color: var(--white); }
-.btn-act-complete:hover { background-color: var(--success); color: var(--white); }
-.btn-act-cancel:hover { background-color: var(--danger); color: var(--white); }
+.btn-act-confirm:hover {
+  background-color: var(--info);
+  color: var(--white);
+}
+
+.btn-act-complete:hover {
+  background-color: var(--success);
+  color: var(--white);
+}
+
+.btn-act-cancel:hover {
+  background-color: var(--danger);
+  color: var(--white);
+}
 
 /* Clientes Cells */
 .client-avatar-cell {
