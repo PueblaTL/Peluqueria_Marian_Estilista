@@ -12,8 +12,7 @@
 /* --- SIDEBAR --- */
 .admin-sidebar {
   width: 260px;
-  background-color: var(--dark);
-  color: var(--white);
+  background-color: #36343dda;
   display: flex;
   flex-direction: column;
   position: fixed;
