@@ -703,7 +703,6 @@ h6 {
 }
 
 /* --- 5. HEADER & NAVBAR --- */
-
 .site-header {
   position: fixed;
   top: 0;
@@ -713,7 +712,7 @@ h6 {
   z-index: 1000;
   transition: all var(--transition-normal);
   /* Un tono beige/champagne más oscuro y cálido en lugar de blanco translúcido */
-  background-color: rgba(221, 190, 160, 0.432);
+  background-color: rgba(156, 142, 127, 0.562);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(179, 107, 0, 0.15);
@@ -721,7 +720,7 @@ h6 {
 
 .site-header.scrolled {
   /* Más oscuro y opaco al hacer scroll */
-  background-color: rgba(221, 186, 150, 0.397);
+  background-color: rgba(170, 151, 151, 0.171);
   box-shadow: 0 4px 20px rgba(18, 10, 7, 0.12);
   height: 72px;
 }
@@ -955,7 +954,7 @@ h6 {
   position: absolute;
   bottom: 30px;
   left: -24px;
-  background-color: var(--white);
+  background-color: rgba(255, 255, 255, 0.658);
   padding: 16px 22px;
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-lg);
@@ -1043,13 +1042,13 @@ h6 {
   position: absolute;
   top: 14px;
   left: 14px;
-  background-color: rgba(22, 21, 25, 0.85);
+  background-color: var(--color-gold);
   backdrop-filter: blur(6px);
-  color: var(--white);
+  color: var(--color-black-soft);
   padding: 4px 12px;
   border-radius: var(--radius-full);
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.95rem;
+  font-weight: 800;
   letter-spacing: 0.04em;
 }
 
@@ -1071,7 +1070,7 @@ h6 {
   font-family: var(--font-sans);
   font-size: 1.15rem;
   font-weight: 700;
-  color: var(--primary-dark);
+  color: var(--color-gold-light);
   letter-spacing: -0.01em;
 }
 
@@ -1351,7 +1350,7 @@ h6 {
 
   padding: 16px 18px;
 
-  background: rgba(18, 18, 18, 0.78);
+  background: rgba(255, 255, 255, 0.658);
   backdrop-filter: blur(8px);
 
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -1649,9 +1648,7 @@ h6 {
   margin-top: 30px;
   padding: 24px;
 
-  background: linear-gradient(145deg,
-      rgba(197, 168, 128, 0.08),
-      rgba(255, 255, 255, 0.02));
+  background: rgba(197, 168, 128, 0.08);
 
   border: 1px solid rgba(197, 168, 128, 0.18);
   border-radius: var(--radius-lg);
@@ -1714,6 +1711,7 @@ h6 {
   display: inline-flex;
   justify-content: center;
   align-items: center;
+  background-color: #0e9640;
 
   width: 100%;
   min-height: 54px;
