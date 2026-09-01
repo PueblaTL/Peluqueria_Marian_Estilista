@@ -90,259 +90,263 @@ function initNavbar() {
 
     });
   }
+}
 
-  /* --- FILTROS DE GALERÍA Y LIGHTBOX MODAL --- */
-  function initGalleryFiltersAndLightbox() {
-    const filterBtns = document.querySelectorAll(".filter-btn");
-    const galleryItems = document.querySelectorAll(".gallery-item");
-    const lightbox = document.getElementById("modal-gallery-lightbox");
-    const lightboxImg = document.getElementById("lightbox-img");
-    const lightboxTitle = document.getElementById("lightbox-title");
-    const lightboxDesc = document.getElementById("lightbox-desc");
-    const lightboxTag = document.getElementById("lightbox-tag");
-    const closeLightboxBtn = document.getElementById("btn-close-lightbox");
+/* --- FILTROS DE GALERÍA Y LIGHTBOX MODAL --- */
+function initGalleryFiltersAndLightbox() {
+  const filterBtns = document.querySelectorAll(".filter-btn");
+  const galleryItems = document.querySelectorAll(".gallery-item");
+  const lightbox = document.getElementById("modal-gallery-lightbox");
+  const lightboxImg = document.getElementById("lightbox-img");
+  const lightboxTitle = document.getElementById("lightbox-title");
+  const lightboxDesc = document.getElementById("lightbox-desc");
+  const lightboxTag = document.getElementById("lightbox-tag");
+  const closeLightboxBtn = document.getElementById("btn-close-lightbox");
 
-    // Normalizador de texto para tolerar acentos y mayúsculas
-    const normalize = (str) => (str || "").toLowerCase().trim()
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  // Normalizador de texto para tolerar acentos y mayúsculas
+  const normalize = (str) => (str || "").toLowerCase().trim()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-    // Filtros por categoría
-    if (filterBtns.length && galleryItems.length) {
-      filterBtns.forEach(btn => {
-        btn.addEventListener("click", () => {
-          filterBtns.forEach(b => {
-            b.classList.remove("active");
-            b.setAttribute("aria-selected", "false");
-          });
-          btn.classList.add("active");
-          btn.setAttribute("aria-selected", "true");
+  // Filtros por categoría
+  if (filterBtns.length && galleryItems.length) {
+    filterBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        filterBtns.forEach(b => {
+          b.classList.remove("active");
+          b.setAttribute("aria-selected", "false");
+        });
+        btn.classList.add("active");
+        btn.setAttribute("aria-selected", "true");
 
-          const filterRaw = btn.getAttribute("data-filter") || "";
-          const filterValue = normalize(filterRaw);
+        const filterRaw = btn.getAttribute("data-filter") || "";
+        const filterValue = normalize(filterRaw);
 
-          galleryItems.forEach(item => {
-            const itemCategoryRaw = item.getAttribute("data-category") || "";
-            const itemCategory = normalize(itemCategoryRaw);
+        galleryItems.forEach(item => {
+          const itemCategoryRaw = item.getAttribute("data-category") || "";
+          const itemCategory = normalize(itemCategoryRaw);
 
-            const isAll = filterValue === "all" || filterValue === "todos" || filterValue === "";
-            const isMatch = isAll || itemCategory === filterValue || itemCategory.includes(filterValue);
+          const isAll = filterValue === "all" || filterValue === "todos" || filterValue === "";
+          const isMatch = isAll || itemCategory === filterValue || itemCategory.includes(filterValue);
 
-            if (isMatch) {
-              item.classList.remove("gallery-item--hidden");
-              item.style.display = "";
-              item.style.animation = "fadeInStep 0.35s ease forwards";
-            } else {
-              item.classList.add("gallery-item--hidden");
-              item.style.display = "none";
-            }
-          });
+          if (isMatch) {
+            item.classList.remove("gallery-item--hidden");
+            item.style.display = "";
+            item.style.animation = "fadeInStep 0.35s ease forwards";
+          } else {
+            item.classList.add("gallery-item--hidden");
+            item.style.display = "none";
+          }
         });
       });
-    }
-
-    // Lightbox al hacer clic en un item visible de la galería
-    galleryItems.forEach(item => {
-      item.addEventListener("click", () => {
-        if (item.classList.contains("gallery-item--hidden") || item.style.display === "none") {
-          return;
-        }
-        const img = item.querySelector("img");
-        const title = item.querySelector("h4, .gallery-title");
-        const desc = item.querySelector("p, .gallery-desc");
-        const tag = item.querySelector(".gallery-tag, .gallery-category");
-
-        if (lightbox && lightboxImg && img) {
-          lightboxImg.src = img.src;
-          lightboxImg.alt = img.alt || "Trabajo Marian Estilista";
-          if (lightboxTitle) lightboxTitle.textContent = title ? title.textContent : "";
-          if (lightboxDesc) lightboxDesc.textContent = desc ? desc.textContent : "";
-          if (lightboxTag) lightboxTag.textContent = tag ? tag.textContent : "";
-
-          lightbox.classList.add("active");
-          lightbox.setAttribute("aria-hidden", "false");
-          document.body.style.overflow = "hidden";
-        }
-      });
     });
+  }
 
-    // Cerrar Lightbox
-    const closeLightbox = () => {
-      if (lightbox) {
-        lightbox.classList.remove("active");
-        lightbox.setAttribute("aria-hidden", "true");
-        document.body.style.overflow = "";
+  // Lightbox al hacer clic en un item visible de la galería
+  galleryItems.forEach(item => {
+    item.addEventListener("click", () => {
+      if (item.classList.contains("gallery-item--hidden") || item.style.display === "none") {
+        return;
       }
-    };
+      const img = item.querySelector("img");
+      const title = item.querySelector("h4, .gallery-title");
+      const desc = item.querySelector("p, .gallery-desc");
+      const tag = item.querySelector(".gallery-tag, .gallery-category");
 
-    if (closeLightboxBtn) {
-      closeLightboxBtn.addEventListener("click", closeLightbox);
-    }
+      if (lightbox && lightboxImg && img) {
+        lightboxImg.src = img.src;
+        lightboxImg.alt = img.alt || "Trabajo Marian Estilista";
+        if (lightboxTitle) lightboxTitle.textContent = title ? title.textContent : "";
+        if (lightboxDesc) lightboxDesc.textContent = desc ? desc.textContent : "";
+        if (lightboxTag) lightboxTag.textContent = tag ? tag.textContent : "";
 
+        lightbox.classList.add("active");
+        lightbox.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+      }
+    });
+  });
+
+  // Cerrar Lightbox
+  const closeLightbox = () => {
     if (lightbox) {
-      lightbox.addEventListener("click", (e) => {
-        if (e.target === lightbox) {
-          closeLightbox();
-        }
-      });
+      lightbox.classList.remove("active");
+      lightbox.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
     }
+  };
 
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && lightbox && lightbox.classList.contains("active")) {
+  if (closeLightboxBtn) {
+    closeLightboxBtn.addEventListener("click", closeLightbox);
+  }
+
+  if (lightbox) {
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) {
         closeLightbox();
       }
     });
   }
 
-  /* --- SECCIÓN DE CURSO & MODAL DE INSCRIPCIÓN --- */
-  function initCourseSection() {
-    const enrollBtn = document.getElementById("btn-inscribirme-curso");
-    const modal = document.getElementById("modal-inscripcion-curso");
-    const closeBtn = document.getElementById("btn-close-curso-modal");
-    const cancelBtn = document.getElementById("btn-cancel-inscripcion");
-    const form = document.getElementById("form-inscripcion-curso");
-
-    const openModal = () => {
-      if (modal) {
-        modal.classList.add("active");
-        modal.setAttribute("aria-hidden", "false");
-        document.body.style.overflow = "hidden";
-      }
-    };
-
-    const closeModal = () => {
-      if (modal) {
-        modal.classList.remove("active");
-        modal.setAttribute("aria-hidden", "true");
-        document.body.style.overflow = "";
-      }
-    };
-
-    if (enrollBtn) {
-      enrollBtn.addEventListener("click", openModal);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && lightbox && lightbox.classList.contains("active")) {
+      closeLightbox();
     }
+  });
+}
 
-    if (closeBtn) closeBtn.addEventListener("click", closeModal);
-    if (cancelBtn) cancelBtn.addEventListener("click", closeModal);
+/* --- SECCIÓN DE CURSO & MODAL DE INSCRIPCIÓN --- */
+function initCourseSection() {
+  const enrollBtn = document.getElementById("btn-inscribirme-curso");
+  const modal = document.getElementById("modal-inscripcion-curso");
+  const closeBtn = document.getElementById("btn-close-curso-modal");
+  const cancelBtn = document.getElementById("btn-cancel-inscripcion");
+  const form = document.getElementById("form-inscripcion-curso");
 
+  const openModal = () => {
     if (modal) {
-      modal.addEventListener("click", (e) => {
-        if (e.target === modal) closeModal();
-      });
+      modal.classList.add("active");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
     }
+  };
 
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && modal && modal.classList.contains("active")) {
+  const closeModal = () => {
+    if (modal) {
+      modal.classList.remove("active");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+  };
+
+  if (enrollBtn) {
+    enrollBtn.addEventListener("click", openModal);
+  }
+
+  if (closeBtn) closeBtn.addEventListener("click", closeModal);
+  if (cancelBtn) cancelBtn.addEventListener("click", closeModal);
+
+  if (modal) {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
+    });
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal && modal.classList.contains("active")) {
+      closeModal();
+    }
+  });
+
+  // Envío del formulario de inscripción
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const nombre = document.getElementById("ins-nombre")?.value.trim() || "";
+      const apellido = document.getElementById("ins-apellido")?.value.trim() || "";
+      const telefono = document.getElementById("ins-telefono")?.value.trim() || "";
+      const email = document.getElementById("ins-email")?.value.trim() || "";
+
+      // El formulario usa ins-nombre para nombre completo; apellido es opcional
+      const nombreCompleto = apellido ? `${nombre} ${apellido}` : nombre;
+
+      if (!nombreCompleto || !telefono || !email) {
+        showToast("Por favor completa todos los campos requeridos.", "warning");
+        return;
+      }
+
+      // Validar formato de email básico
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showToast("Por favor ingresa un correo electrónico válido.", "danger");
+        return;
+      }
+
+      const submitBtn = document.getElementById("btn-submit-inscripcion");
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Registrando inscripción...";
+      }
+
+      try {
+        await window.StorageService.saveInscripcion({
+          nombre: nombreCompleto,
+          apellido,
+          telefono,
+          email
+        });
+
+        showToast("✨ ¡Inscripción registrada con éxito! Te contactaremos a la brevedad.", "success");
+        form.reset();
         closeModal();
+      } catch (err) {
+        console.error("Error al registrar inscripción:", err);
+        showToast("Ocurrió un error al registrar la inscripción. Inténtalo nuevamente.", "danger");
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Confirmar Inscripción";
+        }
       }
     });
-
-    // Envío del formulario de inscripción
-    if (form) {
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const nombre = document.getElementById("ins-nombre").value.trim();
-        const apellido = document.getElementById("ins-apellido").value.trim();
-        const telefono = document.getElementById("ins-telefono").value.trim();
-        const email = document.getElementById("ins-email").value.trim();
-
-        if (!nombre || !apellido || !telefono || !email) {
-          showToast("Por favor completa todos los campos requeridos.", "warning");
-          return;
-        }
-
-        // Validar formato de email básico
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-          showToast("Por favor ingresa un correo electrónico válido.", "danger");
-          return;
-        }
-
-        const submitBtn = document.getElementById("btn-submit-inscripcion");
-        if (submitBtn) {
-          submitBtn.disabled = true;
-          submitBtn.textContent = "Registrando inscripción...";
-        }
-
-        try {
-          await window.StorageService.saveInscripcion({
-            nombre,
-            apellido,
-            telefono,
-            email
-          });
-
-          showToast("✨ ¡Inscripción registrada con éxito! Te contactaremos a la brevedad.", "success");
-          form.reset();
-          closeModal();
-        } catch (err) {
-          console.error("Error al registrar inscripción:", err);
-          showToast("Ocurrió un error al registrar la inscripción. Inténtalo nuevamente.", "danger");
-        } finally {
-          if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.textContent = "Confirmar Inscripción";
-          }
-        }
-      });
-    }
-  }
-
-  /* --- SCROLL SUAVE --- */
-  function initSmoothScroll() {
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener("click", function (e) {
-        const href = this.getAttribute("href");
-        if (href === "#") return;
-
-        const targetElement = document.querySelector(href);
-        if (targetElement) {
-          e.preventDefault();
-          const headerOffset = 80;
-          const elementPosition = targetElement.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: "smooth"
-          });
-        }
-      });
-    });
-  }
-
-  /* --- UTILIDAD TOAST NOTIFICATION --- */
-  function showToast(message, type = "info") {
-    const container = document.getElementById("toast-container");
-    if (!container) return;
-
-    const toast = document.createElement("div");
-    toast.className = `toast-item toast-${type}`;
-
-    let iconSvg = "ℹ️";
-    if (type === "success") iconSvg = "✓";
-    if (type === "warning") iconSvg = "⚠️";
-    if (type === "danger") iconSvg = "✕";
-
-    toast.innerHTML = `
-    <span class="toast-icon">${iconSvg}</span>
-    <span class="toast-msg">${message}</span>
-  `;
-
-    container.appendChild(toast);
-
-    // Animación de entrada
-    setTimeout(() => toast.classList.add("show"), 10);
-
-    // Auto remover
-    setTimeout(() => {
-      toast.classList.remove("show");
-      setTimeout(() => toast.remove(), 300);
-    }, 4000);
-  }
-
-  // Exportar globalmente para otros scripts si es necesario
-  if (typeof window !== "undefined") {
-    window.showToast = showToast;
   }
 }
+
+/* --- SCROLL SUAVE --- */
+function initSmoothScroll() {
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener("click", function (e) {
+      const href = this.getAttribute("href");
+      if (href === "#") return;
+
+      const targetElement = document.querySelector(href);
+      if (targetElement) {
+        e.preventDefault();
+        const headerOffset = 80;
+        const elementPosition = targetElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth"
+        });
+      }
+    });
+  });
+}
+
+/* --- UTILIDAD TOAST NOTIFICATION --- */
+function showToast(message, type = "info") {
+  const container = document.getElementById("toast-container");
+  if (!container) return;
+
+  const toast = document.createElement("div");
+  toast.className = `toast-item toast-${type}`;
+
+  let iconSvg = "ℹ️";
+  if (type === "success") iconSvg = "✓";
+  if (type === "warning") iconSvg = "⚠️";
+  if (type === "danger") iconSvg = "✕";
+
+  toast.innerHTML = `
+  <span class="toast-icon">${iconSvg}</span>
+  <span class="toast-msg">${message}</span>
+`;
+
+  container.appendChild(toast);
+
+  // Animación de entrada
+  setTimeout(() => toast.classList.add("show"), 10);
+
+  // Auto remover
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
+
+// Exportar globalmente para otros scripts si es necesario
+if (typeof window !== "undefined") {
+  window.showToast = showToast;
+}
+

@@ -973,7 +973,24 @@
     </div>
   </div>
 
+
+  <!-- ==========================================
+       LIGHTBOX MODAL (Galería)
+       ========================================== -->
+  <div id="modal-gallery-lightbox" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Imagen ampliada">
+    <div class="lightbox-inner">
+      <button id="btn-close-lightbox" class="btn-close-lightbox" aria-label="Cerrar">&times;</button>
+      <img id="lightbox-img" src="" alt="" />
+      <div class="lightbox-info">
+        <span id="lightbox-tag" class="gallery-tag"></span>
+        <h3 id="lightbox-title"></h3>
+        <p id="lightbox-desc"></p>
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts -->
+  <script src="js/storage.js"></script>
   <script src="js/data.js"></script>
   <script src="js/api.js"></script>
   <script src="js/main.js"></script>
