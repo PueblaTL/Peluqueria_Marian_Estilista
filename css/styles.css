@@ -1,3 +1,18 @@
+/* --- RESET BÁSICO --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
 /* --- 1. VARIABLES & DESIGN SYSTEM --- */
 :root {
   /* ======================================================
@@ -537,7 +552,7 @@ html {
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--color-ivory);
+  background: linear-gradient(to right, #F5F5DC, #aa8555);
   color: var(--text-main);
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
@@ -626,87 +641,262 @@ h6 {
 }
 
 .highlight {
-  color: var(--primary-dark);
+  color: rgb(161, 117, 34);
   font-style: italic;
 }
 
-/* --- 4. BOTONES & COMPONENTES UI --- */
+/* =========================================================
+   BOTONES — MARIAN ESTILISTA
+   Estética: Premium / Femenina / Elegante / Cálida
+   ========================================================= */
+
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
+
+  font-family: var(--font-body, "Plus Jakarta Sans", sans-serif);
   font-weight: 600;
-  border-radius: var(--radius-full);
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  border: 1px solid transparent;
   text-align: center;
   white-space: nowrap;
+
+  cursor: pointer;
+
+  border: 1px solid transparent;
+  border-radius: 999px;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease;
 }
 
+/* =========================================================
+   TAMAÑOS
+   ========================================================= */
+
 .btn-sm {
+  min-height: 38px;
   padding: 8px 18px;
-  font-size: 0.88rem;
+  font-size: 0.82rem;
 }
 
 .btn-md {
-  padding: 12px 26px;
-  font-size: 0.98rem;
+  min-height: 46px;
+  padding: 12px 25px;
+  font-size: 0.92rem;
 }
 
 .btn-lg {
-  padding: 15px 32px;
-  font-size: 1.05rem;
+  min-height: 54px;
+  padding: 15px 30px;
+  font-size: 0.98rem;
 }
 
 .btn-xl {
-  padding: 18px 40px;
-  font-size: 1.15rem;
+  min-height: 58px;
+  padding: 17px 36px;
+  font-size: 1.05rem;
 }
 
+
+/* =========================================================
+   PRIMARY
+   Blanco cálido — CTA principal
+   ========================================================= */
+
 .btn-primary {
-  background: linear-gradient(135deg, var(--color-gold-light) 0%, var(--color-gold) 100%);
-  color: var(--color-white);
-  border: none;
-  box-shadow: 0 4px 18px rgba(179, 107, 0, 0.35), 0 1px 3px rgba(0,0,0,0.1);
+  background: #fffdf8;
+  color: #242424;
+
+  border: 1px solid rgba(255, 255, 255, 0.8);
+
+  box-shadow:
+    0 6px 20px rgba(70, 55, 35, 0.12),
+    0 2px 5px rgba(70, 55, 35, 0.06);
+
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-brown-dark) 100%);
-  transform: translateY(-3px);
-  box-shadow: 0 16px 40px rgba(179, 107, 0, 0.45);
+  background: #ffffff;
+  color: #111111;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 12px 28px rgba(70, 55, 35, 0.17),
+    0 3px 8px rgba(70, 55, 35, 0.08);
 }
 
+.btn-primary:active {
+  transform: translateY(0);
+
+  box-shadow:
+    0 5px 14px rgba(70, 55, 35, 0.12);
+}
+
+
+/* =========================================================
+   SECONDARY
+   Transparente / crema — acompaña al principal
+   ========================================================= */
+
 .btn-secondary {
-  background-color: var(--color-champagne);
-  color: var(--color-brown-dark);
-  border: 1.5px solid var(--color-beige);
-  box-shadow: var(--shadow-sm);
-  font-weight: 600;
+  background: rgba(255, 253, 248, 0.28);
+  color: #242424;
+
+  border: 1px solid rgba(255, 255, 255, 0.35);
+
+  box-shadow:
+    0 4px 14px rgba(70, 55, 35, 0.04);
 }
 
 .btn-secondary:hover {
-  border-color: var(--color-gold);
-  color: var(--color-gold);
-  background-color: var(--color-ivory);
+  background: rgba(255, 253, 248, 0.65);
+
+  border-color: rgba(255, 255, 255, 0.65);
+
+  color: #111111;
+
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(179,107,0,0.18);
+
+  box-shadow:
+    0 9px 22px rgba(70, 55, 35, 0.10);
 }
+
+.btn-secondary:active {
+  transform: translateY(0);
+}
+
+
+/* =========================================================
+   OUTLINE WHITE
+   Para fondos oscuros
+   ========================================================= */
 
 .btn-outline-white {
   background: transparent;
-  color: var(--color-ivory);
-  border: 1px solid rgba(250, 247, 240, 0.35);
+  color: #fffdf8;
+
+  border: 1px solid rgba(255, 255, 255, 0.55);
+
+  box-shadow: none;
 }
 
 .btn-outline-white:hover {
-  background: rgba(250, 247, 240, 0.12);
-  color: var(--color-white);
-  border-color: var(--color-ivory);
+  background: #fffdf8;
+  color: #242424;
+
+  border-color: #fffdf8;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.12);
 }
+
+
+/* =========================================================
+   BOTÓN RESERVAR TURNO
+   CTA destacado de la marca
+   ========================================================= */
+
+.btn-book {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  min-height: 52px;
+  padding: 0 28px;
+
+  background: #fffdf8;
+  color: #242424;
+
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 999px;
+
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.015em;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 7px 22px rgba(70, 55, 35, 0.14),
+    0 2px 5px rgba(70, 55, 35, 0.07);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.btn-book:hover {
+  background: #ffffff;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 13px 32px rgba(70, 55, 35, 0.20),
+    0 3px 8px rgba(70, 55, 35, 0.08);
+}
+
+.btn-book:active {
+  transform: translateY(0);
+}
+
+
+/* =========================================================
+   ICONOS
+   ========================================================= */
+
+.btn svg,
+.btn i,
+.btn-book svg,
+.btn-book i {
+  flex-shrink: 0;
+
+  transition: transform 0.25s ease;
+}
+
+.btn:hover svg,
+.btn:hover i,
+.btn-book:hover svg,
+.btn-book:hover i {
+  transform: translateX(2px);
+}
+
+
+/* =========================================================
+   DISABLED
+   ========================================================= */
+
+.btn:disabled,
+.btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+
+/* =========================================================
+   FOCUS
+   ========================================================= */
+
+.btn:focus-visible,
+.btn-book:focus-visible {
+  outline: 2px solid #242424;
+  outline-offset: 3px;
+}
+
+
 
 /* --- 5. HEADER & NAVBAR --- */
 .site-header {
@@ -1076,6 +1266,7 @@ h6 {
 .service-body {
   padding: 24px;
   display: flex;
+  background: rgba(250, 250, 250, 0.63);
   flex-direction: column;
   flex-grow: 1;
 }
@@ -1265,7 +1456,7 @@ h6 {
 .gallery-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(18, 10, 7, 0.85) 0%, rgba(18,10,7,0.2) 55%, transparent 100%);
+  background: linear-gradient(to top, rgba(18, 10, 7, 0.85) 0%, rgba(18, 10, 7, 0.2) 55%, transparent 100%);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -1317,6 +1508,7 @@ h6 {
     opacity: 0;
     transform: translateY(12px) scale(0.97);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -1422,8 +1614,22 @@ h6 {
   min-height: 520px;
 }
 
-/* Imagen principal de Marian */
+.about-images-composition::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: 180px;
+  height: 180px;
+  background: var(--primary);
+  opacity: 0.15;
+  border-radius: var(--radius-lg);
+  z-index: 0;
+}
+
 .about-img-main {
+  position: relative;
+  z-index: 1;
   width: 78%;
   height: 500px;
   object-fit: cover;
@@ -1432,9 +1638,9 @@ h6 {
   box-shadow: var(--shadow-lg);
 }
 
-/* Segunda imagen */
 .about-img-secondary {
   position: absolute;
+  z-index: 2;
   width: 42%;
   height: 230px;
   right: 0;
@@ -1445,16 +1651,14 @@ h6 {
   box-shadow: var(--shadow-lg);
 }
 
-/* 15+ Años de Excelencia */
 .about-experience-badge {
   position: absolute;
   left: 20px;
   bottom: 30px;
   z-index: 5;
-
   background: var(--dark-surface);
   color: var(--white);
-  padding: 16px 24px;
+  padding: 16px 22px;
   border-radius: var(--radius-md);
   border: 1px solid var(--primary);
   text-align: center;
@@ -1463,31 +1667,111 @@ h6 {
 
 .about-exp-years {
   font-family: var(--font-serif);
-  font-size: 2.2rem;
-  font-weight: 700;
-  color: var(--primary);
+  font-size: 3rem;
+  font-weight: 900;
+  color: #FFD700;
   line-height: 1;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7), 0 0 8px rgba(255, 215, 0, 0.6);
 }
 
 .about-exp-label {
-  margin-top: 5px;
-  font-size: 0.8rem;
-  color: var(--text-light);
-  white-space: nowrap;
+  margin-top: 6px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--white);
+  line-height: 1.3;
 }
 
-/* Textos */
+/* ---- Panel del contenido: lo eleva del fondo y da contraste real ---- */
+.about-content {
+  background: var(--white);
+  padding: 48px 44px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.about-content .tag-badge {
+  margin-bottom: 18px;
+}
+
+.about-content .section-title {
+  margin-bottom: 22px;
+}
+
+/* Frase destacada */
 .about-lead {
-  font-size: 1.2rem;
-  color: var(--text-main);
-  font-weight: 500;
-  margin-bottom: 16px;
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  font-style: italic;
+  font-weight: 600;
+  color: var(--dark-surface);
   line-height: 1.6;
+  margin: 0 0 22px;
+  padding-left: 18px;
+  border-left: 3px solid var(--primary);
 }
 
 .about-text {
   color: var(--text-muted);
-  margin-bottom: 32px;
+  font-size: 1rem;
+  line-height: 1.75;
+  margin-bottom: 22px;
+}
+
+.about-text:last-of-type {
+  margin-bottom: 34px;
+}
+
+/* Checklist de valores */
+.about-values-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.about-val-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px;
+  background: #FAF6F0;
+  border-radius: var(--radius-md);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.about-val-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.about-val-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--white);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.about-val-title {
+  font-weight: 700;
+  color: var(--dark-surface);
+  font-size: 0.96rem;
+  margin-bottom: 2px;
+}
+
+.about-val-desc {
+  color: var(--text-muted);
+  font-size: 0.86rem;
+  line-height: 1.4;
 }
 
 /* Botón Reservar Turno */
@@ -1499,26 +1783,26 @@ h6 {
   padding: 16px 38px;
   font-size: 1.1rem;
   font-weight: 600;
-  margin-top: 40px;
+  margin-top: 12px;
 }
+
 
 /* =========================================
    RESPONSIVE
    ========================================= */
 
 @media (max-width: 900px) {
-
   .about-grid {
     grid-template-columns: 1fr;
-    gap: 40px;
   }
 
-  .about-images-composition {
-    max-width: 650px;
-    width: 100%;
-    margin: 0 auto;
+  .about-content {
+    padding: 32px 24px;
   }
 
+  .about-values-list {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 600px) {
@@ -1713,7 +1997,7 @@ h6 {
   min-width: 0;
   padding: 15px 16px;
 
-  background: rgba(255, 255, 255, 0.025);
+  background: rgba(250, 250, 250, 0.63);
   border: 1px solid var(--dark-border);
   border-radius: var(--radius-md);
 
@@ -1829,7 +2113,7 @@ h6 {
 
   padding: 17px;
 
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(250, 250, 250, 0.63);
   border: 1px solid var(--dark-border);
   border-radius: var(--radius-md);
 
@@ -1909,9 +2193,7 @@ h6 {
 
   margin-top: 30px;
   padding: 24px;
-
-  background: rgba(197, 168, 128, 0.08);
-
+  background: rgba(250, 250, 250, 0.63);
   border: 1px solid rgba(197, 168, 128, 0.18);
   border-radius: var(--radius-lg);
 }
@@ -2197,7 +2479,7 @@ h6 {
 
 .location-contact-section {
   padding: 80px 0;
-  background-color: #fcfaf7;
+  background: linear-gradient(to bottom, #F5F5DC, #b98f58a2);
   /* Fondo cálido muy sutil */
 }
 
@@ -2730,6 +3012,7 @@ textarea.form-control {
 }
 
 /* --- 16. ANIMACIONES & RESPONSIVE --- */
+
 @keyframes fadeInStep {
   from {
     opacity: 0;
