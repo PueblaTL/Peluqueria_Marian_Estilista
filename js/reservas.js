@@ -143,12 +143,19 @@ class BookingWizard {
   // ==========================================
   async renderServices() {
     if (!this.servicesContainer) return;
-    this.servicesContainer.innerHTML = `<div class="loading-spinner-msg">Cargando servicios...</div>`;
+
+    this.servicesContainer.innerHTML = `
+    <div class="loading-spinner-msg">
+      Cargando servicios...
+    </div>
+  `;
 
     const servicios = await window.StorageService.getServicios(true);
 
     if (!servicios || servicios.length === 0) {
-      this.servicesContainer.innerHTML = `<p>No hay servicios disponibles actualmente.</p>`;
+      this.servicesContainer.innerHTML = `
+      <p>No hay servicios disponibles actualmente.</p>
+    `;
       return;
     }
 
@@ -156,29 +163,75 @@ class BookingWizard {
 
     servicios.forEach(s => {
       const card = document.createElement("div");
-      card.className = `booking-service-card ${this.state.servicio?.id === s.id ? 'selected' : ''}`;
-      const imgSrc = (s.imagen && !s.imagen.startsWith("http") && !s.imagen.startsWith("data:"))
-        ? (s.imagen.startsWith("../") ? s.imagen : `../${s.imagen}`)
-        : s.imagen;
+
+      // ==========================================
+      // IDENTIFICADOR DEL SERVICIO
+      // ==========================================
+      card.className = `booking-service-card ${String(this.state.servicio?.id) === String(s.id)
+          ? "selected"
+          : ""
+        }`;
+
+      // IMPORTANTE: agregar el ID a la tarjeta
+      card.dataset.serviceId = String(s.id);
+
+      const imgSrc =
+        (s.imagen &&
+          !s.imagen.startsWith("http") &&
+          !s.imagen.startsWith("data:"))
+          ? (s.imagen.startsWith("../")
+            ? s.imagen
+            : `../${s.imagen}`)
+          : s.imagen;
+
+      const isSelected =
+        String(this.state.servicio?.id) === String(s.id);
 
       card.innerHTML = `
-        <div class="book-srv-img-wrap">
-          <img src="${imgSrc}" alt="${s.nombre}" loading="lazy" />
-          <span class="book-srv-badge">${s.categoria || 'Servicio'}</span>
-        </div>
-        <div class="book-srv-body">
-          <div class="book-srv-header">
-            <h4>${s.nombre}</h4>
-            <span class="book-srv-price">$${Number(s.precio).toLocaleString("es-AR")}</span>
-          </div>
-          <p class="book-srv-desc">${s.descripcion}</p>
-          <div class="book-srv-meta">
-            <span class="book-srv-duration">⏱ ${s.duracionMinutos} min</span>
-            <span class="book-srv-select-btn">${this.state.servicio?.id === s.id ? '✓ Seleccionado' : 'Seleccionar'}</span>
-          </div>
-        </div>
-      `;
+      <div class="book-srv-img-wrap">
+        <img 
+          src="${imgSrc}" 
+          alt="${s.nombre}" 
+          loading="lazy"
+        />
 
+        <span class="book-srv-badge">
+          ${s.categoria || "Servicio"}
+        </span>
+      </div>
+
+      <div class="book-srv-body">
+
+        <div class="book-srv-header">
+          <h4>${s.nombre}</h4>
+
+          <span class="book-srv-price">
+            $${Number(s.precio).toLocaleString("es-AR")}
+          </span>
+        </div>
+
+        <p class="book-srv-desc">
+          ${s.descripcion}
+        </p>
+
+        <div class="book-srv-meta">
+
+          <span class="book-srv-duration">
+            ⏱ ${s.duracionMinutos} min
+          </span>
+
+          <span class="book-srv-select-btn">
+            ${isSelected ? "✓ Seleccionado" : "Seleccionar"}
+          </span>
+
+        </div>
+
+      </div>
+    `;
+
+      // ==========================================
+      // CLICK EN LA TARJETA
+      // ==========================================
       card.addEventListener("click", () => {
         this.selectService(s);
       });
@@ -187,25 +240,57 @@ class BookingWizard {
     });
   }
 
+
+  // ==========================================
+  // SELECCIONAR SERVICIO
+  // ==========================================
   selectService(servicio) {
     this.state.servicio = servicio;
 
-    // Actualizar clase selected en tarjetas
-    document.querySelectorAll(".booking-service-card").forEach(c => {
-      if (c.getAttribute("data-service-id") === servicio.id) {
-        c.classList.add("selected");
-        const btn = c.querySelector(".book-srv-select-btn");
-        if (btn) btn.textContent = "✓ Seleccionado";
-      } else {
-        c.classList.remove("selected");
-        const btn = c.querySelector(".book-srv-select-btn");
-        if (btn) btn.textContent = "Seleccionar";
-      }
-    });
+    // ==========================================
+    // ACTUALIZAR TODAS LAS TARJETAS
+    // ==========================================
+    document
+      .querySelectorAll(".booking-service-card")
+      .forEach(card => {
 
-    this.btnNext.disabled = false;
+        const cardServiceId = String(
+          card.dataset.serviceId
+        );
+
+        const selectedServiceId = String(
+          servicio.id
+        );
+
+        const btn = card.querySelector(
+          ".book-srv-select-btn"
+        );
+
+        if (cardServiceId === selectedServiceId) {
+
+          // Tarjeta seleccionada
+          card.classList.add("selected");
+
+          if (btn) {
+            btn.textContent = "✓ Seleccionado";
+          }
+
+        } else {
+
+          // Tarjetas no seleccionadas
+          card.classList.remove("selected");
+
+          if (btn) {
+            btn.textContent = "Seleccionar";
+          }
+        }
+      });
+
+    // Habilitar botón siguiente
+    if (this.btnNext) {
+      this.btnNext.disabled = false;
+    }
   }
-
   // ==========================================
   // RENDERIZADO DEL PASO 2: CALENDARIO
   // ==========================================
@@ -248,7 +333,7 @@ class BookingWizard {
       const cell = document.createElement("div");
       const dateObj = new Date(year, month, day);
       const dayOfWeek = dateObj.getDay(); // 0 Dom, 1 Lun, 2 Mar, ..., 6 Sáb
-      
+
       const yyyy = dateObj.getFullYear();
       const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
       const dd = String(dateObj.getDate()).padStart(2, '0');
@@ -271,7 +356,7 @@ class BookingWizard {
         cell.title = "Cerrado (Atención Martes a Sábados)";
       } else {
         cell.classList.add("available");
-        
+
         if (this.state.fecha === dateString) {
           cell.classList.add("selected");
         }
@@ -400,7 +485,7 @@ class BookingWizard {
     if (!this.summaryContainer) return;
 
     const [y, m, d] = (this.state.fecha || "").split("-").map(Number);
-    const dateFormatted = this.state.fecha 
+    const dateFormatted = this.state.fecha
       ? new Date(y, m - 1, d).toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })
       : "-";
 
@@ -492,8 +577,8 @@ class BookingWizard {
     if (!this.confirmationContainer) return;
 
     const [y, m, d] = (turno.fecha || "").split("-").map(Number);
-    const dateFormatted = new Date(y, m - 1, d).toLocaleDateString("es-AR", { 
-      weekday: "long", day: "numeric", month: "long", year: "numeric" 
+    const dateFormatted = new Date(y, m - 1, d).toLocaleDateString("es-AR", {
+      weekday: "long", day: "numeric", month: "long", year: "numeric"
     });
 
     this.confirmationContainer.innerHTML = `

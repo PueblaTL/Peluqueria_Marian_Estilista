@@ -1,3 +1,18 @@
+/* --- RESET BÁSICO --- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
 /* ==========================================================================
    MARIAN ESTILISTA - RESERVAS.CSS
    Estilos específicos para el Wizard de Reserva de Turnos Online (6 Pasos)
@@ -18,7 +33,7 @@
 
 /* --- TARJETA PRINCIPAL DEL WIZARD --- */
 .booking-wizard-card {
-  background-color: var(--white);
+  background-color: rgba(223, 221, 221, 0.74);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-lg);
@@ -164,8 +179,9 @@
 }
 
 .booking-service-card.selected {
+  color: green;
   border-color: var(--primary-dark);
-  background-color: var(--primary-light);
+  background-color: rgb(155, 190, 155);
   box-shadow: var(--shadow-gold);
 }
 
@@ -185,7 +201,7 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  background-color: rgba(22, 21, 25, 0.85);
+  background-color: rgba(250, 249, 252, 0.692);
   color: var(--white);
   padding: 3px 10px;
   border-radius: var(--radius-full);
@@ -194,6 +210,7 @@
 }
 
 .book-srv-body {
+  background-color: rgba(250, 249, 252, 0.692);
   padding: 18px;
   display: flex;
   flex-direction: column;
@@ -248,9 +265,10 @@
 
 /* --- PASO 2: CALENDARIO WIDGET --- */
 .calendar-widget {
+
   max-width: 540px;
   margin: 0 auto;
-  background: var(--light-bg);
+  background: white;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 30px;
@@ -258,6 +276,7 @@
 }
 
 .calendar-header {
+  background-color: rgba(255, 0, 0, 0.199);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -326,7 +345,8 @@
   visibility: hidden;
 }
 
-.calendar-day-cell.past, .calendar-day-cell.closed {
+.calendar-day-cell.past,
+.calendar-day-cell.closed {
   color: var(--text-light);
   background-color: transparent;
   cursor: not-allowed;
@@ -377,15 +397,24 @@
   border-radius: var(--radius-full);
 }
 
-.legend-dot.available { background-color: var(--white); border: 1px solid var(--border-color); }
-.legend-dot.selected { background-color: var(--primary-dark); }
-.legend-dot.unavailable { background-color: #D1D5DB; }
+.legend-dot.available {
+  background-color: var(--white);
+  border: 1px solid var(--border-color);
+}
+
+.legend-dot.selected {
+  background-color: var(--primary-dark);
+}
+
+.legend-dot.unavailable {
+  background-color: #fffdfdb9;
+}
 
 /* --- PASO 3: SLOTS HORARIOS --- */
 .slots-container-card {
   max-width: 680px;
   margin: 0 auto;
-  background: var(--light-bg);
+  background: rgba(255, 255, 255, 0.589);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 36px;
@@ -442,7 +471,7 @@
 .client-form-card {
   max-width: 640px;
   margin: 0 auto;
-  background: var(--light-bg);
+  background: rgba(255, 255, 255, 0.527);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 36px;
@@ -452,7 +481,7 @@
 .summary-ticket-card {
   max-width: 640px;
   margin: 0 auto;
-  background: var(--white);
+  background: rgba(255, 255, 255, 0.781);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -683,6 +712,7 @@
 /* --- RESPONSIVE RESERVAS --- */
 @media (max-width: 768px) {
   .booking-wizard-card {
+    background-color: aliceblue;
     padding: 24px 18px;
   }
 
@@ -700,7 +730,8 @@
     top: 18px;
   }
 
-  .ticket-grid-meta, .conf-details-grid {
+  .ticket-grid-meta,
+  .conf-details-grid {
     grid-template-columns: 1fr;
   }
 
