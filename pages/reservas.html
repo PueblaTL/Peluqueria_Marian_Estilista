@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reservar Turno Online | Marian Estilista</title>
+  <title>Reservar Turno Online | Aura Studio</title>
   <meta name="description"
-    content="Reserva tu turno online para peluquería femenina con Mariano. Selecciona servicio, fecha y horario de forma rápida y sencilla en Galería La Catedral.">
+    content="Reserva tu turno online en Aura Studio. Selecciona servicio, fecha y horario de forma rápida y sencilla para tu cita de peluquería y estilismo.">
 
   <!-- Favicon -->
   <link rel="icon"
@@ -32,9 +32,9 @@
   <header class="site-header scrolled">
     <div class="container header-container">
       <a href="../index.html" class="brand-logo">
-        <div class="brand-symbol">M</div>
+        <div class="brand-symbol">A</div>
         <div class="brand-text">
-          <span class="brand-name">MARIAN ESTILISTA</span>
+          <span class="brand-name">AURA STUDIO</span>
           <span class="brand-tag">Sistema de Reservas</span>
         </div>
       </a>
@@ -46,15 +46,6 @@
             <polyline points="12 19 5 12 12 5"></polyline>
           </svg>
           <span>Volver al Inicio</span>
-        </a>
-        <a href="admin.html" class="admin-link" title="Ir al Panel Administrativo">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="7" height="7"></rect>
-            <rect x="14" y="3" width="7" height="7"></rect>
-            <rect x="14" y="14" width="7" height="7"></rect>
-            <rect x="3" y="14" width="7" height="7"></rect>
-          </svg>
-          <span>Admin</span>
         </a>
       </div>
     </div>
@@ -109,7 +100,7 @@
           <div class="step-instruction">
             <span class="tag-badge">Paso 1 de 6</span>
             <h2>Selecciona el servicio que deseas</h2>
-            <p>Haz clic en el tratamiento o técnica para continuar con tu reserva.</p>
+            <p>Elige uno de nuestros servicios de catálogo para iniciar tu reserva.</p>
           </div>
 
           <div id="booking-services-list" class="booking-services-grid">
@@ -123,37 +114,29 @@
         <div class="wizard-step-content" data-step-content="2">
           <div class="step-instruction">
             <span class="tag-badge">Paso 2 de 6</span>
-            <h2>Selecciona el día de tu turno</h2>
-            <p>Atención de Martes a Sábados. Elige una fecha disponible en el calendario.</p>
+            <h2>Elige el día de tu visita</h2>
+            <p>Atendemos de martes a sábados de 09:00 a 19:00 hs con turno programado.</p>
           </div>
 
-          <div class="calendar-widget">
-            <div class="calendar-header">
-              <button id="cal-prev-btn" class="cal-nav-btn" aria-label="Mes anterior">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="15 18 9 12 15 6"></polyline>
-                </svg>
-              </button>
-              <h3 id="calendar-month-title" class="calendar-month-title">Cargando mes...</h3>
-              <button id="cal-next-btn" class="cal-nav-btn" aria-label="Mes siguiente">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-              </button>
+          <div class="calendar-card">
+            <div class="calendar-nav">
+              <button id="cal-prev-btn" class="cal-nav-btn" aria-label="Mes anterior">‹</button>
+              <h3 id="calendar-month-title" class="cal-month-title">Mes Año</h3>
+              <button id="cal-next-btn" class="cal-nav-btn" aria-label="Mes siguiente">›</button>
             </div>
 
-            <div class="calendar-weekdays">
-              <div>Dom</div>
-              <div>Lun</div>
-              <div>Mar</div>
-              <div>Mié</div>
-              <div>Jue</div>
-              <div>Vie</div>
-              <div>Sáb</div>
+            <div class="calendar-weekdays-grid">
+              <span>Dom</span>
+              <span>Lun</span>
+              <span>Mar</span>
+              <span>Mié</span>
+              <span>Jue</span>
+              <span>Vie</span>
+              <span>Sáb</span>
             </div>
 
             <div id="calendar-days-grid" class="calendar-days-grid">
-              <!-- Renderizado dinámico de días -->
+              <!-- Renderizado dinámico del mes -->
             </div>
 
             <div class="calendar-legend">
@@ -171,7 +154,7 @@
           <div class="step-instruction">
             <span class="tag-badge">Paso 3 de 6</span>
             <h2>Elige la hora de tu cita</h2>
-            <p id="slots-date-label">Horarios disponibles para la fecha seleccionada con Mariano:</p>
+            <p id="slots-date-label">Horarios disponibles para la fecha seleccionada en Aura Studio:</p>
           </div>
 
           <div class="slots-container-card">
@@ -182,7 +165,7 @@
         </div>
 
         <!-- ==========================================
-             PASO 4: DATOS DE CONTACTO DE LA CLIENTA
+             PASO 4: DATOS DE CONTACTO DEL CLIENTE
              ========================================== -->
         <div class="wizard-step-content" data-step-content="4">
           <div class="step-instruction">
@@ -206,7 +189,7 @@
             <div class="form-row-2">
               <div class="form-group">
                 <label for="cli-telefono">Teléfono / WhatsApp *</label>
-                <input type="tel" id="cli-telefono" class="form-control" placeholder="Ej: +54 9 294 123-4567"
+                <input type="tel" id="cli-telefono" class="form-control" placeholder="Ej: +54 9 11 1234-5678"
                   required />
               </div>
               <div class="form-group">
@@ -236,8 +219,8 @@
           <div class="summary-ticket-card">
             <div class="ticket-header">
               <div class="ticket-brand">
-                <span class="ticket-brand-name">Marian Estilista</span>
-                <span class="ticket-tag">Atención Personalizada • Bariloche</span>
+                <span class="ticket-brand-name">Aura Studio</span>
+                <span class="ticket-tag">Atención Personalizada & Estilismo</span>
               </div>
               <div class="ticket-badge">Turno Online</div>
             </div>
@@ -247,8 +230,7 @@
             </div>
 
             <div class="ticket-notice">
-              <span>📍 <strong>Lugar:</strong> Galería La Catedral, San Carlos de Bariloche – Salón Marian
-                Estilista</span>
+              <span>📍 <strong>Lugar:</strong> Av. San Martín 450, Galería Comercial – Salón Aura Studio</span>
               <span>ℹ️ El pago se abona el día de tu cita en el salón.</span>
             </div>
           </div>
@@ -265,7 +247,7 @@
               Confirmado!</span>
             <h2 class="confirmation-title">¡Turno reservado correctamente!</h2>
             <p class="confirmation-desc">
-              Tu turno ha sido registrado exitosamente. Te esperamos en el salón para brindarte la mejor atención.
+              Tu turno ha sido registrado exitosamente en Aura Studio. Te esperamos en el salón para brindarte la mejor atención.
             </p>
 
             <div id="confirmation-details-box" class="confirmation-card">
@@ -276,8 +258,8 @@
               <a href="../index.html" class="btn btn-primary btn-lg">
                 Volver al Inicio
               </a>
-              <a href="admin.html" class="btn btn-secondary btn-lg">
-                Ver en Panel Administrativo
+              <a href="../index.html#servicios" class="btn btn-secondary btn-lg">
+                Explorar Más Servicios
               </a>
             </div>
           </div>

@@ -1,18 +1,16 @@
 /**
  * storage.js - Módulo Centralizado de Persistencia y Acceso a Datos
- * Marian Estilista - Portal Web Profesional
- * 
- * Abstrae las operaciones de localStorage y prepara la interfaz para 
- * una posterior migración directa a una API REST (Java + Spring Boot + PostgreSQL).
+ * Aura Studio - Portal Web Profesional
  */
 
 const STORAGE_KEYS = {
-  SERVICIOS: "marian_servicios_v2",
-  PROFESIONAL: "marian_profesional_v1",
-  TURNOS: "marian_turnos_v2",
-  CURSO: "marian_curso_v1",
-  INSCRIPCIONES: "marian_inscripciones_v1",
-  NEGOCIO: "marian_negocio_v1"
+  SERVICIOS: "aura_servicios_v1",
+  PROFESIONAL: "aura_profesional_v1",
+  EQUIPO: "aura_equipo_v1",
+  TURNOS: "aura_turnos_v1",
+  CURSO: "aura_curso_v1",
+  INSCRIPCIONES: "aura_inscripciones_v1",
+  NEGOCIO: "aura_negocio_v1"
 };
 
 class StorageService {
@@ -30,6 +28,9 @@ class StorageService {
     }
     if (!localStorage.getItem(STORAGE_KEYS.PROFESIONAL)) {
       localStorage.setItem(STORAGE_KEYS.PROFESIONAL, JSON.stringify(window.SEED_DATA.profesional));
+    }
+    if (!localStorage.getItem(STORAGE_KEYS.EQUIPO)) {
+      localStorage.setItem(STORAGE_KEYS.EQUIPO, JSON.stringify(window.SEED_DATA.equipo));
     }
     if (!localStorage.getItem(STORAGE_KEYS.TURNOS)) {
       localStorage.setItem(STORAGE_KEYS.TURNOS, JSON.stringify(window.SEED_DATA.turnos));
@@ -79,6 +80,7 @@ class StorageService {
     if (!window.SEED_DATA) return false;
     localStorage.setItem(STORAGE_KEYS.SERVICIOS, JSON.stringify(window.SEED_DATA.servicios));
     localStorage.setItem(STORAGE_KEYS.PROFESIONAL, JSON.stringify(window.SEED_DATA.profesional));
+    localStorage.setItem(STORAGE_KEYS.EQUIPO, JSON.stringify(window.SEED_DATA.equipo));
     localStorage.setItem(STORAGE_KEYS.TURNOS, JSON.stringify(window.SEED_DATA.turnos));
     localStorage.setItem(STORAGE_KEYS.CURSO, JSON.stringify(window.SEED_DATA.curso));
     localStorage.setItem(STORAGE_KEYS.INSCRIPCIONES, JSON.stringify(window.SEED_DATA.inscripcionesCurso));
@@ -100,62 +102,20 @@ class StorageService {
     return servicios.find(s => s.id === id) || null;
   }
 
-  static async saveServicio(servicioDto) {
-    const servicios = await this.getServicios();
-    const nuevo = {
-      id: `srv-${Date.now()}`,
-      nombre: servicioDto.nombre,
-      categoria: servicioDto.categoria || "General",
-      descripcion: servicioDto.descripcion || "",
-      precio: Number(servicioDto.precio) || 0,
-      duracionMinutos: Number(servicioDto.duracionMinutos) || 60,
-      imagen: servicioDto.imagen || "assets/images/balayage_miel.png",
-      destacado: !!servicioDto.destacado,
-      activo: servicioDto.activo !== undefined ? servicioDto.activo : true
-    };
-    servicios.push(nuevo);
-    this._setItem(STORAGE_KEYS.SERVICIOS, servicios);
-    return nuevo;
-  }
-
-
-  static async updateServicio(id, servicioDto) {
-    const servicios = await this.getServicios();
-    const index = servicios.findIndex(s => s.id === id);
-    if (index === -1) throw new Error(`Servicio ${id} no encontrado`);
-
-    servicios[index] = {
-      ...servicios[index],
-      nombre: servicioDto.nombre ?? servicios[index].nombre,
-      categoria: servicioDto.categoria ?? servicios[index].categoria,
-      descripcion: servicioDto.descripcion ?? servicios[index].descripcion,
-      precio: servicioDto.precio !== undefined ? Number(servicioDto.precio) : servicios[index].precio,
-      duracionMinutos: servicioDto.duracionMinutos !== undefined ? Number(servicioDto.duracionMinutos) : servicios[index].duracionMinutos,
-      imagen: servicioDto.imagen ?? servicios[index].imagen,
-      destacado: servicioDto.destacado !== undefined ? !!servicioDto.destacado : servicios[index].destacado,
-      activo: servicioDto.activo !== undefined ? !!servicioDto.activo : servicios[index].activo
-    };
-    this._setItem(STORAGE_KEYS.SERVICIOS, servicios);
-    return servicios[index];
-  }
-
-  static async deleteServicio(id) {
-    let servicios = await this.getServicios();
-    servicios = servicios.filter(s => s.id !== id);
-    this._setItem(STORAGE_KEYS.SERVICIOS, servicios);
-    return true;
-  }
-
   // ==========================================
-  // PROFESIONAL (Mariano)
+  // EQUIPO PROFESIONAL
   // ==========================================
+
+  static async getEquipo() {
+    return this._getItem(STORAGE_KEYS.EQUIPO, window.SEED_DATA?.equipo || []);
+  }
 
   static async getProfesional() {
     return this._getItem(STORAGE_KEYS.PROFESIONAL, window.SEED_DATA?.profesional || {
       id: "prof-1",
-      nombre: "Mariano",
-      titulo: "Estilista Profesional & Colorista",
-      experiencia: "+15 Años de Experiencia"
+      nombre: "Valeria Benítez",
+      titulo: "Directora Creativa & Master Colorist",
+      experiencia: "12 Años de Trayectoria"
     });
   }
 
@@ -197,7 +157,6 @@ class StorageService {
       );
     }
 
-    // Ordenar por fecha y hora descendente por defecto
     return turnos.sort((a, b) => {
       const dateA = new Date(`${a.fecha}T${a.hora}`);
       const dateB = new Date(`${b.fecha}T${b.hora}`);
@@ -224,7 +183,7 @@ class StorageService {
       hora: reservaDto.hora,
       duracionMinutos: Number(reservaDto.duracionMinutos) || 60,
       precio: Number(reservaDto.precio) || 0,
-      estado: "Pendiente", // Por defecto al reservar online
+      estado: "Pendiente",
       cliente: {
         nombre: reservaDto.cliente.nombre,
         apellido: reservaDto.cliente.apellido,
@@ -257,14 +216,10 @@ class StorageService {
     return true;
   }
 
-  /**
-   * Calcula los horarios disponibles para una fecha y duración dada
-   */
   static async getDisponibilidad(fechaStr, duracionMinutos = 60) {
     const negocio = await this.getNegocio();
     const turnosDelDia = await this.getTurnos({ fecha: fechaStr });
 
-    // Rango horario general (ej: 09:00 a 19:00)
     const [startH, startM] = (negocio.horaApertura || "09:00").split(":").map(Number);
     const [endH, endM] = (negocio.horaCierre || "19:00").split(":").map(Number);
     const intervalo = negocio.intervaloTurnosMinutos || 30;
@@ -272,7 +227,6 @@ class StorageService {
     const startTotal = startH * 60 + startM;
     const endTotal = endH * 60 + endM;
 
-    // Convertir turnos existentes a rangos de minutos ocupados (excluyendo cancelados)
     const turnosActivos = turnosDelDia.filter(t => t.estado !== "Cancelado");
     const ocupados = turnosActivos.map(t => {
       const [h, m] = t.hora.split(":").map(Number);
@@ -291,7 +245,6 @@ class StorageService {
       const mm = String(slotInicio % 60).padStart(2, "0");
       const horaStr = `${hh}:${mm}`;
 
-      // Comprobar colisión con turnos existentes
       const colisiona = ocupados.some(o => (slotInicio < o.fin && slotFin > o.inicio));
 
       slots.push({
@@ -304,7 +257,7 @@ class StorageService {
   }
 
   // ==========================================
-  // CLIENTES (Generados a partir de los turnos)
+  // CLIENTES
   // ==========================================
 
   static async getClientes() {
@@ -361,58 +314,12 @@ class StorageService {
       telefono: datos.telefono,
       email: datos.email,
       fecha: new Date().toISOString(),
-      estado: "Pendiente" // Pendiente, Contactado, Inscripto
+      estado: "Pendiente"
     };
 
     inscripciones.push(nueva);
     this._setItem(STORAGE_KEYS.INSCRIPCIONES, inscripciones);
     return nueva;
-  }
-
-  static async updateInscripcionEstado(id, nuevoEstado) {
-    const inscripciones = this._getItem(STORAGE_KEYS.INSCRIPCIONES, []);
-    const index = inscripciones.findIndex(i => i.id === id);
-    if (index === -1) throw new Error(`Inscripción ${id} no encontrada`);
-
-    inscripciones[index].estado = nuevoEstado;
-    this._setItem(STORAGE_KEYS.INSCRIPCIONES, inscripciones);
-    return inscripciones[index];
-  }
-
-  static async deleteInscripcion(id) {
-    let inscripciones = this._getItem(STORAGE_KEYS.INSCRIPCIONES, []);
-    inscripciones = inscripciones.filter(i => i.id !== id);
-    this._setItem(STORAGE_KEYS.INSCRIPCIONES, inscripciones);
-    return true;
-  }
-
-  // ==========================================
-  // DASHBOARD KPIS
-  // ==========================================
-
-  static async getDashboardStats() {
-    const turnos = await this.getTurnos();
-    const clientes = await this.getClientes();
-    const inscripciones = await this.getInscripciones();
-
-    const hoyStr = new Date().toISOString().split("T")[0];
-
-    const turnosHoy = turnos.filter(t => t.fecha === hoyStr && t.estado !== "Cancelado").length;
-    const turnosPendientes = turnos.filter(t => t.estado === "Pendiente").length;
-    const turnosCompletados = turnos.filter(t => t.estado === "Completado").length;
-
-    const ingresosEstimados = turnos
-      .filter(t => t.estado === "Confirmado" || t.estado === "Completado")
-      .reduce((sum, t) => sum + (Number(t.precio) || 0), 0);
-
-    return {
-      turnosHoy,
-      turnosPendientes,
-      turnosCompletados,
-      totalClientes: clientes.length,
-      ingresosEstimados,
-      inscripcionesCurso: inscripciones.length
-    };
   }
 }
 

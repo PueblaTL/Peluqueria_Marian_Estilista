@@ -1,6 +1,6 @@
 /**
  * reservas.js - Lógica Integral del Asistente de Reserva de Turnos en 6 Pasos
- * Marian Estilista - Mariano (Único Profesional)
+ * Aura Studio - Sistema de Reservas Online
  */
 
 class BookingWizard {
@@ -396,7 +396,7 @@ class BookingWizard {
       const dateFormatted = new Date(y, m - 1, d).toLocaleDateString("es-AR", {
         weekday: "long", day: "numeric", month: "long"
       });
-      this.slotsDateLabel.innerHTML = `Horarios disponibles para el <strong>${dateFormatted}</strong> con <strong>Mariano</strong>:`;
+      this.slotsDateLabel.innerHTML = `Horarios disponibles para el <strong>${dateFormatted}</strong> en <strong>Aura Studio</strong>:`;
     }
 
     try {

@@ -14,7 +14,7 @@ body {
 }
 
 /* ==========================================================================
-   MARIAN ESTILISTA - RESERVAS.CSS
+   AURA STUDIO - RESERVAS.CSS
    Estilos específicos para el Wizard de Reserva de Turnos Online (6 Pasos)
    ========================================================================== */
 
@@ -33,7 +33,7 @@ body {
 
 /* --- TARJETA PRINCIPAL DEL WIZARD --- */
 .booking-wizard-card {
-  background-color: rgba(223, 221, 221, 0.74);
+  background-color: rgba(255, 255, 255, 0.92);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-lg);
@@ -414,7 +414,7 @@ body {
 .slots-container-card {
   max-width: 680px;
   margin: 0 auto;
-  background: rgba(255, 255, 255, 0.589);
+  background: rgba(255, 255, 255, 0.97);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 36px;
@@ -471,10 +471,11 @@ body {
 .client-form-card {
   max-width: 640px;
   margin: 0 auto;
-  background: rgba(255, 255, 255, 0.527);
+  background: rgba(255, 255, 255, 0.97);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 36px;
+  box-shadow: var(--shadow-sm);
 }
 
 /* --- PASO 5: RESUMEN DEL TURNO (TICKET) --- */
@@ -712,7 +713,7 @@ body {
 /* --- RESPONSIVE RESERVAS --- */
 @media (max-width: 768px) {
   .booking-wizard-card {
-    background-color: aliceblue;
+    background-color: rgba(255, 255, 255, 0.95);
     padding: 24px 18px;
   }
 

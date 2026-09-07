@@ -1,26 +1,26 @@
 /**
- * data.js - Datos Iniciales y Fixtures para "Marian Estilista" (San Carlos de Bariloche)
- * 
- * Estructura de entidades preparadas para migración a Spring Boot / JPA Entities.
- * Negocio orientado exclusivamente a peluquería femenina con Mariano como único profesional.
+ * data.js - Datos Iniciales y Fixtures para "Aura Studio"
+ * Proyecto de Presentación Universitaria - Sistema Integral de Peluquería & Estilismo
  */
 
 const SEED_DATA = {
   // Configuración general del negocio
   negocio: {
-    nombre: "Marian Estilista",
-    profesional: "Mariano",
+    nombre: "Aura Studio",
+    subtitulo: "Peluquería & Estilismo Integral",
     lema: "El arte de realzar tu belleza y transformar tu cabello",
-    descripcion: "Espacio exclusivo dedicado a la belleza y salud capilar femenina en San Carlos de Bariloche. Especialización en balayage, babylights, alisados de última generación, tratamientos nutritivos y peinados de autor.",
-    lugar: "Galería La Catedral, San Carlos de Bariloche – Salón Marian Estilista",
-    direccion: "Galería La Catedral, San Carlos de Bariloche",
-    telefono: "+54 2920 359074",
-    whatsapp: "+54 2920 359074",
-    whatsappLink: "https://wa.me/542920359074",
-    instagram: "@marian.estilista.bariloche",
-    instagramLink: "https://www.instagram.com/marian.estilista.bariloche/",
-    email: "[EMAIL_ADDRESS]",
-    experiencia: "+15 Años de Experiencia",
+    descripcion: "Espacio exclusivo dedicado a la belleza y salud capilar femenina. Especialización en balayage, babylights, alisados de última generación, tratamientos nutritivos y peinados de autor.",
+    lugar: "Av. San Martín 450, Centro Comercial Galerías",
+    direccion: "Av. San Martín 450, Galería Comercial",
+    ciudad: "Centro de Estilismo & Tendencia",
+    coordenadas: [-34.603722, -58.381592],
+    telefono: "+54 11 4567-8900",
+    whatsapp: "+54 11 4567-8900",
+    whatsappLink: "https://wa.me/541145678900",
+    instagram: "@aurastudio.estilismo",
+    instagramLink: "https://instagram.com",
+    email: "contacto@aurastudio.demo",
+    experiencia: "+12 Años de Trayectoria",
     horariosTexto: "Martes a Sábados de 09:00 a 19:00 hs",
     diasApertura: [2, 3, 4, 5, 6], // Martes (2) a Sábado (6)
     horaApertura: "09:00",
@@ -28,22 +28,78 @@ const SEED_DATA = {
     intervaloTurnosMinutos: 30
   },
 
-  // Profesional Único (Mariano)
+  // Equipo Profesional Multidisciplinario
+  equipo: [
+    {
+      id: "prof-1",
+      nombre: "Valeria Benítez",
+      titulo: "Directora Creativa & Master Colorist",
+      especialidad: "Balayage, Colorimetría de Vanguardia y Visagismo",
+      experiencia: "12 Años de Trayectoria",
+      descripcion: "Líder del equipo técnico de Aura Studio. Especialista en visagismo y diseño de iluminación europea a mano alzada. Su pasión es crear tonalidades armoniosas que realcen las facciones y cuiden la salud del cabello.",
+      imagen: "assets/images/equipo_valeria.jpg",
+      diasLaborales: [2, 3, 4, 5, 6],
+      horarioInicio: "09:00",
+      horarioFin: "19:00",
+      activo: true
+    },
+    {
+      id: "prof-2",
+      nombre: "Lucas Morales",
+      titulo: "Estilista Senior & Diseñador de Cortes",
+      especialidad: "Cortes de Autor, Visagismo y Texturizado",
+      experiencia: "9 Años de Trayectoria",
+      descripcion: "Especialista en cortes vanguardistas adaptados a la morfología facial y estilo de vida. Experto en técnicas de corte en seco y peinado de alta durabilidad.",
+      imagen: "assets/images/equipo_lucas.jpg",
+      diasLaborales: [2, 3, 4, 5, 6],
+      horarioInicio: "09:00",
+      horarioFin: "19:00",
+      activo: true
+    },
+    {
+      id: "prof-3",
+      nombre: "Sofía Carrizo",
+      titulo: "Especialista en Rubios & Babylights",
+      especialidad: "Microiluminación, Babylights y Tonos Fríos",
+      experiencia: "7 Años de Trayectoria",
+      descripcion: "Dedicada a la creación de rubios luminosos y dimensionales. Trabaja con fórmulas orgánicas y protectores de enlaces capilares para un rubio radiante y sin daño.",
+      imagen: "assets/images/equipo_sofia.jpg",
+      diasLaborales: [2, 3, 4, 5, 6],
+      horarioInicio: "09:00",
+      horarioFin: "19:00",
+      activo: true
+    },
+    {
+      id: "prof-4",
+      nombre: "Camila Navarro",
+      titulo: "Terapeuta Capilar & Peinados de Gala",
+      especialidad: "Alisados Láser 6D, Botox Capilar y Peinados de Novia",
+      experiencia: "6 Años de Trayectoria",
+      descripcion: "Especializada en salud capilar intensiva, alineación de fibra y peinados sofisticados para eventos, quinceañeras y celebraciones especiales.",
+      imagen: "assets/images/equipo_camila.jpg",
+      diasLaborales: [2, 3, 4, 5, 6],
+      horarioInicio: "09:00",
+      horarioFin: "19:00",
+      activo: true
+    }
+  ],
+
+  // Profesional por defecto para el flujo de reservas
   profesional: {
     id: "prof-1",
-    nombre: "Mariano",
-    titulo: "Estilista Profesional & Colorista",
+    nombre: "Valeria Benítez",
+    titulo: "Directora Creativa & Master Colorist",
     especialidad: "Coloración, Balayage, Alisados y Peinados",
-    experiencia: "+15 Años de Experiencia",
-    descripcion: "Especialista en colorimetría avanzada, diseño de iluminación personalizada, alisados de alto brillo y tratamientos restauradores. Con más de 15 años de trayectoria dedicados a brindar una atención personalizada a cada clienta en Bariloche.",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80",
+    experiencia: "+12 Años de Trayectoria",
+    descripcion: "Especialista en colorimetría avanzada, diseño de iluminación personalizada, alisados de alto brillo y tratamientos restauradores.",
+    avatar: "assets/images/equipo_valeria.jpg",
     diasLaborales: [2, 3, 4, 5, 6],
     horarioInicio: "09:00",
     horarioFin: "19:00",
     activo: true
   },
 
-  // Catálogo Oficial de Servicios (5 Servicios Exclusivamente Femeninos)
+  // Catálogo Oficial de Servicios
   servicios: [
     {
       id: "srv-1",
@@ -65,7 +121,7 @@ const SEED_DATA = {
       precio: 95000,
       precioTexto: "$95.000",
       duracionMinutos: 180,
-      imagen: "assets/images/mechas_balayage.webp",
+      imagen: "assets/images/mechas_balayage_2.png",
       destacado: true,
       activo: true
     },
@@ -77,7 +133,7 @@ const SEED_DATA = {
       precio: 85000,
       precioTexto: "$85.000",
       duracionMinutos: 120,
-      imagen: "assets/images/mechas_localizadas.webp",
+      imagen: "assets/images/mechas_localizadas_2.png",
       destacado: true,
       activo: true
     },
@@ -89,7 +145,7 @@ const SEED_DATA = {
       precio: 88000,
       precioTexto: "$88.000",
       duracionMinutos: 150,
-      imagen: "assets/images/mechas_babylight_2.webp",
+      imagen: "assets/images/mechas_babylight_2.jpg",
       destacado: true,
       activo: true
     },
@@ -97,7 +153,7 @@ const SEED_DATA = {
       id: "srv-5",
       nombre: "Peinados para Eventos",
       categoria: "Peinados",
-      descripcion: "Peinados personalizados para quinceañeras, bodas, fiestas, celebraciones y ocasiones especiales. Diseños pensados para complementar el estilo, el vestido y la personalidad de cada clienta, buscando un resultado elegante, sofisticado y duradero.",
+      descripcion: "Peinados personalizados para quinceañeras, bodas, fiestas, celebraciones y ocasiones especiales. Diseños pensados para complementar el estilo, el vestido y la personalidad de cada clienta.",
       detalles: [
         "Ondas y peinados sueltos",
         "Recogidos elegantes",
@@ -110,27 +166,27 @@ const SEED_DATA = {
       precio: 48000,
       precioTexto: "$48.000",
       duracionMinutos: 60,
-      imagen: "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=800&q=80",
+      imagen: "assets/images/peinados_1.jpeg",
       destacado: true,
       activo: true
     }
   ],
 
-  // Información Oficial del Curso de Peluquería
+  // Información de la Academia & Cursos
   curso: {
     id: "cur-1",
     nombre: "CURSO COMPLETO DE PELUQUERÍA PROFESIONAL",
     tag: "✨ ¡INSCRIPCIONES ABIERTAS!",
     inicio: "10 de julio",
-    lugar: "Galería La Catedral, San Carlos de Bariloche – Salón Marian Estilista",
+    lugar: "Aura Studio • Av. San Martín 450",
     modalidad: "Presencial. Curso completo y 100% práctico.",
     duracion: "5 meses",
     clases: "1 vez por semana",
-    formacion: "Teoría y práctica profesional",
+    formacion: "Teoría y práctica profesional con equipo docente",
     inversion: 350000,
     inversionTexto: "$350.000 por mes",
-    certificacion: "Al finalizar el curso se entregará un certificado.",
-    descripcion: "Capacitación intensiva y personalizada impartida directamente por Mariano en Bariloche. Desarrolla las técnicas de color, iluminación, alisados y diagnóstico capilar con mayor demanda en el mercado profesional.",
+    certificacion: "Al finalizar el curso se entregará un certificado profesional.",
+    descripcion: "Capacitación intensiva impartida por el equipo docente de Aura Studio. Desarrolla las técnicas de color, iluminación, alisados y diagnóstico capilar con mayor demanda en el mercado profesional.",
     contenidos: [
       {
         titulo: "Color y colorimetría",
@@ -178,14 +234,14 @@ const SEED_DATA = {
     ]
   },
 
-  // Galería de Trabajos Reales (Exclusivamente Femenina)
+  // Galería de Trabajos Reales
   galeria: [
     {
       id: "gal-1",
       titulo: "Mechas Balayage Miel & Golden Gloss",
       categoria: "coloracion",
       categoriaNombre: "Coloración",
-      imagen: "https://plus.unsplash.com/premium_photo-1669675936132-cd68d8a1ac5f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8QmFsYXlhZ2UlMjBwcm9mZXNpb25hbHxlbnwwfHwwfHx8MA%3D%3D",
+      imagen: "assets/images/mechas_balayage_3.webp",
       descripcion: "Degradé suave a mano alzada con matices cálidos y acabado luminoso."
     },
     {
@@ -193,7 +249,7 @@ const SEED_DATA = {
       titulo: "Alisado Láser 6D & Tratamiento Espejo",
       categoria: "alisados",
       categoriaNombre: "Alisados",
-      imagen: "assets/images/alisado_6d.png",
+      imagen: "assets/images/alisado_6d_3.jpeg",
       descripcion: "Alineación capilar termoactiva con sedosidad y cero encrespamiento."
     },
     {
@@ -201,7 +257,7 @@ const SEED_DATA = {
       titulo: "Corte y Perfilado de Puntas",
       categoria: "corte",
       categoriaNombre: "Corte",
-      imagen: "https://plus.unsplash.com/premium_photo-1669675935927-0ed8935e6600?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8Y29ydGUlMjBtdWplciUyMHBlbHVxdWVyaWF8ZW58MHx8MHx8fDA%3D",
+      imagen: "assets/images/cortes_1.webp",
       descripcion: "Definición de capas y movimiento con sellado cuticular."
     },
     {
@@ -209,7 +265,7 @@ const SEED_DATA = {
       titulo: "Semirrecogido Trenzado para Eventos",
       categoria: "peinados",
       categoriaNombre: "Peinados",
-      imagen: "https://images.unsplash.com/photo-1575287537815-ef82dd922198?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      imagen: "assets/images/peinados_2.jpeg",
       descripcion: "Diseño bohemio y sofisticado para quinceañeras y fiestas."
     },
     {
@@ -217,7 +273,7 @@ const SEED_DATA = {
       titulo: "Rubio Ceniza Platinado & Matización",
       categoria: "coloracion",
       categoriaNombre: "Coloración",
-      imagen: "https://images.unsplash.com/photo-1554519934-e32b1629d9ee?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y29sb3JhY2lvbiUyMHJ1YmlvJTIwY2VuaXphJTIwcGxhdGluYWRvfGVufDB8fDB8fHww",
+      imagen: "assets/images/mechas_localizadas_3.webp",
       descripcion: "Aclaración precisa y matización fría personalizada."
     },
     {
@@ -225,7 +281,7 @@ const SEED_DATA = {
       titulo: "Balayage Caramelo & Contorno Frontal",
       categoria: "coloracion",
       categoriaNombre: "Coloración",
-      imagen: "https://images.unsplash.com/photo-1638064432604-8da1fc75de09?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8QmFsYXlhZ2UlMjBwZWx1cXVlcmlhfGVufDB8fDB8fHww",
+      imagen: "assets/images/mechas_balayage.webp",
       descripcion: "Degradado cálido en base castaña con ondas naturales."
     },
     {
@@ -233,7 +289,7 @@ const SEED_DATA = {
       titulo: "Recogido de Gala para Novias y Fiestas",
       categoria: "peinados",
       categoriaNombre: "Peinados",
-      imagen: "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=800&q=80",
+      imagen: "assets/images/peinados_3.jpeg",
       descripcion: "Peinado de alta costura con fijación duradera y acabado brillante."
     },
     {
@@ -246,14 +302,14 @@ const SEED_DATA = {
     }
   ],
 
-  // Turnos Iniciales Simulados (Todos con Mariano en Bariloche)
+  // Turnos Iniciales Simulados
   turnos: [
     {
       id: "trn-1001",
       servicioId: "srv-2",
       servicioNombre: "Mechas Balayage",
       profesionalId: "prof-1",
-      profesionalNombre: "Mariano",
+      profesionalNombre: "Valeria Benítez",
       fecha: new Date().toISOString().split("T")[0],
       hora: "10:00",
       duracionMinutos: 180,
@@ -262,7 +318,7 @@ const SEED_DATA = {
       cliente: {
         nombre: "Camila",
         apellido: "Fernández",
-        telefono: "+54 9 294 455-8899",
+        telefono: "+54 9 11 4555-8899",
         email: "camila.fernandez@gmail.com",
         notas: "Quiere tonos beige manteca"
       },
@@ -272,8 +328,8 @@ const SEED_DATA = {
       id: "trn-1002",
       servicioId: "srv-4",
       servicioNombre: "Mechas Babylight",
-      profesionalId: "prof-1",
-      profesionalNombre: "Mariano",
+      profesionalId: "prof-3",
+      profesionalNombre: "Sofía Carrizo",
       fecha: new Date().toISOString().split("T")[0],
       hora: "15:00",
       duracionMinutos: 150,
@@ -282,7 +338,7 @@ const SEED_DATA = {
       cliente: {
         nombre: "Luciana",
         apellido: "García",
-        telefono: "+54 9 294 477-2233",
+        telefono: "+54 9 11 4777-2233",
         email: "luciana.garcia@outlook.com",
         notas: "Primera vez en el salón"
       },
@@ -292,8 +348,8 @@ const SEED_DATA = {
       id: "trn-1003",
       servicioId: "srv-1",
       servicioNombre: "Alisado Láser 6D",
-      profesionalId: "prof-1",
-      profesionalNombre: "Mariano",
+      profesionalId: "prof-4",
+      profesionalNombre: "Camila Navarro",
       fecha: new Date(Date.now() + 86400000).toISOString().split("T")[0],
       hora: "11:00",
       duracionMinutos: 150,
@@ -302,7 +358,7 @@ const SEED_DATA = {
       cliente: {
         nombre: "Valentina",
         apellido: "Rossi",
-        telefono: "+54 9 294 444-9988",
+        telefono: "+54 9 11 4444-9988",
         email: "valen.rossi@yahoo.com",
         notas: "Cabello largo y con volumen"
       },
@@ -312,8 +368,8 @@ const SEED_DATA = {
       id: "trn-1004",
       servicioId: "srv-3",
       servicioNombre: "Mechas Localizadas",
-      profesionalId: "prof-1",
-      profesionalNombre: "Mariano",
+      profesionalId: "prof-2",
+      profesionalNombre: "Lucas Morales",
       fecha: new Date(Date.now() - 86400000).toISOString().split("T")[0],
       hora: "16:00",
       duracionMinutos: 120,
@@ -322,7 +378,7 @@ const SEED_DATA = {
       cliente: {
         nombre: "Martina",
         apellido: "Suárez",
-        telefono: "+54 9 294 466-7788",
+        telefono: "+54 9 11 4666-7788",
         email: "martina.suarez@gmail.com",
         notas: "Clienta habitual"
       },
@@ -337,7 +393,7 @@ const SEED_DATA = {
       cursoId: "cur-1",
       nombre: "Florencia",
       apellido: "Méndez",
-      telefono: "+54 9 294 423-4455",
+      telefono: "+54 9 11 4233-4455",
       email: "flor.mendez@gmail.com",
       fecha: new Date(Date.now() - 86400000 * 4).toISOString(),
       estado: "Inscripto"
@@ -347,7 +403,7 @@ const SEED_DATA = {
       cursoId: "cur-1",
       nombre: "Agustina",
       apellido: "Pérez",
-      telefono: "+54 9 294 489-0011",
+      telefono: "+54 9 11 4899-0011",
       email: "agus.perez@hotmail.com",
       fecha: new Date(Date.now() - 86400000 * 2).toISOString(),
       estado: "Contactado"
@@ -357,7 +413,7 @@ const SEED_DATA = {
       cursoId: "cur-1",
       nombre: "Micaela",
       apellido: "Romero",
-      telefono: "+54 9 294 478-9900",
+      telefono: "+54 9 11 4788-9900",
       email: "mica.romero@gmail.com",
       fecha: new Date().toISOString(),
       estado: "Pendiente"
