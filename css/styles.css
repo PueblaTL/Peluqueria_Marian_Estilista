@@ -4074,7 +4074,7 @@ textarea.form-control {
   background: linear-gradient(135deg, #fffaf3 0%, #eecc9bb0 100%);
   border-radius: var(--radius-lg, 16px);
   overflow: hidden;
-  s border: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
+  border: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
   transition: transform 0.35s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.35s ease, border-color 0.35s ease;
   display: flex;
