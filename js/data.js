@@ -19,7 +19,7 @@ const SEED_DATA = {
     whatsappLink: "https://wa.me/542920359074",
     instagram: "@marian.estilista.bariloche",
     instagramLink: "https://www.instagram.com/marian.estilista.bariloche/",
-    email: "[EMAIL_ADDRESS]",
+    email: "Jesusechavarria057@gmail.com",
     experiencia: "+15 Años de Experiencia",
     horariosTexto: "Martes a Sábados de 09:00 a 19:00 hs",
     diasApertura: [2, 3, 4, 5, 6], // Martes (2) a Sábado (6)
@@ -193,7 +193,7 @@ const SEED_DATA = {
       titulo: "Alisado Láser 6D & Tratamiento Espejo",
       categoria: "alisados",
       categoriaNombre: "Alisados",
-      imagen: "assets/images/alisado_6d.png",
+      imagen: "assets/images/alisado_6d.webp",
       descripcion: "Alineación capilar termoactiva con sedosidad y cero encrespamiento."
     },
     {

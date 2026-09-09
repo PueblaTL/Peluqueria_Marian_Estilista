@@ -9,10 +9,208 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   initNavbar();
+  initHeroCarousel();
+  initSalonMap();
   initGalleryFiltersAndLightbox();
   initCourseSection();
   initSmoothScroll();
 });
+
+/* --- CONFIGURACIÓN DE UBICACIÓN CENTRALIZADA --- */
+const SALON_LOCATION = {
+  lat: -41.133965,
+  lng: -71.303469,
+  name: "Marian Estilista",
+  stylist: "Mariano Echavarría",
+  address: "Calle General Nicolás Palacios 156 (Galería Paseo de la Catedral)",
+  city: "San Carlos de Bariloche, Río Negro",
+  schedule: "Martes a Sábados: 09:00 - 19:00 hs",
+  scheduleClosed: "Domingos y Lunes: Cerrado",
+  directionsUrl: "https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=%3B-41.133965%2C-71.303469"
+};
+
+/* --- CARRUSEL HERO DE ALTA CALIDAD --- */
+function initHeroCarousel() {
+  const carousel = document.getElementById("hero-carousel");
+  if (!carousel) return;
+
+  const slides = carousel.querySelectorAll(".carousel-slide");
+  const dots = carousel.querySelectorAll(".carousel-dot");
+  const prevBtn = document.getElementById("carousel-prev");
+  const nextBtn = document.getElementById("carousel-next");
+
+  if (!slides.length) return;
+
+  let currentIndex = 0;
+  const totalSlides = slides.length;
+  let autoplayTimer = null;
+  const AUTOPLAY_INTERVAL = 5000;
+
+  const goToSlide = (targetIndex) => {
+    // Normalizar índice circular
+    const newIndex = (targetIndex + totalSlides) % totalSlides;
+
+    slides[currentIndex].classList.remove("active");
+    slides[newIndex].classList.add("active");
+
+    if (dots.length) {
+      dots[currentIndex].classList.remove("active");
+      dots[currentIndex].setAttribute("aria-selected", "false");
+      dots[newIndex].classList.add("active");
+      dots[newIndex].setAttribute("aria-selected", "true");
+    }
+
+    currentIndex = newIndex;
+  };
+
+  const nextSlide = () => goToSlide(currentIndex + 1);
+  const prevSlide = () => goToSlide(currentIndex - 1);
+
+  const startAutoplay = () => {
+    stopAutoplay();
+    autoplayTimer = setInterval(nextSlide, AUTOPLAY_INTERVAL);
+  };
+
+  const stopAutoplay = () => {
+    if (autoplayTimer) {
+      clearInterval(autoplayTimer);
+      autoplayTimer = null;
+    }
+  };
+
+  // Botones de navegación
+  if (prevBtn) {
+    prevBtn.addEventListener("click", () => {
+      prevSlide();
+      startAutoplay();
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener("click", () => {
+      nextSlide();
+      startAutoplay();
+    });
+  }
+
+  // Indicadores / Dots
+  dots.forEach((dot, idx) => {
+    dot.addEventListener("click", () => {
+      goToSlide(idx);
+      startAutoplay();
+    });
+  });
+
+  // Pausar al pasar el mouse por encima
+  carousel.addEventListener("mouseenter", stopAutoplay);
+  carousel.addEventListener("mouseleave", startAutoplay);
+
+  // Soporte táctil / Swipe para dispositivos móviles
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let isTouching = false;
+
+  carousel.addEventListener("touchstart", (e) => {
+    stopAutoplay();
+    if (e.touches && e.touches.length) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      isTouching = true;
+    }
+  }, { passive: true });
+
+  carousel.addEventListener("touchend", (e) => {
+    if (!isTouching || !e.changedTouches || !e.changedTouches.length) return;
+    isTouching = false;
+
+    const diffX = e.changedTouches[0].clientX - touchStartX;
+    const diffY = e.changedTouches[0].clientY - touchStartY;
+
+    // Verificar desplazamiento horizontal mínimo de 40px con predominio horizontal
+    if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
+      if (diffX < 0) {
+        nextSlide();
+      } else {
+        prevSlide();
+      }
+    }
+
+    startAutoplay();
+  }, { passive: true });
+
+  carousel.addEventListener("touchcancel", () => {
+    isTouching = false;
+    startAutoplay();
+  }, { passive: true });
+
+  // Iniciar autoplay
+  startAutoplay();
+}
+
+/* --- MAPA INTERACTIVO (LEAFLET & OPENSTREETMAP) --- */
+function initSalonMap() {
+  const mapContainer = document.getElementById("salon-map");
+  if (!mapContainer || typeof window.L === "undefined") return;
+
+  try {
+    const map = L.map("salon-map", {
+      center: [SALON_LOCATION.lat, SALON_LOCATION.lng],
+      zoom: 16,
+      scrollWheelZoom: false, // Evita atrapar el scroll de página en móviles/desktop
+      zoomControl: true
+    });
+
+    // Capa de mosaicos OpenStreetMap
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
+      maxZoom: 19
+    }).addTo(map);
+
+    // Pin de mapa personalizado en negro y dorado
+    const customPin = L.divIcon({
+      className: "custom-map-pin",
+      html: `
+        <div class="pin-marker-pulse"></div>
+        <div class="pin-marker-core" title="${SALON_LOCATION.name}">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 3a3 3 0 0 0-3 3v2a3 3 0 0 0 3 3 3 3 0 0 0 2.22-.98l4.08 4.08a3 3 0 0 0-2.3 2.9 3 3 0 1 0 3-3 2.98 2.98 0 0 0-.9-2.22l4.08-4.08A3 3 0 0 0 21 8V6a3 3 0 0 0-3-3 3 3 0 0 0-2.82 2H9.82A3 3 0 0 0 6 3z"/>
+          </svg>
+        </div>
+      `,
+      iconSize: [44, 44],
+      iconAnchor: [22, 38],
+      popupAnchor: [0, -38]
+    });
+
+    // Contenido del popup personalizado
+    const popupHtml = `
+      <div class="salon-popup-card">
+        <h4>${SALON_LOCATION.name}</h4>
+        <div class="popup-address">
+          📍 <strong>${SALON_LOCATION.address}</strong><br>
+          <span style="color: #bbb;">${SALON_LOCATION.city}</span>
+        </div>
+        <div class="popup-schedule">
+          🕒 <strong>Horario:</strong> ${SALON_LOCATION.schedule}<br>
+          <span style="color: #999;">${SALON_LOCATION.scheduleClosed}</span>
+        </div>
+        <a href="${SALON_LOCATION.directionsUrl}" target="_blank" rel="noopener noreferrer" class="btn-map-directions">
+          Cómo llegar →
+        </a>
+      </div>
+    `;
+
+    const marker = L.marker([SALON_LOCATION.lat, SALON_LOCATION.lng], { icon: customPin }).addTo(map);
+    marker.bindPopup(popupHtml);
+
+    // Abrir popup tras renderizado para mostrar información
+    setTimeout(() => {
+      marker.openPopup();
+    }, 700);
+  } catch (err) {
+    console.error("Error al inicializar Leaflet Map:", err);
+  }
+}
 
 /* --- NAVBAR & SCROLL INTERACTION --- */
 function initNavbar() {
