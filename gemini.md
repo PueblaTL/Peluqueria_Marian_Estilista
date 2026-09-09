@@ -1,12 +1,12 @@
-# PROJECT: MARIAN ESTILISTA — PROFESSIONAL HAIR SALON WEB PORTAL
+# PROJECT: AURA STUDIO — PROFESSIONAL HAIR SALON WEB PORTAL
 
 ## 1. BUSINESS INFORMATION
 
-- **Business Name:** Marian Estilista
-- **Main Professional:** Mariano (the only professional currently working at the salon).
+- **Business Name:** Aura Studio
+- **Main Professional:** Agustina.
 - **Target Audience:** Women.
 - **Business Focus:** Professional hairdressing, hair coloring, hair treatments, straightening services, and hairstyling.
-- **Location:** Galería La Catedral, San Carlos de Bariloche — Marian Estilista Salon.
+- **Location:** Galería La Catedral, San Carlos de Bariloche — Aura Studio Salon.
 - **Experience:** 15+ years of professional experience.
 - **Specialization:** Hair coloring, balayage, babylights, hair treatments, straightening techniques, and hairstyling.
 
@@ -14,10 +14,9 @@
 
 - The salon is 100% focused on women's hairdressing and beauty services.
 - DO NOT include barbering, men's haircuts, beard services, or masculine-oriented services.
-- DO NOT invent additional fictional professionals. Mariano is the only stylist.
 - DO NOT invent testimonials, awards, certifications, reviews, achievements, or business claims that were not explicitly provided.
 - The official location is:
-  **Galería La Catedral, San Carlos de Bariloche — Salón Marian Estilista.**
+  **Galería La Catedral, San Carlos de Bariloche — Aura Studio Salon.**
 - Preserve all business information accurately throughout the website.
 - Do not alter or fabricate prices, durations, course information, or service descriptions unless explicitly instructed.
 

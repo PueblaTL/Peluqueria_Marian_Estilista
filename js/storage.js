@@ -109,7 +109,7 @@ class StorageService {
       descripcion: servicioDto.descripcion || "",
       precio: Number(servicioDto.precio) || 0,
       duracionMinutos: Number(servicioDto.duracionMinutos) || 60,
-      imagen: servicioDto.imagen || "assets/images/balayage_miel.png",
+      imagen: servicioDto.imagen || "assets/images/mechas_balayage.webp",
       destacado: !!servicioDto.destacado,
       activo: servicioDto.activo !== undefined ? servicioDto.activo : true
     };

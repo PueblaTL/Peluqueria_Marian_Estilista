@@ -13,6 +13,7 @@
     href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C5A880'><path d='M6 3a3 3 0 0 0-3 3v2a3 3 0 0 0 3 3 3 3 0 0 0 2.22-.98l4.08 4.08a3 3 0 0 0-2.3 2.9 3 3 0 1 0 3-3 2.98 2.98 0 0 0-.9-2.22l4.08-4.08A3 3 0 0 0 21 8V6a3 3 0 0 0-3-3 3 3 0 0 0-2.82 2H9.82A3 3 0 0 0 6 3z'/></svg>">
 
   <!-- Estilos -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -40,23 +41,13 @@
         <a href="#inicio" class="nav-link active">Inicio</a>
         <a href="#servicios" class="nav-link">Servicios</a>
         <a href="#galeria" class="nav-link">Galería</a>
-        <a href="#aboutme" class="nav-link">Sobre Mi</a>
+        <a href="#equipo" class="nav-link">Equipo</a>
         <a href="#curso" class="nav-link">Academia & Curso</a>
         <a href="#contacto" class="nav-link">Contacto</a>
       </nav>
 
       <!-- Acciones -->
       <div class="header-actions">
-
-        <a href="pages/admin.html" class="admin-link" title="Ir al Panel Administrativo">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="7" height="7"></rect>
-            <rect x="14" y="3" width="7" height="7"></rect>
-            <rect x="14" y="14" width="7" height="7"></rect>
-            <rect x="3" y="14" width="7" height="7"></rect>
-          </svg>
-          <span>Admin</span>
-        </a>
 
         <a href="pages/reservas.html" class="btn btn-primary btn-sm">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -133,21 +124,59 @@
       </div>
 
       <div class="hero-visual">
-        <div class="hero-img-wrapper">
-          <img src="assets/images/salon_3.webp" alt="Peluquería y Estilo Élite Studio" class="hero-main-img" />
-        </div>
-        <div class="hero-floating-card">
-          <div class="hero-floating-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
+        <div class="hero-carousel" id="hero-carousel" aria-label="Instalaciones Marian Estilista" role="region">
+          <div class="carousel-track" id="carousel-track">
+            <div class="carousel-slide active" data-index="0">
+              <img src="assets/images/salon_3.webp" alt="Salón Marian Estilista en Bariloche - Espacio Exclusivo" class="carousel-img" />
+              <div class="carousel-caption">
+                <span class="carousel-tag">Salón Marian Estilista</span>
+                <p>Espacio exclusivo & confort en Galería La Catedral</p>
+              </div>
+            </div>
+            <div class="carousel-slide" data-index="1">
+              <img src="assets/images/salon_2.webp" alt="Estaciones de estilismo con espejos LED y diseño minimalista" class="carousel-img" loading="lazy" />
+              <div class="carousel-caption">
+                <span class="carousel-tag">Estaciones de Vanguardia</span>
+                <p>Espejos LED, confort y diseño minimalista</p>
+              </div>
+            </div>
+            <div class="carousel-slide" data-index="2">
+              <img src="assets/images/salon_4.webp" alt="Área de atención y diagnóstico capilar personalizado" class="carousel-img" loading="lazy" />
+              <div class="carousel-caption">
+                <span class="carousel-tag">Atención Personalizada</span>
+                <p>Diagnóstico capilar a medida y técnicas avanzadas</p>
+              </div>
+            </div>
+            <div class="carousel-slide" data-index="3">
+              <img src="assets/images/salon_1.webp" alt="Cartel oficial de neón Mariano Echavarría Estilista" class="carousel-img" loading="lazy" />
+              <div class="carousel-caption">
+                <span class="carousel-tag">Mariano Echavarría</span>
+                <p>Más de 15 años de trayectoria en alta peluquería</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botones Anterior / Siguiente -->
+          <button class="carousel-arrow carousel-prev" id="carousel-prev" aria-label="Diapositiva anterior">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
-          </div>
-          <div>
-            <div class="hero-floating-title">Atención con Turno Previo</div>
-            <div class="hero-floating-subtitle">Sin esperas ni demoras</div>
+          </button>
+          <button class="carousel-arrow carousel-next" id="carousel-next" aria-label="Diapositiva siguiente">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+
+          <!-- Indicadores / Dots -->
+          <div class="carousel-dots" id="carousel-dots" role="tablist" aria-label="Seleccionar diapositiva">
+            <button class="carousel-dot active" data-slide="0" role="tab" aria-selected="true" aria-label="Ver diapositiva 1"></button>
+            <button class="carousel-dot" data-slide="1" role="tab" aria-selected="false" aria-label="Ver diapositiva 2"></button>
+            <button class="carousel-dot" data-slide="2" role="tab" aria-selected="false" aria-label="Ver diapositiva 3"></button>
+            <button class="carousel-dot" data-slide="3" role="tab" aria-selected="false" aria-label="Ver diapositiva 4"></button>
           </div>
         </div>
+
       </div>
     </div>
   </section>
@@ -199,7 +228,7 @@
         <!-- Servicio 2: Mechas Balayage -->
         <article class="service-card">
           <div class="service-img-wrap">
-            <img src="assets/images/mechas_balayage_2.png" alt="Mechas Balayage" class="service-img" />
+            <img src="assets/images/mechas_balayage_2.webp" alt="Mechas Balayage" class="service-img" />
             <span class="service-category-badge">Iluminación</span>
           </div>
           <div class="service-body">
@@ -231,7 +260,7 @@
         <!-- Servicio 3: Mechas Localizadas -->
         <article class="service-card">
           <div class="service-img-wrap">
-            <img src="assets/images/mechas_localizadas_2.png" alt="Mechas Localizadas" class="service-img" />
+            <img src="assets/images/mechas_localizadas_2.webp" alt="Mechas Localizadas" class="service-img" />
             <span class="service-category-badge">Iluminación</span>
           </div>
           <div class="service-body">
@@ -263,7 +292,7 @@
         <!-- Servicio 4: Mechas Babylight -->
         <article class="service-card">
           <div class="service-img-wrap">
-            <img src="assets/images/mechas_babylight_2.jpg" alt="Mechas Babylight" class="service-img" />
+            <img src="assets/images/mechas_babylight_2.webp" alt="Mechas Babylight" class="service-img" />
             <span class="service-category-badge">Iluminación</span>
           </div>
           <div class="service-body">
@@ -436,18 +465,27 @@
             <p class="gallery-desc">Nutrición profunda, sellado de fibra y sedosidad duradera.</p>
           </div>
         </div>
+
+        <div class="gallery-item" data-category="coloracion">
+          <img src="assets/images/ejemplo_imagen.webp" alt="Balayage Vainilla & Ondas Suaves" class="gallery-img" />
+          <div class="gallery-overlay">
+            <span class="gallery-tag">Coloración</span>
+            <h4 class="gallery-title">Balayage Vainilla</h4>
+            <p class="gallery-desc">Iluminación degradada con ondas naturales y brillo gloss.</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- ==========================================
-     SOBRE MI 
+     EQUIPO & SOBRE NOSOTROS
      ========================================== -->
-  <section id="aboutme" class="about-section section-spacing">
+  <section id="equipo" class="about-section section-spacing">
     <div class="container about-grid">
       <div class="about-images-composition">
-        <img src="assets/images/foto_perfil.webp" alt="Marian Estilista" class="about-img-main" />
-        <img src="assets/images/salon_1.webp" alt="Foto del salón" class="about-img-secondary" />
+        <img src="assets/images/foto_perfil.webp" alt="Mariano Echavarría — Estilista Titular Marian Estilista" class="about-img-main" />
+        <img src="assets/images/salon_1.webp" alt="Cartel oficial Mariano Echavarría Estilista" class="about-img-secondary" />
         <div class="about-experience-badge">
           <div class="about-exp-years">15+</div>
           <div class="about-exp-label">Años de<br />Excelencia</div>
@@ -455,21 +493,18 @@
       </div>
 
       <div class="about-content">
-        <span class="tag-badge">Sobre mí</span>
-        <h2 class="section-title">Más que un salón, un espacio de estilo y bienestar</h2>
+        <span class="tag-badge">Nuestro Equipo & Trayectoria</span>
+        <h2 class="section-title">Mariano Echavarría — Estilista Titular</h2>
 
         <p class="about-lead">
-          Un lugar donde la técnica y la pasión se encuentran para transformar tu cabello en una experiencia única.
+          Un espacio donde la técnica de vanguardia y la atención personalizada se encuentran para transformar tu cabello en Bariloche.
         </p>
 
         <p class="about-text">
-          Con más de 15 años de excelencia, nos especializamos en colorimetría avanzada, peinados sociales y
-          tratamientos capilares que cuidan la salud de tu fibra mientras realzan tu estilo personal.
+          Con más de 15 años de trayectoria y pasión por la excelencia, Mariano lidera Marian Estilista como especialista exclusivo en colorimetría de precisión, diseño de mechas balayage y babylights, alisados termoactivos de alto brillo y peinados de autor para eventos.
         </p>
         <p class="about-text">
-          Cada visita comienza con un diagnóstico de visagismo, porque creemos que tu rostro y tu estilo de vida
-          merecen un corte y un color diseñados a medida. Nos capacitamos constantemente en las capitales de la
-          moda para traerte las últimas tendencias, siempre con productos orgánicos y libres de amoníaco.
+          Cada visita comienza con un diagnóstico capilar y de visagismo, porque creemos que tu estilo y las necesidades de tu cabello merecen una atención a medida con productos de máxima pureza, libres de amoníaco y con resultados de revista.
         </p>
 
         <div class="about-values-list">
@@ -500,6 +535,14 @@
               <div class="about-val-title">Cortes a medida</div>
               <div class="about-val-desc">Diseñados para tu rostro y estilo de vida.</div>
             </div>
+          </div>
+        </div>
+
+        <div class="about-products-spotlight" style="margin: 20px 0 24px 0; display: flex; align-items: center; gap: 16px; padding: 14px; background: rgba(255, 255, 255, 0.7); border: 1px solid var(--color-border-light); border-radius: var(--radius-md); box-shadow: 0 4px 12px rgba(18, 10, 7, 0.04);">
+          <img src="assets/images/productos_1.webp" alt="Línea oficial de tratamientos BTX Extreme Marian Estilista" style="width: 80px; height: 62px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--color-border-light);" loading="lazy">
+          <div>
+            <div style="font-size: 0.9rem; font-weight: 700; color: var(--color-black);">Tratamientos & Fórmulas BTX Extreme</div>
+            <div style="font-size: 0.82rem; color: var(--color-gray-dark);">Cuidado termoactivo sin amoníaco para nutrición profunda y brillo espejo.</div>
           </div>
         </div>
 
@@ -859,7 +902,7 @@
                 </svg>
                 (2920) 359074
               </a>
-              <a href="mailto:marianestilista@gmail.com" class="channel-btn">
+              <a href="mailto:Jesusechavarria057@gmail.com" class="channel-btn">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                   <polyline points="22,6 12,13 2,6"></polyline>
@@ -872,14 +915,8 @@
 
         <!-- Columna Derecha: Mapa y Formulario -->
         <div class="map-form-col">
-          <div class="map-placeholder-card">
-            <div class="map-pin-box">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                <circle cx="12" cy="10" r="3"></circle>
-              </svg>
-              <span>Marian Estilista • Galeria La Catedral, Bariloche</span>
-            </div>
+          <div class="map-wrapper-card">
+            <div id="salon-map" class="salon-interactive-map" role="region" aria-label="Mapa interactivo con la ubicación de Marian Estilista en Bariloche"></div>
           </div>
 
           <form id="fast-contact-form" class="fast-contact-form">
@@ -934,8 +971,9 @@
             <li><a href="#inicio" class="footer-link">Inicio</a></li>
             <li><a href="#servicios" class="footer-link">Servicios & Precios</a></li>
             <li><a href="#galeria" class="footer-link">Galería de Trabajos</a></li>
-            <li><a href="#nosotros" class="footer-link">Sobre Nosotros</a></li>
+            <li><a href="#equipo" class="footer-link">Nuestro Equipo</a></li>
             <li><a href="#curso" class="footer-link">Academia & Cursos</a></li>
+            <li><a href="#contacto" class="footer-link">Contacto & Ubicación</a></li>
           </ul>
         </div>
 
@@ -943,19 +981,22 @@
           <h5 class="footer-col-title">Servicios Populares</h5>
           <ul class="footer-links">
             <li><a href="pages/reservas.html?servicio=srv-5" class="footer-link">Mechas & Balayage</a></li>
-            <li><a href="pages/reservas.html?servicio=srv-2" class="footer-link">Corte Femenino</a></li>
-            <li><a href="pages/reservas.html?servicio=srv-4" class="footer-link">Coloración Global</a></li>
+            <li><a href="pages/reservas.html?servicio=srv-2" class="footer-link">Alisado Láser 6D</a></li>
+            <li><a href="pages/reservas.html?servicio=srv-4" class="footer-link">Mechas Babylight</a></li>
           </ul>
         </div>
 
         <div>
-          <h5 class="footer-col-title">Administración</h5>
-          <p style="font-size: 0.88rem; color: var(--text-light); margin-bottom: 14px;">
-            Accede al panel de control interno para gestionar turnos, clientes y servicios.
+          <h5 class="footer-col-title">Ubicación & Horarios</h5>
+          <p style="font-size: 0.88rem; color: var(--text-light); margin-bottom: 6px;">
+            Palacios 156 (Galería La Catedral)
           </p>
-          <a href="pages/admin.html" class="btn btn-outline-white btn-sm">
-            Panel de Administración
-          </a>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+            San Carlos de Bariloche, Río Negro
+          </p>
+          <p style="font-size: 0.88rem; color: var(--color-gold); font-weight: 600;">
+            Mar a Sáb: 09:00 - 19:00 hs
+          </p>
         </div>
       </div>
 
@@ -1024,7 +1065,22 @@
     </div>
   </div>
 
+  <!-- Burbuja Flotante de WhatsApp -->
+  <a href="https://wa.me/5492920359074?text=Hola%20Marian%20Estilista,%20quisiera%20consultar%20por%20un%20turno"
+    class="whatsapp-float-btn"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Contactar a Marian Estilista por WhatsApp"
+    id="whatsapp-float-btn">
+    <span class="whatsapp-float-tooltip">¿Consultas? Escríbenos</span>
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path
+        d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.5 0 .15 5.35.15 11.91c0 2.1.55 4.15 1.59 5.96L.05 24l6.27-1.64a11.88 11.88 0 0 0 5.74 1.47h.01c6.56 0 11.91-5.35 11.91-11.91 0-3.18-1.24-6.17-3.46-8.44ZM12.07 21.82h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.72.97.99-3.63-.23-.37a9.88 9.88 0 0 1-1.51-5.29C2.2 6.46 6.63 2.03 12.07 2.03c2.63 0 5.1 1.03 6.96 2.9a9.82 9.82 0 0 1 2.89 6.98c0 5.44-4.43 9.87-9.85 9.91Zm5.41-7.4c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.49s1.07 2.89 1.22 3.09c.15.2 2.1 3.21 5.09 4.5.71.31 1.26.5 1.69.64.71.23 1.35.2 1.86.12.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35Z" />
+    </svg>
+  </a>
+
   <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="js/storage.js"></script>
   <script src="js/data.js"></script>
   <script src="js/api.js"></script>
