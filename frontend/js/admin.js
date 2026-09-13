@@ -39,7 +39,9 @@ class AdminDashboard {
     this.tabPanes = document.querySelectorAll(".admin-tab-pane");
     this.topbarTitle = document.getElementById("admin-topbar-title");
     this.dateBadge = document.getElementById("admin-current-date");
-    this.sidebar = document.querySelector(".admin-sidebar");
+    this.sidebar = document.querySelector(".admin-sidebar") || document.getElementById("admin-sidebar");
+    this.sidebarOverlay = document.getElementById("admin-sidebar-overlay");
+    this.sidebarCloseBtn = document.getElementById("sidebar-close-btn");
     this.mobileToggle = document.getElementById("admin-sidebar-toggle");
 
     // KPIs
@@ -70,6 +72,40 @@ class AdminDashboard {
     this.btnCancelServiceModal = document.getElementById("btn-cancel-service-modal");
   }
 
+  openSidebar() {
+    if (this.sidebar) {
+      this.sidebar.classList.add("open");
+    }
+    if (this.sidebarOverlay) {
+      this.sidebarOverlay.classList.add("active");
+    }
+    if (this.mobileToggle) {
+      this.mobileToggle.setAttribute("aria-expanded", "true");
+    }
+    document.body.style.overflow = "hidden";
+  }
+
+  closeSidebar() {
+    if (this.sidebar) {
+      this.sidebar.classList.remove("open");
+    }
+    if (this.sidebarOverlay) {
+      this.sidebarOverlay.classList.remove("active");
+    }
+    if (this.mobileToggle) {
+      this.mobileToggle.setAttribute("aria-expanded", "false");
+    }
+    document.body.style.overflow = "";
+  }
+
+  toggleSidebar() {
+    if (this.sidebar && this.sidebar.classList.contains("open")) {
+      this.closeSidebar();
+    } else {
+      this.openSidebar();
+    }
+  }
+
   bindEvents() {
     // Navegación por pestañas
     this.navItems.forEach(item => {
@@ -79,14 +115,42 @@ class AdminDashboard {
           this.switchTab(targetTab);
         }
       });
+      // Accesibilidad teclado
+      item.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          item.click();
+        }
+      });
     });
 
-    // Toggle móvil sidebar
-    if (this.mobileToggle && this.sidebar) {
-      this.mobileToggle.addEventListener("click", () => {
-        this.sidebar.classList.toggle("open");
+    // Control centralizado del Sidebar y Overlay móvil
+    if (this.mobileToggle) {
+      this.mobileToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.toggleSidebar();
       });
     }
+
+    if (this.sidebarCloseBtn) {
+      this.sidebarCloseBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        this.closeSidebar();
+      });
+    }
+
+    if (this.sidebarOverlay) {
+      this.sidebarOverlay.addEventListener("click", () => {
+        this.closeSidebar();
+      });
+    }
+
+    // Cerrar sidebar con ESC
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && this.sidebar && this.sidebar.classList.contains("open")) {
+        this.closeSidebar();
+      }
+    });
 
     // Filtros de tabla de turnos
     if (this.turnosSearchInput) {
@@ -165,10 +229,8 @@ class AdminDashboard {
       this.topbarTitle.textContent = titlesMap[tabName] || "Panel de Administración";
     }
 
-    // Cerrar sidebar en móvil
-    if (this.sidebar) {
-      this.sidebar.classList.remove("open");
-    }
+    // Cerrar sidebar en móvil (con overlay)
+    this.closeSidebar();
 
     // Recargar datos relevantes
     this.loadAllData();
@@ -209,23 +271,23 @@ class AdminDashboard {
 
       this.dashboardRecentTurnosTable.innerHTML = recientes.map(t => `
         <tr>
-          <td>
+          <td data-label="Fecha &amp; Hora">
             <strong>${t.fecha}</strong><br>
-            <span class="text-muted" style="font-size: 0.85rem;">${t.hora} hs</span>
+            <span class="text-muted">${t.hora} hs</span>
           </td>
-          <td>
+          <td data-label="Clienta">
             <strong>${t.cliente?.nombre || ''} ${t.cliente?.apellido || ''}</strong><br>
-            <span class="text-muted" style="font-size: 0.82rem;">${t.cliente?.telefono || ''}</span>
+            <span class="text-muted">${t.cliente?.telefono || ''}</span>
           </td>
-          <td>${t.servicioNombre}</td>
-          <td><strong>Marian</strong></td>
-          <td><strong>$${Number(t.precio).toLocaleString("es-AR")}</strong></td>
-          <td><span class="status-badge status-${t.estado.toLowerCase()}">${t.estado}</span></td>
-          <td>
+          <td data-label="Servicio">${t.servicioNombre}</td>
+          <td data-label="Profesional"><strong>Marian</strong></td>
+          <td data-label="Precio"><strong>$${Number(t.precio).toLocaleString("es-AR")}</strong></td>
+          <td data-label="Estado"><span class="status-badge status-${t.estado.toLowerCase()}">${t.estado}</span></td>
+          <td data-label="Acciones">
             <div class="action-buttons-group">
-              ${t.estado === 'Pendiente' ? `<button class="btn-action btn-act-confirm" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Confirmado')" title="Confirmar">✓</button>` : ''}
-              ${t.estado !== 'Completado' && t.estado !== 'Cancelado' ? `<button class="btn-action btn-act-complete" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Completado')" title="Marcar como Completado">★</button>` : ''}
-              ${t.estado !== 'Cancelado' ? `<button class="btn-action btn-act-cancel" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Cancelado')" title="Cancelar">✕</button>` : ''}
+              ${t.estado === 'Pendiente' ? `<button class="btn-action btn-act-confirm" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Confirmado')" title="Confirmar" aria-label="Confirmar turno">✓</button>` : ''}
+              ${t.estado !== 'Completado' && t.estado !== 'Cancelado' ? `<button class="btn-action btn-act-complete" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Completado')" title="Completar" aria-label="Completar turno">★</button>` : ''}
+              ${t.estado !== 'Cancelado' ? `<button class="btn-action btn-act-cancel" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Cancelado')" title="Cancelar" aria-label="Cancelar turno">✕</button>` : ''}
             </div>
           </td>
         </tr>
@@ -254,41 +316,41 @@ class AdminDashboard {
 
     this.turnosTableBody.innerHTML = turnos.map(t => `
       <tr>
-        <td><code>#${t.id.slice(-5)}</code></td>
-        <td>
+        <td data-label="ID"><code>#${t.id.slice(-5)}</code></td>
+        <td data-label="Fecha &amp; Hora">
           <strong>${t.fecha}</strong><br>
           <span class="text-muted">${t.hora} hs (${t.duracionMinutos} min)</span>
         </td>
-        <td>
+        <td data-label="Clienta">
           <strong>${t.cliente?.nombre || ''} ${t.cliente?.apellido || ''}</strong>
           ${t.cliente?.notas ? `<br><small class="text-muted" title="${t.cliente.notas}">📝 ${t.cliente.notas.slice(0, 24)}...</small>` : ''}
         </td>
-        <td>
+        <td data-label="Contacto">
           <a href="tel:${t.cliente?.telefono}" class="contact-link">📱 ${t.cliente?.telefono}</a><br>
-          <span class="text-muted" style="font-size: 0.8rem;">✉️ ${t.cliente?.email}</span>
+          <span class="text-muted">✉️ ${t.cliente?.email}</span>
         </td>
-        <td><strong>${t.servicioNombre}</strong></td>
-        <td>Marian</td>
-        <td><strong>$${Number(t.precio).toLocaleString("es-AR")}</strong></td>
-        <td><span class="status-badge status-${t.estado.toLowerCase()}">${t.estado}</span></td>
-        <td>
+        <td data-label="Servicio"><strong>${t.servicioNombre}</strong></td>
+        <td data-label="Profesional">Marian</td>
+        <td data-label="Precio"><strong>$${Number(t.precio).toLocaleString("es-AR")}</strong></td>
+        <td data-label="Estado"><span class="status-badge status-${t.estado.toLowerCase()}">${t.estado}</span></td>
+        <td data-label="Acciones">
           <div class="action-buttons-group">
             ${t.estado === 'Pendiente' ? `
-              <button class="btn btn-sm btn-action-pill btn-pill-confirm" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Confirmado')">
+              <button class="btn btn-sm btn-action-pill btn-pill-confirm" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Confirmado')" aria-label="Confirmar turno">
                 Confirmar
               </button>
             ` : ''}
             ${t.estado === 'Confirmado' ? `
-              <button class="btn btn-sm btn-action-pill btn-pill-complete" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Completado')">
+              <button class="btn btn-sm btn-action-pill btn-pill-complete" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Completado')" aria-label="Completar turno">
                 Completar
               </button>
             ` : ''}
             ${t.estado !== 'Cancelado' ? `
-              <button class="btn btn-sm btn-action-pill btn-pill-cancel" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Cancelado')">
+              <button class="btn btn-sm btn-action-pill btn-pill-cancel" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Cancelado')" aria-label="Cancelar turno">
                 Cancelar
               </button>
             ` : `
-              <button class="btn btn-sm btn-action-pill btn-pill-delete" onclick="window.adminDashboard.eliminarTurno('${t.id}')">
+              <button class="btn btn-sm btn-action-pill btn-pill-delete" onclick="window.adminDashboard.eliminarTurno('${t.id}')" aria-label="Eliminar turno">
                 Eliminar
               </button>
             `}

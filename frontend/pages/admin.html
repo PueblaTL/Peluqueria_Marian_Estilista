@@ -10,7 +10,7 @@
 
   <!-- Favicon -->
   <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C5A880'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z'/></svg>">
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230a0a0a'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z'/></svg>">
 
   <!-- Tipografía Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,23 +27,33 @@
 
 <body class="admin-body">
 
+  <!-- Overlay para cerrar sidebar en móvil -->
+  <div class="admin-sidebar-overlay" id="admin-sidebar-overlay" aria-hidden="true"></div>
+
   <!-- ==========================================
        SIDEBAR DE NAVEGACIÓN ADMINISTRATIVA
        ========================================== -->
-  <aside class="admin-sidebar">
+  <aside class="admin-sidebar" id="admin-sidebar" aria-label="Menú de administración">
     <div class="admin-sidebar-header">
       <div class="brand-logo">
         <div class="brand-symbol">M</div>
         <div class="brand-text">
-          <span class="brand-name" style="color: var(--white); font-size: 1.15rem;">MARIAN ADMIN</span>
+          <span class="brand-name">MARIAN ADMIN</span>
           <span class="brand-tag">Gestión del Salón</span>
         </div>
       </div>
+      <!-- Botón cierre visible solo en móvil -->
+      <button class="sidebar-close-btn" id="sidebar-close-btn" aria-label="Cerrar menú">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
     </div>
 
-    <nav class="admin-nav-list">
-      <div class="admin-nav-item active" data-tab="dashboard">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <nav class="admin-nav-list" aria-label="Navegación principal">
+      <div class="admin-nav-item active" data-tab="dashboard" role="button" tabindex="0" aria-label="Dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <rect x="3" y="3" width="7" height="7"></rect>
           <rect x="14" y="3" width="7" height="7"></rect>
           <rect x="14" y="14" width="7" height="7"></rect>
@@ -52,8 +62,8 @@
         <span>Dashboard</span>
       </div>
 
-      <div class="admin-nav-item" data-tab="turnos">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div class="admin-nav-item" data-tab="turnos" role="button" tabindex="0" aria-label="Turnos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
           <line x1="16" y1="2" x2="16" y2="6"></line>
           <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -62,8 +72,8 @@
         <span>Turnos</span>
       </div>
 
-      <div class="admin-nav-item" data-tab="clientes">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div class="admin-nav-item" data-tab="clientes" role="button" tabindex="0" aria-label="Clientes">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
           <circle cx="9" cy="7" r="4"></circle>
           <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
@@ -72,8 +82,8 @@
         <span>Clientes</span>
       </div>
 
-      <div class="admin-nav-item" data-tab="servicios">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div class="admin-nav-item" data-tab="servicios" role="button" tabindex="0" aria-label="Servicios">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
           <polyline points="14 2 14 8 20 8"></polyline>
           <line x1="16" y1="13" x2="8" y2="13"></line>
@@ -83,16 +93,16 @@
         <span>Servicios</span>
       </div>
 
-      <div class="admin-nav-item" data-tab="curso">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div class="admin-nav-item" data-tab="curso" role="button" tabindex="0" aria-label="Curso e Inscripciones">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
           <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
         </svg>
-        <span>Curso & Inscripciones</span>
+        <span>Curso &amp; Inscripciones</span>
       </div>
 
-      <div class="admin-nav-item" data-tab="configuracion">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div class="admin-nav-item" data-tab="configuracion" role="button" tabindex="0" aria-label="Configuración">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <circle cx="12" cy="12" r="3"></circle>
           <path
             d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
@@ -103,8 +113,8 @@
     </nav>
 
     <div class="admin-sidebar-footer">
-      <a href="../index.html" class="btn btn-outline-white btn-sm" style="width: 100%;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <a href="../index.html" class="btn-outline-white" aria-label="Ver sitio web">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
           <polyline points="15 3 21 3 21 9"></polyline>
           <line x1="10" y1="14" x2="21" y2="3"></line>
@@ -120,10 +130,10 @@
   <div class="admin-main-wrapper">
 
     <!-- TOPBAR -->
-    <header class="admin-topbar">
-      <div style="display: flex; align-items: center; gap: 14px;">
-        <button id="admin-sidebar-toggle" class="mobile-toggle" style="display: none;" aria-label="Abrir menú">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <header class="admin-topbar" role="banner">
+      <div class="admin-topbar-left">
+        <button id="admin-sidebar-toggle" class="mobile-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="admin-sidebar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <line x1="3" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -134,29 +144,30 @@
 
       <div class="admin-topbar-actions">
         <span id="admin-current-date" class="admin-badge-date">Cargando fecha...</span>
-        <a href="reservas.html" target="_blank" class="btn btn-primary btn-sm">
+        <a href="reservas.html" target="_blank" class="btn btn-primary btn-sm" aria-label="Crear nuevo turno">
           + Nuevo Turno
         </a>
       </div>
     </header>
 
     <!-- ÁREA DE CONTENIDO DINÁMICO -->
-    <main class="admin-content-area">
+    <main class="admin-content-area" id="admin-main-content" role="main">
 
       <!-- ==========================================
            PESTAÑA 1: DASHBOARD GENERAL
            ========================================== -->
-      <section id="tab-dashboard" class="admin-tab-pane active">
+      <section id="tab-dashboard" class="admin-tab-pane active" aria-label="Dashboard General">
         <!-- Tarjetas de Métricas (KPIs) -->
-        <div class="kpis-grid">
-          <div class="kpi-card">
+        <div class="kpis-grid" role="list" aria-label="Estadísticas del salón">
+
+          <div class="kpi-card" role="listitem">
             <div class="kpi-info">
               <h4>Turnos de Hoy</h4>
               <div id="kpi-turnos-hoy" class="kpi-value">0</div>
               <div class="kpi-trend">📅 Citas programadas</div>
             </div>
-            <div class="kpi-icon-wrap">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <div class="kpi-icon-wrap" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
                 <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -165,85 +176,86 @@
             </div>
           </div>
 
-          <div class="kpi-card">
+          <div class="kpi-card" role="listitem">
             <div class="kpi-info">
               <h4>Turnos Pendientes</h4>
               <div id="kpi-turnos-pendientes" class="kpi-value">0</div>
-              <div class="kpi-trend" style="color: #B45309;">⚠️ Requieren confirmación</div>
+              <div class="kpi-trend">⚠️ Requieren confirmación</div>
             </div>
-            <div class="kpi-icon-wrap pending">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <div class="kpi-icon-wrap pending" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="10"></circle>
                 <polyline points="12 6 12 12 16 14"></polyline>
               </svg>
             </div>
           </div>
 
-          <div class="kpi-card">
+          <div class="kpi-card" role="listitem">
             <div class="kpi-info">
               <h4>Turnos Completados</h4>
               <div id="kpi-turnos-completados" class="kpi-value">0</div>
-              <div class="kpi-trend" style="color: #047857;">✓ Atendidos con éxito</div>
+              <div class="kpi-trend">✓ Atendidos con éxito</div>
             </div>
-            <div class="kpi-icon-wrap completed">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <div class="kpi-icon-wrap completed" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                 <polyline points="22 4 12 14.01 9 11.01"></polyline>
               </svg>
             </div>
           </div>
 
-          <div class="kpi-card">
+          <div class="kpi-card" role="listitem">
             <div class="kpi-info">
               <h4>Clientas Únicas</h4>
               <div id="kpi-total-clientes" class="kpi-value">0</div>
-              <div class="kpi-trend" style="color: #1D4ED8;">👥 Base de datos</div>
+              <div class="kpi-trend">👥 Base de datos</div>
             </div>
-            <div class="kpi-icon-wrap clients">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <div class="kpi-icon-wrap clients" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                 <circle cx="9" cy="7" r="4"></circle>
               </svg>
             </div>
           </div>
 
-          <div class="kpi-card">
+          <div class="kpi-card" role="listitem">
             <div class="kpi-info">
               <h4>Ingresos Estimados</h4>
               <div id="kpi-ingresos-estimados" class="kpi-value">$0</div>
               <div class="kpi-trend">💰 Turnos confirmados/hechos</div>
             </div>
-            <div class="kpi-icon-wrap revenue">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <div class="kpi-icon-wrap revenue" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="12" y1="1" x2="12" y2="23"></line>
                 <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
               </svg>
             </div>
           </div>
 
-          <div class="kpi-card">
+          <div class="kpi-card" role="listitem">
             <div class="kpi-info">
               <h4>Inscripciones al Curso</h4>
               <div id="kpi-total-inscripciones" class="kpi-value">0</div>
-              <div class="kpi-trend" style="color: var(--primary-dark);">🎓 Postulantes</div>
+              <div class="kpi-trend">🎓 Postulantes</div>
             </div>
-            <div class="kpi-icon-wrap course-kpi">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <div class="kpi-icon-wrap course-kpi" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
                 <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
               </svg>
             </div>
           </div>
+
         </div>
 
         <!-- Banner Profesional Único -->
         <div class="admin-prof-banner">
           <div class="prof-banner-content">
-            <div class="prof-banner-avatar">
+            <div class="prof-banner-avatar" aria-hidden="true">
               <img src="../assets/images/salon_1.webp" alt="Mariano Estilista" />
             </div>
             <div>
-              <h3>Mariano — Profesional & Estilista Titular</h3>
+              <h3>Mariano — Profesional &amp; Estilista Titular</h3>
               <p>Atención exclusiva y personalizada en Marian Estilista • Galería La Catedral, San Carlos de Bariloche
                 (+15 Años de Experiencia).</p>
             </div>
@@ -263,10 +275,10 @@
             </button>
           </div>
           <div class="table-responsive">
-            <table class="admin-table">
+            <table class="admin-table dashboard-table" aria-label="Turnos recientes">
               <thead>
                 <tr>
-                  <th>Fecha & Hora</th>
+                  <th>Fecha &amp; Hora</th>
                   <th>Clienta</th>
                   <th>Servicio</th>
                   <th>Profesional</th>
@@ -286,7 +298,7 @@
       <!-- ==========================================
            PESTAÑA 2: GESTIÓN DE TURNOS
            ========================================== -->
-      <section id="tab-turnos" class="admin-tab-pane">
+      <section id="tab-turnos" class="admin-tab-pane" aria-label="Gestión de Turnos">
         <div class="admin-card">
           <div class="admin-card-header flex-between">
             <div>
@@ -296,9 +308,9 @@
 
             <div class="table-filters-row">
               <input type="text" id="turnos-search-input" class="form-control form-control-sm"
-                placeholder="🔍 Buscar clienta o servicio..." />
+                placeholder="🔍 Buscar clienta o servicio..." aria-label="Buscar turnos" />
 
-              <select id="turnos-status-filter" class="form-control form-control-sm">
+              <select id="turnos-status-filter" class="form-control form-control-sm" aria-label="Filtrar por estado">
                 <option value="todos">Todos los estados</option>
                 <option value="Pendiente">Pendiente</option>
                 <option value="Confirmado">Confirmado</option>
@@ -306,16 +318,16 @@
                 <option value="Cancelado">Cancelado</option>
               </select>
 
-              <input type="date" id="turnos-date-filter" class="form-control form-control-sm" />
+              <input type="date" id="turnos-date-filter" class="form-control form-control-sm" aria-label="Filtrar por fecha" />
             </div>
           </div>
 
           <div class="table-responsive">
-            <table class="admin-table">
+            <table class="admin-table turnos-table" aria-label="Tabla de turnos">
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Fecha & Hora</th>
+                  <th>Fecha &amp; Hora</th>
                   <th>Clienta</th>
                   <th>Contacto</th>
                   <th>Servicio</th>
@@ -336,7 +348,7 @@
       <!-- ==========================================
            PESTAÑA 3: GESTIÓN DE CLIENTES
            ========================================== -->
-      <section id="tab-clientes" class="admin-tab-pane">
+      <section id="tab-clientes" class="admin-tab-pane" aria-label="Directorio de Clientas">
         <div class="admin-card">
           <div class="admin-card-header">
             <div>
@@ -346,7 +358,7 @@
           </div>
 
           <div class="table-responsive">
-            <table class="admin-table">
+            <table class="admin-table" aria-label="Directorio de clientes">
               <thead>
                 <tr>
                   <th>Clienta</th>
@@ -368,7 +380,7 @@
       <!-- ==========================================
            PESTAÑA 4: GESTIÓN DE SERVICIOS
            ========================================== -->
-      <section id="tab-servicios" class="admin-tab-pane">
+      <section id="tab-servicios" class="admin-tab-pane" aria-label="Catálogo de Servicios">
         <div class="admin-card">
           <div class="admin-card-header flex-between">
             <div>
@@ -389,9 +401,9 @@
       <!-- ==========================================
            PESTAÑA 5: CURSO & INSCRIPCIONES
            ========================================== -->
-      <section id="tab-curso" class="admin-tab-pane">
+      <section id="tab-curso" class="admin-tab-pane" aria-label="Curso Profesional e Inscripciones">
         <!-- Resumen del Curso -->
-        <div class="admin-card" style="margin-bottom: 28px;">
+        <div class="admin-card">
           <div class="admin-card-header">
             <div>
               <h3>Información del Curso Profesional</h3>
@@ -430,7 +442,7 @@
           </div>
 
           <div class="table-responsive">
-            <table class="admin-table">
+            <table class="admin-table" aria-label="Tabla de inscripciones">
               <thead>
                 <tr>
                   <th>Fecha de Registro</th>
@@ -452,7 +464,7 @@
       <!-- ==========================================
            PESTAÑA 6: CONFIGURACIÓN
            ========================================== -->
-      <section id="tab-configuracion" class="admin-tab-pane">
+      <section id="tab-configuracion" class="admin-tab-pane" aria-label="Configuración del Negocio">
         <div class="admin-card">
           <div class="admin-card-header">
             <h3>Configuración General del Negocio</h3>
@@ -461,29 +473,29 @@
 
           <div class="config-form-grid">
             <div class="form-group">
-              <label>Nombre del Salón</label>
-              <input type="text" class="form-control" value="Marian Estilista" readonly />
+              <label for="config-salon-nombre">Nombre del Salón</label>
+              <input type="text" id="config-salon-nombre" class="form-control" value="Marian Estilista" readonly />
             </div>
             <div class="form-group">
-              <label>Profesional Titular</label>
-              <input type="text" class="form-control" value="Mariano" readonly />
+              <label for="config-profesional">Profesional Titular</label>
+              <input type="text" id="config-profesional" class="form-control" value="Mariano" readonly />
             </div>
             <div class="form-group">
-              <label>Ubicación</label>
-              <input type="text" class="form-control"
+              <label for="config-ubicacion">Ubicación</label>
+              <input type="text" id="config-ubicacion" class="form-control"
                 value="Galería La Catedral, San Carlos de Bariloche – Salón Marian Estilista" readonly />
             </div>
             <div class="form-group">
-              <label>Horarios de Atención</label>
-              <input type="text" class="form-control" value="Martes a Sábados de 09:00 a 19:00 hs" readonly />
+              <label for="config-horarios">Horarios de Atención</label>
+              <input type="text" id="config-horarios" class="form-control" value="Martes a Sábados de 09:00 a 19:00 hs" readonly />
             </div>
             <div class="form-group">
-              <label>Enfoque</label>
-              <input type="text" class="form-control" value="Exclusivamente Peluquería Femenina" readonly />
+              <label for="config-enfoque">Enfoque</label>
+              <input type="text" id="config-enfoque" class="form-control" value="Exclusivamente Peluquería Femenina" readonly />
             </div>
             <div class="form-group">
-              <label>Inversión Curso Profesional</label>
-              <input type="text" class="form-control" value="$350.000 / mes (5 meses)" readonly />
+              <label for="config-inversion">Inversión Curso Profesional</label>
+              <input type="text" id="config-inversion" class="form-control" value="$350.000 / mes (5 meses)" readonly />
             </div>
           </div>
 
@@ -492,7 +504,7 @@
             <p>Si deseas restaurar los servicios iniciales, turnos de demostración e inscripciones por defecto de Marian
               Estilista:</p>
             <button id="btn-reset-demo-data" class="btn btn-secondary btn-sm"
-              style="color: var(--danger); border-color: var(--danger); margin-top: 10px;">
+              style="color: var(--clr-cancel-txt); border-color: var(--clr-cancel-bdr); margin-top: 10px;">
               🔄 Restablecer Datos de Demostración
             </button>
           </div>
@@ -505,20 +517,20 @@
   <!-- ==========================================
        MODAL CRUD DE SERVICIOS
        ========================================== -->
-  <div id="modal-servicio-crud" class="modal-backdrop" aria-hidden="true">
+  <div id="modal-servicio-crud" class="modal-backdrop" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-service-title">
     <div class="modal-box modal-md">
       <div class="modal-header">
         <h3 id="modal-service-title" class="modal-title">Agregar Nuevo Servicio</h3>
-        <button id="btn-close-service-modal" class="modal-close-btn">&times;</button>
+        <button id="btn-close-service-modal" class="modal-close-btn" aria-label="Cerrar modal">&times;</button>
       </div>
       <div class="modal-body">
-        <form id="form-servicio-crud">
+        <form id="form-servicio-crud" novalidate>
           <input type="hidden" id="crud-service-id" />
 
           <div class="form-group">
             <label for="crud-service-nombre">Nombre del Servicio *</label>
             <input type="text" id="crud-service-nombre" class="form-control" placeholder="Ej: Balayage Caramelo"
-              required />
+              required autocomplete="off" />
           </div>
 
           <div class="form-row-2">
@@ -576,7 +588,7 @@
   </div>
 
   <!-- Toast Container -->
-  <div id="toast-container" class="toast-container"></div>
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 
   <!-- Scripts -->
   <script src="../js/data.js"></script>
@@ -584,6 +596,7 @@
   <script src="../js/api.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/admin.js"></script>
+
 </body>
 
 </html>
