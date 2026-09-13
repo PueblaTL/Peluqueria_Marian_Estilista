@@ -44,8 +44,34 @@ class BookingWizard {
     this.cacheDom();
     this.bindEvents();
     await this.loadInitialData();
+    await this.checkDraftBooking();
     this.checkUrlParams();
     this.updateStepUI();
+  }
+
+  async checkDraftBooking() {
+    try {
+      const draft = sessionStorage.getItem("draft_reserva");
+      if (draft) {
+        const parsed = JSON.parse(draft);
+        if (parsed && parsed.servicio && parsed.fecha && parsed.hora) {
+          this.state = { ...this.state, ...parsed };
+          sessionStorage.removeItem("draft_reserva");
+          const user = await window.apiGetCurrentUser?.();
+          if (user) {
+            this.state.cliente.nombre = user.nombre;
+            this.state.cliente.apellido = user.apellido || "";
+            this.state.cliente.email = user.email;
+            this.state.cliente.telefono = user.telefono || "";
+          }
+          this.currentStep = 5;
+          this.renderSummary();
+          this.showToast?.("✨ Sesión iniciada. Ya puedes confirmar tu turno.", "success");
+        }
+      }
+    } catch (e) {
+      console.warn("Error al recuperar borrador:", e);
+    }
   }
 
   cacheDom() {
@@ -114,7 +140,9 @@ class BookingWizard {
 
   async loadInitialData() {
     try {
-      this.profesional = await window.StorageService.getProfesional();
+      this.profesional = (typeof window.apiGetProfesionalDefault === "function")
+        ? await window.apiGetProfesionalDefault()
+        : await window.StorageService.getProfesional();
       this.state.profesional = this.profesional;
       await this.renderServices();
     } catch (err) {
@@ -130,8 +158,10 @@ class BookingWizard {
     const serviceParam = urlParams.get("servicio");
 
     if (serviceParam) {
-      const servicios = await window.StorageService.getServicios(true);
-      const matched = servicios.find(s => s.id === serviceParam);
+      const servicios = (typeof window.apiGetServicios === "function")
+        ? await window.apiGetServicios(true)
+        : await window.StorageService.getServicios(true);
+      const matched = servicios.find(s => String(s.id) === String(serviceParam));
       if (matched) {
         this.selectService(matched);
       }
@@ -146,11 +176,13 @@ class BookingWizard {
 
     this.servicesContainer.innerHTML = `
     <div class="loading-spinner-msg">
-      Cargando servicios...
+      Cargando servicios oficiales...
     </div>
   `;
 
-    const servicios = await window.StorageService.getServicios(true);
+    const servicios = (typeof window.apiGetServicios === "function")
+      ? await window.apiGetServicios(true)
+      : await window.StorageService.getServicios(true);
 
     if (!servicios || servicios.length === 0) {
       this.servicesContainer.innerHTML = `
@@ -168,8 +200,8 @@ class BookingWizard {
       // IDENTIFICADOR DEL SERVICIO
       // ==========================================
       card.className = `booking-service-card ${String(this.state.servicio?.id) === String(s.id)
-          ? "selected"
-          : ""
+        ? "selected"
+        : ""
         }`;
 
       // IMPORTANTE: agregar el ID a la tarjeta
@@ -294,6 +326,32 @@ class BookingWizard {
   // ==========================================
   // RENDERIZADO DEL PASO 2: CALENDARIO
   // ==========================================
+  // Llama a esta función cuando inicialices tu Wizard/Clase
+  initCalendar() {
+    // Referencias al DOM (ajusta si ya las tienes en tu constructor)
+    this.calPrevBtn = document.getElementById('cal-prev-btn');
+    this.calNextBtn = document.getElementById('cal-next-btn');
+    this.calendarMonthTitle = document.getElementById('calendar-month-title');
+    this.calendarDaysGrid = document.getElementById('calendar-days-grid');
+
+    // Iniciar con la fecha actual
+    this.calCurrentDate = new Date();
+
+    // Funcionalidad: Mes anterior
+    this.calPrevBtn.addEventListener('click', () => {
+      this.calCurrentDate.setMonth(this.calCurrentDate.getMonth() - 1);
+      this.renderCalendar();
+    });
+
+    // Funcionalidad: Mes siguiente
+    this.calNextBtn.addEventListener('click', () => {
+      this.calCurrentDate.setMonth(this.calCurrentDate.getMonth() + 1);
+      this.renderCalendar();
+    });
+
+    // Render inicial
+    this.renderCalendar();
+  }
   renderCalendar() {
     if (!this.calendarDaysGrid || !this.calendarMonthTitle) return;
 
@@ -307,7 +365,7 @@ class BookingWizard {
 
     this.calendarMonthTitle.textContent = `${monthNames[month]} ${year}`;
 
-    // Validar botón de mes anterior (no ir al pasado)
+    // Validar botón de mes anterior (evitar navegar al pasado)
     const today = new Date();
     const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
     if (this.calPrevBtn) {
@@ -316,9 +374,7 @@ class BookingWizard {
 
     this.calendarDaysGrid.innerHTML = "";
 
-    // Primer día del mes (0: Domingo, 1: Lunes, etc.)
     const firstDayIndex = new Date(year, month, 1).getDay();
-    // Cantidad de días en el mes
     const lastDayDate = new Date(year, month + 1, 0).getDate();
 
     // Días vacíos previos
@@ -332,18 +388,16 @@ class BookingWizard {
     for (let day = 1; day <= lastDayDate; day++) {
       const cell = document.createElement("div");
       const dateObj = new Date(year, month, day);
-      const dayOfWeek = dateObj.getDay(); // 0 Dom, 1 Lun, 2 Mar, ..., 6 Sáb
+      const dayOfWeek = dateObj.getDay();
 
       const yyyy = dateObj.getFullYear();
       const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
       const dd = String(dateObj.getDate()).padStart(2, '0');
       const dateString = `${yyyy}-${mm}-${dd}`;
 
-      // Reglas de disponibilidad:
-      // Atención: Martes (2) a Sábado (6). Domingo (0) y Lunes (1) cerrado.
+      // Reglas: Atención Martes(2) a Sábado(6)
       const isPast = dateObj < new Date(today.getFullYear(), today.getMonth(), today.getDate());
       const isWorkingDay = dayOfWeek >= 2 && dayOfWeek <= 6;
-      const isAvailable = !isPast && isWorkingDay;
 
       cell.className = "calendar-day-cell";
       cell.textContent = day;
@@ -353,11 +407,11 @@ class BookingWizard {
         cell.classList.add("past");
       } else if (!isWorkingDay) {
         cell.classList.add("closed");
-        cell.title = "Cerrado (Atención Martes a Sábados)";
+        cell.title = "Cerrado";
       } else {
         cell.classList.add("available");
 
-        if (this.state.fecha === dateString) {
+        if (this.state && this.state.fecha === dateString) {
           cell.classList.add("selected");
         }
 
@@ -371,8 +425,10 @@ class BookingWizard {
   }
 
   selectDate(dateString) {
+    if (!this.state) this.state = {};
     this.state.fecha = dateString;
 
+    // Actualizar visualmente sin recargar todo el calendario
     document.querySelectorAll(".calendar-day-cell.available").forEach(c => {
       if (c.getAttribute("data-date") === dateString) {
         c.classList.add("selected");
@@ -381,9 +437,8 @@ class BookingWizard {
       }
     });
 
-    this.btnNext.disabled = false;
+    if (this.btnNext) this.btnNext.disabled = false;
   }
-
   // ==========================================
   // RENDERIZADO DEL PASO 3: SLOTS HORARIOS
   // ==========================================
@@ -400,8 +455,11 @@ class BookingWizard {
     }
 
     try {
-      const duracion = this.state.servicio?.duracionMinutos || 60;
-      const slots = await window.StorageService.getDisponibilidad(this.state.fecha, duracion);
+      const duracion = this.state.servicio?.duracion_minutos || this.state.servicio?.duracionMinutos || 60;
+      const profId = this.state.profesional?.id || 1;
+      const slots = (typeof window.apiGetDisponibilidad === "function")
+        ? await window.apiGetDisponibilidad(this.state.fecha, duracion, profId)
+        : await window.StorageService.getDisponibilidad(this.state.fecha, duracion);
 
       this.slotsGrid.innerHTML = "";
 
@@ -546,16 +604,49 @@ class BookingWizard {
     this.btnNext.textContent = "Procesando turno...";
 
     try {
-      const nuevoTurno = await window.StorageService.saveTurno({
-        servicioId: this.state.servicio.id,
-        servicioNombre: this.state.servicio.nombre,
-        fecha: this.state.fecha,
-        hora: this.state.hora,
-        duracionMinutos: this.state.servicio.duracionMinutos,
-        precio: this.state.servicio.precio,
-        cliente: this.state.cliente
-      });
+      // 1. Verificar si el usuario está autenticado
+      let currentUser = null;
+      if (typeof window.apiGetCurrentUser === "function") {
+        currentUser = await window.apiGetCurrentUser();
+      }
 
+      if (!currentUser) {
+        this.showToast("Para confirmar tu reserva, inicia sesión o crea una cuenta en Marian Estilista.", "warning");
+        this.btnNext.disabled = false;
+        this.btnNext.textContent = "Iniciar Sesión para Confirmar";
+
+        // Guardar borrador en sessionStorage para no perder los datos elegidos
+        sessionStorage.setItem("draft_reserva", JSON.stringify(this.state));
+
+        setTimeout(() => {
+          window.location.href = `login.html?redirect=${encodeURIComponent('reservas.html')}`;
+        }, 1200);
+        return;
+      }
+
+      // 2. Registrar la reserva mediante la API REST de PHP
+      let nuevoTurno;
+      if (typeof window.apiCrearReserva === "function") {
+        nuevoTurno = await window.apiCrearReserva({
+          servicio_id: this.state.servicio.id,
+          profesional_id: this.state.profesional?.id || 1,
+          fecha: this.state.fecha,
+          hora: this.state.hora,
+          observaciones: this.state.cliente?.notas || ""
+        });
+      } else {
+        nuevoTurno = await window.StorageService.saveTurno({
+          servicioId: this.state.servicio.id,
+          servicioNombre: this.state.servicio.nombre,
+          fecha: this.state.fecha,
+          hora: this.state.hora,
+          duracionMinutos: this.state.servicio.duracion_minutos || this.state.servicio.duracionMinutos || 60,
+          precio: this.state.servicio.precio,
+          cliente: this.state.cliente
+        });
+      }
+
+      sessionStorage.removeItem("draft_reserva");
       this.state.turnoConfirmado = nuevoTurno;
 
       // Renderizar confirmación
@@ -567,7 +658,8 @@ class BookingWizard {
       this.showToast("✨ ¡Turno reservado exitosamente!", "success");
     } catch (err) {
       console.error("Error al confirmar turno:", err);
-      this.showToast("Ocurrió un error al registrar el turno. Inténtalo nuevamente.", "danger");
+      const msg = err.data?.message || err.message || "Ocurrió un error al registrar el turno.";
+      this.showToast(msg, "danger");
       this.btnNext.disabled = false;
       this.btnNext.textContent = "Confirmar Turno";
     }
@@ -729,6 +821,22 @@ class BookingWizard {
       this.btnNext.style.display = "inline-flex";
       this.btnNext.textContent = "Revisar Resumen →";
       this.btnNext.disabled = false;
+
+      // Autocompletar datos del cliente si tiene sesión iniciada
+      if (typeof window.apiGetCurrentUser === "function") {
+        window.apiGetCurrentUser().then(user => {
+          if (user) {
+            const nom = document.getElementById("cli-nombre");
+            const ape = document.getElementById("cli-apellido");
+            const tel = document.getElementById("cli-telefono");
+            const eml = document.getElementById("cli-email");
+            if (nom && !nom.value) nom.value = user.nombre || "";
+            if (ape && !ape.value) ape.value = user.apellido || "";
+            if (tel && !tel.value) tel.value = user.telefono || "";
+            if (eml && !eml.value) eml.value = user.email || "";
+          }
+        });
+      }
     } else if (this.currentStep === 5) {
       this.btnBack.style.visibility = "visible";
       this.btnNext.style.display = "inline-flex";

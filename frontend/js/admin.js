@@ -9,6 +9,20 @@ class AdminDashboard {
   }
 
   async init() {
+    // Verificar rol de Administrador en backend
+    if (typeof window.apiGetCurrentUser === "function") {
+      const user = await window.apiGetCurrentUser();
+      if (!user || user.rol !== "ADMIN") {
+        if (typeof window.showToast === "function") {
+          window.showToast("Acceso denegado: se requieren permisos de Administrador.", "danger");
+        }
+        setTimeout(() => {
+          window.location.href = "login.html?redirect=admin.html";
+        }, 800);
+        return;
+      }
+    }
+
     // 1. Inicializar almacenamiento
     if (window.StorageService) {
       window.StorageService.init();

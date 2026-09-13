@@ -265,50 +265,54 @@ body {
 
 /* --- PASO 2: CALENDARIO WIDGET --- */
 .calendar-widget {
-
-  max-width: 540px;
+  max-width: 420px;
+  /* Ligeramente más compacto para mejor proporción */
   margin: 0 auto;
-  background: white;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
-  padding: 30px;
-  box-shadow: var(--shadow-sm);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  font-family: system-ui, -apple-system, sans-serif;
 }
 
 .calendar-header {
-  background-color: rgba(255, 0, 0, 0.199);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  /* Se eliminó el background rojo translúcido */
 }
 
 .calendar-month-title {
-  font-size: 1.35rem;
-  color: var(--text-main);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+  text-transform: capitalize;
 }
 
 .cal-nav-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: var(--radius-full);
-  background: var(--white);
-  border: 1px solid var(--border-color);
-  color: var(--text-main);
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.2s ease;
 }
 
 .cal-nav-btn:hover:not(:disabled) {
-  background-color: var(--primary);
-  border-color: var(--primary);
+  background-color: #e2e8f0;
+  color: #0f172a;
 }
 
 .cal-nav-btn:disabled {
-  opacity: 0.35;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
@@ -316,17 +320,16 @@ body {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   text-align: center;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 700;
-  color: var(--text-muted);
-  text-transform: uppercase;
+  color: #64748b;
   margin-bottom: 12px;
 }
 
 .calendar-days-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
+  gap: 6px;
 }
 
 .calendar-day-cell {
@@ -335,9 +338,9 @@ body {
   align-items: center;
   justify-content: center;
   font-size: 0.95rem;
-  font-weight: 600;
-  border-radius: var(--radius-md);
-  transition: all var(--transition-fast);
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.2s ease;
   user-select: none;
 }
 
@@ -345,44 +348,50 @@ body {
   visibility: hidden;
 }
 
+/* Días pasados o cerrados (No disponibles) */
 .calendar-day-cell.past,
 .calendar-day-cell.closed {
-  color: var(--text-light);
-  background-color: transparent;
+  color: #94a3b8;
+  background-color: #f1f5f9;
   cursor: not-allowed;
-  opacity: 0.45;
 }
 
+/* Días disponibles */
 .calendar-day-cell.available {
-  background-color: var(--white);
-  border: 1px solid var(--border-color);
-  color: var(--text-main);
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  color: #1e293b;
   cursor: pointer;
 }
 
 .calendar-day-cell.available:hover {
-  background-color: var(--primary-light);
-  border-color: var(--primary);
-  color: var(--primary-dark);
+  background-color: #eff6ff;
+  /* Azul muy claro */
+  border-color: #bfdbfe;
+  color: #1d4ed8;
 }
 
+/* Día Seleccionado */
 .calendar-day-cell.selected {
-  background-color: var(--primary-dark) !important;
-  border-color: var(--primary-dark) !important;
-  color: var(--white) !important;
-  box-shadow: var(--shadow-sm);
+  background-color: #2563eb;
+  /* Azul primario */
+  border-color: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
 }
 
+/* Leyenda */
 .calendar-legend {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 16px;
   margin-top: 24px;
   padding-top: 16px;
-  border-top: 1px solid var(--border-color);
-  font-size: 0.8rem;
-  color: var(--text-muted);
+  border-top: 1px solid #e2e8f0;
+  font-size: 0.85rem;
+  color: #64748b;
 }
 
 .legend-item {
@@ -392,22 +401,23 @@ body {
 }
 
 .legend-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: var(--radius-full);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
 }
 
 .legend-dot.available {
-  background-color: var(--white);
-  border: 1px solid var(--border-color);
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
 }
 
 .legend-dot.selected {
-  background-color: var(--primary-dark);
+  background-color: #2563eb;
 }
 
 .legend-dot.unavailable {
-  background-color: #fffdfdb9;
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
 }
 
 /* --- PASO 3: SLOTS HORARIOS --- */
