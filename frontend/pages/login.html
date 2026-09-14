@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesión | Marian Estilista</title>
+  <meta name="description" content="Inicia sesión en Marian Estilista para gestionar tus turnos y reservas online.">
+
+  <!-- Favicon -->
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C5A880'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z'/></svg>">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/auth.css">
+</head>
+
+<body class="auth-page-body">
+
+  <!-- Header mínimo -->
+  <header class="site-header scrolled">
+    <div class="container header-container">
+      <a href="../index.html" class="brand-logo">
+        <div class="brand-symbol">M</div>
+        <div class="brand-text">
+          <span class="brand-name">MARIAN ESTILISTA</span>
+          <span class="brand-tag">Peluquería & Colorimetría</span>
+        </div>
+      </a>
+
+      <div class="header-actions">
+        <a href="../index.html" class="btn btn-secondary btn-sm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>Volver al Inicio</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenido de Autenticación -->
+  <main class="auth-main-content">
+    <div class="auth-card">
+      <div class="auth-card-header">
+        <div class="auth-brand-symbol">M</div>
+        <h1 class="auth-title">Bienvenida</h1>
+        <p class="auth-subtitle">Ingresa a tu cuenta para gestionar tus reservas y citas exclusivas en Bariloche.</p>
+      </div>
+
+      <form id="form-login" class="auth-form" novalidate>
+        <div class="form-group-custom">
+          <label for="login-email">Correo Electrónico</label>
+          <div class="form-input-wrapper">
+            <input type="email" id="login-email" class="form-input-custom" placeholder="ejemplo@correo.com" required autocomplete="email" autofocus>
+          </div>
+        </div>
+
+        <div class="form-group-custom">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label for="login-password">Contraseña</label>
+          </div>
+          <div class="form-input-wrapper">
+            <input type="password" id="login-password" class="form-input-custom" placeholder="••••••••" required autocomplete="current-password">
+          </div>
+        </div>
+
+        <button type="submit" id="btn-submit-login" class="btn btn-primary btn-md" style="width: 100%; margin-top: 10px;">
+          <span>Iniciar Sesión</span>
+        </button>
+      </form>
+
+      <!-- Credenciales de prueba didácticas -->
+      <div class="auth-demo-credentials">
+        <strong>🔑 Cuentas de Demostración:</strong>
+        <ul>
+          <li><strong>Administrador:</strong> <code>admin@marianestilista.com</code> / <code>Admin123!</code></li>
+          <li><strong>Cliente:</strong> <code>camila@gmail.com</code> / <code>Cliente123!</code></li>
+        </ul>
+      </div>
+
+      <div class="auth-card-footer">
+        ¿Aún no tienes una cuenta? <a href="registro.html">Crear Cuenta</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="../js/data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      initLoginPage();
+    });
+  </script>
+</body>
+
+</html>

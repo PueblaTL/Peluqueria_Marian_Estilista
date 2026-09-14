@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Reservas | Marian Estilista</title>
+  <meta name="description" content="Consulta y gestiona tus reservas de peluquería en Marian Estilista.">
+
+  <!-- Favicon -->
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C5A880'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z'/></svg>">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/auth.css">
+</head>
+
+<body class="auth-page-body">
+
+  <!-- Header con acciones -->
+  <header class="site-header scrolled">
+    <div class="container header-container">
+      <a href="../index.html" class="brand-logo">
+        <div class="brand-symbol">M</div>
+        <div class="brand-text">
+          <span class="brand-name">MARIAN ESTILISTA</span>
+          <span class="brand-tag">Peluquería & Colorimetría</span>
+        </div>
+      </a>
+
+      <div class="header-actions" id="header-actions-container">
+        <a href="reservas.html" class="btn btn-primary btn-sm">
+          <span>+ Nuevo Turno</span>
+        </a>
+        <a href="../index.html" class="btn btn-secondary btn-sm">
+          <span>Volver al Inicio</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenido Principal -->
+  <main class="container" style="flex: 1; padding: 40px 20px;">
+    <div class="reservas-client-header">
+      <span class="tag-badge">Mi Cuenta</span>
+      <h1 class="section-title">Mis Citas & Reservas</h1>
+      <p class="section-subtitle" id="user-greeting">Consulta el historial y estado de tus turnos reservados en nuestro salón.</p>
+    </div>
+
+    <!-- Contenedor de listado -->
+    <div id="reservas-list-container" class="reservas-client-grid">
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #7a6e62;">
+        Cargando tus reservas...
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="../js/data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      await initMisReservasPage();
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrarse | Marian Estilista</title>
+  <meta name="description" content="Crea tu cuenta en Marian Estilista para reservar turnos exclusivos de peluquería en Bariloche.">
+
+  <!-- Favicon -->
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C5A880'><path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.4z'/></svg>">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/auth.css">
+</head>
+
+<body class="auth-page-body">
+
+  <!-- Header mínimo -->
+  <header class="site-header scrolled">
+    <div class="container header-container">
+      <a href="../index.html" class="brand-logo">
+        <div class="brand-symbol">M</div>
+        <div class="brand-text">
+          <span class="brand-name">MARIAN ESTILISTA</span>
+          <span class="brand-tag">Peluquería & Colorimetría</span>
+        </div>
+      </a>
+
+      <div class="header-actions">
+        <a href="../index.html" class="btn btn-secondary btn-sm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>Volver al Inicio</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenido de Registro -->
+  <main class="auth-main-content">
+    <div class="auth-card" style="max-width: 500px;">
+      <div class="auth-card-header">
+        <div class="auth-brand-symbol">M</div>
+        <h1 class="auth-title">Crear Cuenta</h1>
+        <p class="auth-subtitle">Regístrate para agendar tus citas y disfrutar de una atención personalizada.</p>
+      </div>
+
+      <form id="form-registro" class="auth-form" novalidate>
+        <div class="form-row-dual">
+          <div class="form-group-custom">
+            <label for="reg-nombre">Nombre *</label>
+            <input type="text" id="reg-nombre" class="form-input-custom" placeholder="Ej: Camila" required autocomplete="given-name">
+          </div>
+          <div class="form-group-custom">
+            <label for="reg-apellido">Apellido *</label>
+            <input type="text" id="reg-apellido" class="form-input-custom" placeholder="Ej: Fernández" required autocomplete="family-name">
+          </div>
+        </div>
+
+        <div class="form-group-custom">
+          <label for="reg-email">Correo Electrónico *</label>
+          <input type="email" id="reg-email" class="form-input-custom" placeholder="camila@ejemplo.com" required autocomplete="email">
+        </div>
+
+        <div class="form-group-custom">
+          <label for="reg-telefono">Teléfono / WhatsApp *</label>
+          <input type="tel" id="reg-telefono" class="form-input-custom" placeholder="+54 9 294 455-8899" required autocomplete="tel">
+        </div>
+
+        <div class="form-row-dual">
+          <div class="form-group-custom">
+            <label for="reg-password">Contraseña *</label>
+            <input type="password" id="reg-password" class="form-input-custom" placeholder="Mínimo 6 caracteres" minlength="6" required autocomplete="new-password">
+          </div>
+          <div class="form-group-custom">
+            <label for="reg-confirm-password">Confirmar *</label>
+            <input type="password" id="reg-confirm-password" class="form-input-custom" placeholder="Repite la contraseña" minlength="6" required autocomplete="new-password">
+          </div>
+        </div>
+
+        <button type="submit" id="btn-submit-registro" class="btn btn-primary btn-md" style="width: 100%; margin-top: 10px;">
+          <span>Registrarse e Iniciar Sesión</span>
+        </button>
+      </form>
+
+      <div class="auth-card-footer">
+        ¿Ya tienes una cuenta registrada? <a href="login.html">Iniciar Sesión</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="../js/data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      initRegisterPage();
+    });
+  </script>
+</body>
+
+</html>
