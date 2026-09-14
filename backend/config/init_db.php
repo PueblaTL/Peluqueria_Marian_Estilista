@@ -10,21 +10,27 @@ require_once __DIR__ . '/config.php';
 header('Content-Type: text/html; charset=utf-8');
 
 try {
-    // 1. Conexión inicial al servidor MySQL sin especificar base de datos
-    $dsnNoDb = sprintf('mysql:host=%s;port=%s;charset=%s', DB_HOST, DB_PORT, DB_CHARSET);
-    $pdoRoot = new PDO($dsnNoDb, DB_USER, DB_PASS, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-    ]);
-
-    // 2. Crear base de datos si no existe
     $dbName = DB_NAME;
-    $pdoRoot->exec("CREATE DATABASE IF NOT EXISTS `$dbName` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;");
+    $pdo = null;
 
-    // 3. Conectar a la base de datos recién asegurada
-    $dsnWithDb = sprintf('mysql:host=%s;port=%s;dbname=%s;charset=%s', DB_HOST, DB_PORT, $dbName, DB_CHARSET);
-    $pdo = new PDO($dsnWithDb, DB_USER, DB_PASS, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-    ]);
+    // 1. Intentar conectar directamente a la base de datos (ideal para hosting donde la base de datos ya fue creada en el panel)
+    try {
+        $dsnWithDb = sprintf('mysql:host=%s;port=%s;dbname=%s;charset=%s', DB_HOST, DB_PORT, $dbName, DB_CHARSET);
+        $pdo = new PDO($dsnWithDb, DB_USER, DB_PASS, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        ]);
+    } catch (PDOException $eDirect) {
+        // 2. Si falló la conexión directa, intentar crear la base de datos (entornos locales como XAMPP/Laragon)
+        $dsnNoDb = sprintf('mysql:host=%s;port=%s;charset=%s', DB_HOST, DB_PORT, DB_CHARSET);
+        $pdoRoot = new PDO($dsnNoDb, DB_USER, DB_PASS, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        ]);
+        $pdoRoot->exec("CREATE DATABASE IF NOT EXISTS `$dbName` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;");
+
+        $pdo = new PDO($dsnWithDb, DB_USER, DB_PASS, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+        ]);
+    }
 
     // 4. Cargar y ejecutar schema.sql
     $schemaPath = __DIR__ . '/../sql/schema.sql';
