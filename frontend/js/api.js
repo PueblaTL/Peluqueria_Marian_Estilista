@@ -52,7 +52,8 @@ async function requestApi(endpoint, options = {}) {
     const data = await res.json().catch(() => null);
 
     if (!res.ok) {
-      const errorMsg = data?.message || `Error HTTP ${res.status}: ${res.statusText}`;
+      const statusDetail = res.statusText ? `: ${res.statusText}` : '';
+      const errorMsg = data?.message || `Error HTTP ${res.status}${statusDetail}`;
       const err = new Error(errorMsg);
       err.status = res.status;
       err.data = data;

@@ -9,9 +9,23 @@ ini_set('display_errors', '0');
 ini_set('display_startup_errors', '0');
 error_reporting(E_ALL);
 
+// Manejador global de excepciones para responder siempre en JSON válido ante cualquier fallo
+set_exception_handler(function (Throwable $e) {
+    if (!headers_sent()) {
+        header('Content-Type: application/json; charset=utf-8');
+        http_response_code(500);
+    }
+    echo json_encode([
+        'success' => false,
+        'message' => $e->getMessage(),
+        'error'   => 'SERVER_ERROR'
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit();
+});
+
 // Parámetros de Conexión a Base de Datos (Personalizables por entorno)
 define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
-define('DB_NAME', getenv('DB_NAME') ?: 'marian_estilista');
+define('DB_NAME', getenv('DB_NAME') ?: 'a0190776_marian');
 define('DB_USER', getenv('DB_USER') ?: 'a0190776_marian');
 define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : 'CasaMoneda5050@');
 define('DB_PORT', getenv('DB_PORT') ?: '3306');
