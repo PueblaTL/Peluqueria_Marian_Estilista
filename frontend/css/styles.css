@@ -2716,6 +2716,10 @@ textarea.form-control {
 
 
 /* --- 13. FOOTER --- */
+.footer-text-highlight {
+  color: var(--color-red);
+}
+
 .site-footer {
   background: linear-gradient(to top, rgb(31, 30, 30) 0%, #4e4e4e 100%);
   color: var(--white);
@@ -3886,6 +3890,7 @@ textarea.form-control {
     transform: scale(0.8);
     opacity: 0.9;
   }
+
   100% {
     transform: scale(1.7);
     opacity: 0;
@@ -4031,6 +4036,7 @@ textarea.form-control {
     transform: scale(0.95);
     opacity: 0.8;
   }
+
   100% {
     transform: scale(1.35);
     opacity: 0;
@@ -4057,7 +4063,8 @@ textarea.form-control {
   }
 
   .whatsapp-float-tooltip {
-    display: none; /* En móvil no mostrar tooltip para no bloquear vista */
+    display: none;
+    /* En móvil no mostrar tooltip para no bloquear vista */
   }
 
   .carousel-arrow {
