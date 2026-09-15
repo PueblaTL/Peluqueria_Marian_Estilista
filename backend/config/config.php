@@ -23,13 +23,34 @@ set_exception_handler(function (Throwable $e) {
     exit();
 });
 
-// Parámetros de Conexión a Base de Datos (Personalizables por entorno)
-define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
-define('DB_NAME', getenv('DB_NAME') ?: 'a0190776_marian');
-define('DB_USER', getenv('DB_USER') ?: 'a0190776_marian');
-define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : 'CasaMoneda5050@');
-define('DB_PORT', getenv('DB_PORT') ?: '3306');
+// Detección de entorno: Local (XAMPP / Laragon / CLI) vs Producción (Hosting)
+$httpHost = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? '';
+$isLocalHost = (bool) preg_match('#^(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$#i', $httpHost);
+$isLocalPath = (
+    stripos(__DIR__, 'xampp') !== false || 
+    stripos(__DIR__, 'laragon') !== false || 
+    stripos(__DIR__, 'antigravity') !== false ||
+    stripos(__DIR__, 'scratch') !== false
+);
+$isLocalEnvironment = $isLocalHost || (php_sapi_name() === 'cli' && $isLocalPath) || (empty($httpHost) && $isLocalPath);
+
+if ($isLocalEnvironment) {
+    // === ENTORNO LOCAL (XAMPP / Laragon) ===
+    define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+    define('DB_NAME', getenv('DB_NAME') ?: 'marian_estilista');
+    define('DB_USER', getenv('DB_USER') ?: 'root');
+    define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : '');
+    define('DB_PORT', getenv('DB_PORT') ?: '3306');
+} else {
+    // === ENTORNO PRODUCCIÓN / HOSTING ===
+    define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+    define('DB_NAME', getenv('DB_NAME') ?: 'a0190776_marian');
+    define('DB_USER', getenv('DB_USER') ?: 'a0190776_marian');
+    define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : 'CasaMoneda5050@');
+    define('DB_PORT', getenv('DB_PORT') ?: '3306');
+}
 define('DB_CHARSET', 'utf8mb4');
+
 
 // Configuración de Sesión Segura en PHP
 if (session_status() === PHP_SESSION_NONE) {
@@ -78,7 +99,7 @@ function setupCors() {
     header('Content-Type: application/json; charset=utf-8');
 
     // Responder a las peticiones preflight OPTIONS del navegador
-    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    if (($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS') {
         http_response_code(200);
         exit();
     }
