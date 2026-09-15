@@ -115,11 +115,23 @@ async function apiGetServicios(soloActivos = true) {
   try {
     const endpoint = soloActivos ? "/servicios/list.php" : "/servicios/list.php?todos=1";
     const res = await requestApi(endpoint, { method: "GET" });
-    return res.data || [];
+    const items = res.data || [];
+    return items.map(s => {
+      const dur = s.duracion_minutos !== undefined ? Number(s.duracion_minutos) : Number(s.duracionMinutos || 60);
+      return {
+        ...s,
+        duracion_minutos: dur,
+        duracionMinutos: dur
+      };
+    });
   } catch (err) {
     console.warn("[API] Fallback a datos locales de servicios:", err.message);
     if (window.StorageService) {
-      return window.StorageService.getServicios(soloActivos);
+      const locales = await window.StorageService.getServicios(soloActivos);
+      return locales.map(s => {
+        const dur = s.duracionMinutos !== undefined ? Number(s.duracionMinutos) : Number(s.duracion_minutos || 60);
+        return { ...s, duracionMinutos: dur, duracion_minutos: dur };
+      });
     }
     return window.SEED_DATA?.servicios || [];
   }
@@ -127,6 +139,49 @@ async function apiGetServicios(soloActivos = true) {
 
 async function apiGetServicioById(id) {
   const res = await requestApi(`/servicios/get.php?id=${id}`, { method: "GET" });
+  if (res.data) {
+    const dur = res.data.duracion_minutos !== undefined ? Number(res.data.duracion_minutos) : Number(res.data.duracionMinutos || 60);
+    res.data.duracion_minutos = dur;
+    res.data.duracionMinutos = dur;
+  }
+  return res.data;
+}
+
+async function apiCreateServicio(datosServicio) {
+  const payload = {
+    ...datosServicio,
+    duracion_minutos: datosServicio.duracion_minutos || datosServicio.duracionMinutos || 60,
+    duracionMinutos: datosServicio.duracionMinutos || datosServicio.duracion_minutos || 60
+  };
+  const res = await requestApi("/servicios/create.php", {
+    method: "POST",
+    body: payload
+  });
+  return res.data;
+}
+
+async function apiUpdateServicio(id, datosServicio) {
+  const payload = {
+    id: Number(id),
+    ...datosServicio
+  };
+  if (datosServicio.duracionMinutos !== undefined || datosServicio.duracion_minutos !== undefined) {
+    const dur = datosServicio.duracion_minutos !== undefined ? datosServicio.duracion_minutos : datosServicio.duracionMinutos;
+    payload.duracion_minutos = Number(dur);
+    payload.duracionMinutos = Number(dur);
+  }
+  const res = await requestApi("/servicios/update.php", {
+    method: "POST",
+    body: payload
+  });
+  return res.data;
+}
+
+async function apiDeleteServicio(id) {
+  const res = await requestApi("/servicios/delete.php", {
+    method: "POST",
+    body: { id: Number(id) }
+  });
   return res.data;
 }
 
@@ -187,13 +242,31 @@ async function apiObtenerReservas(filtros = {}) {
   let query = "";
   const params = new URLSearchParams();
   if (filtros.fecha) params.append("fecha", filtros.fecha);
-  if (filtros.estado) params.append("estado", filtros.estado);
+  if (filtros.estado && filtros.estado !== "todos") params.append("estado", filtros.estado);
   if (filtros.search) params.append("search", filtros.search);
   const qStr = params.toString();
   if (qStr) query = `?${qStr}`;
 
-  const res = await requestApi(`/reservas/list.php${query}`, { method: "GET" });
-  return res.data || [];
+  try {
+    const res = await requestApi(`/reservas/list.php${query}`, { method: "GET" });
+    const items = res.data || [];
+    return items.map(t => {
+      const dur = t.duracion_minutos !== undefined ? Number(t.duracion_minutos) : Number(t.duracionMinutos || 60);
+      return {
+        ...t,
+        duracion_minutos: dur,
+        duracionMinutos: dur,
+        servicioNombre: t.servicio_nombre || t.servicioNombre || "Servicio",
+        profesionalNombre: t.profesional_nombre || t.profesionalNombre || "Marian"
+      };
+    });
+  } catch (err) {
+    console.warn("[API] Fallback a datos locales de reservas:", err.message);
+    if (window.StorageService) {
+      return window.StorageService.getTurnos(filtros);
+    }
+    return [];
+  }
 }
 
 async function apiCancelarReserva(id) {
@@ -205,11 +278,41 @@ async function apiCancelarReserva(id) {
 }
 
 async function apiActualizarEstadoReserva(id, estado) {
+  // Normalizar el estado antes de enviarlo para que el mapa del backend funcione
+  const estadoNorm = String(estado).toUpperCase();
   const res = await requestApi("/reservas/update.php", {
     method: "POST",
-    body: { id, estado }
+    body: { id, estado: estadoNorm }
   });
   return res.data;
+}
+
+// ==============================================================================
+// 6. ESTADÍSTICAS DEL DASHBOARD (ADMIN)
+// ==============================================================================
+
+async function apiGetStats() {
+  try {
+    const res = await requestApi("/reservas/stats.php", { method: "GET" });
+    return res.data || {};
+  } catch (err) {
+    console.warn("[API] No se pudieron obtener las estadísticas desde el servidor:", err.message);
+    return null; // null indica al caller que use fallback local
+  }
+}
+
+// ==============================================================================
+// 7. CLIENTES (ADMIN)
+// ==============================================================================
+
+async function apiGetClientes() {
+  try {
+    const res = await requestApi("/usuarios/list.php", { method: "GET" });
+    return res.data || [];
+  } catch (err) {
+    console.warn("[API] No se pudieron obtener los clientes desde el servidor:", err.message);
+    return null; // null indica al caller que use fallback local
+  }
 }
 
 // ==============================================================================
@@ -221,6 +324,15 @@ class ServicioService {
   }
   static async getById(id) {
     return apiGetServicioById(id);
+  }
+  static async create(payload) {
+    return apiCreateServicio(payload);
+  }
+  static async update(id, payload) {
+    return apiUpdateServicio(id, payload);
+  }
+  static async delete(id) {
+    return apiDeleteServicio(id);
   }
 }
 
@@ -252,6 +364,9 @@ if (typeof window !== "undefined") {
   window.apiGetCurrentUser = apiGetCurrentUser;
   window.apiGetServicios = apiGetServicios;
   window.apiGetServicioById = apiGetServicioById;
+  window.apiCreateServicio = apiCreateServicio;
+  window.apiUpdateServicio = apiUpdateServicio;
+  window.apiDeleteServicio = apiDeleteServicio;
   window.apiGetProfesionales = apiGetProfesionales;
   window.apiGetProfesionalDefault = apiGetProfesionalDefault;
   window.apiGetDisponibilidad = apiGetDisponibilidad;
@@ -259,8 +374,11 @@ if (typeof window !== "undefined") {
   window.apiObtenerReservas = apiObtenerReservas;
   window.apiCancelarReserva = apiCancelarReserva;
   window.apiActualizarEstadoReserva = apiActualizarEstadoReserva;
+  window.apiGetStats = apiGetStats;
+  window.apiGetClientes = apiGetClientes;
 
   // Clases adaptadoras
   window.ServicioService = ServicioService;
   window.TurnoService = TurnoService;
 }
+

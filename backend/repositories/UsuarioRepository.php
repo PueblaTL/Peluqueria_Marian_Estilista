@@ -86,6 +86,47 @@ class UsuarioRepository {
     }
 
     /**
+     * Obtiene clientes (rol=CLIENTE) enriquecidos con estadísticas de sus reservas.
+     * Retorna: id, nombre, apellido, email, telefono, cantidadTurnos, ultimoTurno, gastoTotal.
+     *
+     * @return array
+     */
+    public function listClientes(): array {
+        $sql = "SELECT 
+                    u.id,
+                    u.nombre,
+                    u.apellido,
+                    u.email,
+                    u.telefono,
+                    u.activo,
+                    u.created_at,
+                    COUNT(r.id)          AS cantidad_turnos,
+                    MAX(r.fecha)         AS ultimo_turno,
+                    COALESCE(SUM(r.precio), 0) AS gasto_total
+                FROM `usuarios` u
+                LEFT JOIN `reservas` r ON r.usuario_id = u.id AND r.estado != 'CANCELADA'
+                WHERE u.rol = 'CLIENTE' AND u.activo = 1
+                GROUP BY u.id, u.nombre, u.apellido, u.email, u.telefono, u.activo, u.created_at
+                ORDER BY cantidad_turnos DESC, u.created_at DESC";
+
+        $stmt = $this->db->query($sql);
+        $rows = $stmt->fetchAll();
+
+        return array_map(fn($row) => [
+            'id'             => (int)$row['id'],
+            'nombre'         => $row['nombre'],
+            'apellido'       => $row['apellido'],
+            'email'          => $row['email'],
+            'telefono'       => $row['telefono'] ?? '',
+            'activo'         => (bool)$row['activo'],
+            'cantidadTurnos' => (int)$row['cantidad_turnos'],
+            'ultimoTurno'    => $row['ultimo_turno'] ?? 'Sin turnos',
+            'gastoTotal'     => (float)$row['gasto_total'],
+            'createdAt'      => $row['created_at']
+        ], $rows);
+    }
+
+    /**
      * Cuenta la cantidad total de clientes registrados.
      *
      * @return int

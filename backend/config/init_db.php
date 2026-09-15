@@ -17,7 +17,8 @@ try {
     try {
         $dsnWithDb = sprintf('mysql:host=%s;port=%s;dbname=%s;charset=%s', DB_HOST, DB_PORT, $dbName, DB_CHARSET);
         $pdo = new PDO($dsnWithDb, DB_USER, DB_PASS, [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::MYSQL_ATTR_MULTI_STATEMENTS => true
         ]);
     } catch (PDOException $eDirect) {
         // 2. Si falló la conexión directa, intentar crear la base de datos (entornos locales como XAMPP/Laragon)
@@ -28,7 +29,8 @@ try {
         $pdoRoot->exec("CREATE DATABASE IF NOT EXISTS `$dbName` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;");
 
         $pdo = new PDO($dsnWithDb, DB_USER, DB_PASS, [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::MYSQL_ATTR_MULTI_STATEMENTS => true
         ]);
     }
 

@@ -250,48 +250,81 @@ class AdminDashboard {
   // 1. DASHBOARD & KPIS
   // ==========================================
   async loadDashboardStats() {
-    const stats = await window.StorageService.getDashboardStats();
+    let stats = null;
+    if (typeof window.apiGetStats === "function") {
+      try {
+        stats = await window.apiGetStats();
+      } catch (e) {
+        console.warn("[Admin] Fallback a StorageService para stats:", e);
+      }
+    }
+    if (!stats) {
+      stats = await window.StorageService.getDashboardStats();
+    }
 
-    if (this.kpiTurnosHoy) this.kpiTurnosHoy.textContent = stats.turnosHoy;
-    if (this.kpiTurnosPendientes) this.kpiTurnosPendientes.textContent = stats.turnosPendientes;
-    if (this.kpiTurnosCompletados) this.kpiTurnosCompletados.textContent = stats.turnosCompletados;
-    if (this.kpiTotalClientes) this.kpiTotalClientes.textContent = stats.totalClientes;
-    if (this.kpiIngresosEstimados) this.kpiIngresosEstimados.textContent = `$${stats.ingresosEstimados.toLocaleString("es-AR")}`;
-    if (this.kpiTotalInscripciones) this.kpiTotalInscripciones.textContent = stats.inscripcionesCurso;
+    if (this.kpiTurnosHoy) this.kpiTurnosHoy.textContent = stats.turnosHoy ?? 0;
+    if (this.kpiTurnosPendientes) this.kpiTurnosPendientes.textContent = stats.turnosPendientes ?? 0;
+    if (this.kpiTurnosCompletados) this.kpiTurnosCompletados.textContent = stats.turnosCompletados ?? 0;
+    if (this.kpiTotalClientes) this.kpiTotalClientes.textContent = stats.totalClientes ?? 0;
+    if (this.kpiIngresosEstimados) {
+      const ing = Number(stats.ingresosEstimados || 0);
+      this.kpiIngresosEstimados.textContent = `$${ing.toLocaleString("es-AR")}`;
+    }
+    if (this.kpiTotalInscripciones) this.kpiTotalInscripciones.textContent = stats.inscripcionesCurso ?? 0;
 
     // Tabla rápida de turnos recientes en Dashboard
     if (this.dashboardRecentTurnosTable) {
-      const turnos = await window.StorageService.getTurnos();
-      const recientes = turnos.slice(0, 5);
+      let turnos = [];
+      if (typeof window.apiObtenerReservas === "function") {
+        try {
+          turnos = await window.apiObtenerReservas();
+        } catch (e) {
+          turnos = await window.StorageService.getTurnos();
+        }
+      } else {
+        turnos = await window.StorageService.getTurnos();
+      }
+      const recientes = (turnos || []).slice(0, 5);
 
       if (recientes.length === 0) {
         this.dashboardRecentTurnosTable.innerHTML = `<tr><td colspan="7" class="text-center">No hay turnos registrados aún.</td></tr>`;
         return;
       }
 
-      this.dashboardRecentTurnosTable.innerHTML = recientes.map(t => `
+      this.dashboardRecentTurnosTable.innerHTML = recientes.map(t => {
+        const clienteNombre = t.cliente?.nombre ? `${t.cliente.nombre} ${t.cliente.apellido || ''}` : (t.cliente_nombre || 'Cliente');
+        const clienteTel = t.cliente?.telefono || t.cliente_telefono || '';
+        const servNombre = t.servicioNombre || t.servicio_nombre || 'Servicio';
+        const profNombre = t.profesionalNombre || t.profesional_nombre || 'Marian';
+        const precio = Number(t.precio || 0).toLocaleString("es-AR");
+        const stUpper = String(t.estado || 'PENDIENTE').toUpperCase();
+        const estadoLabel = stUpper === 'PENDIENTE' ? 'Pendiente' : (stUpper === 'CONFIRMADA' || stUpper === 'CONFIRMADO' ? 'Confirmada' : (stUpper === 'COMPLETADA' || stUpper === 'COMPLETADO' ? 'Completada' : 'Cancelada'));
+        const estadoClass = stUpper === 'PENDIENTE' ? 'pendiente' : (stUpper === 'CONFIRMADA' || stUpper === 'CONFIRMADO' ? 'confirmado' : (stUpper === 'COMPLETADA' || stUpper === 'COMPLETADO' ? 'completado' : 'cancelado'));
+
+        return `
         <tr>
           <td data-label="Fecha &amp; Hora">
             <strong>${t.fecha}</strong><br>
             <span class="text-muted">${t.hora} hs</span>
           </td>
           <td data-label="Clienta">
-            <strong>${t.cliente?.nombre || ''} ${t.cliente?.apellido || ''}</strong><br>
-            <span class="text-muted">${t.cliente?.telefono || ''}</span>
+            <strong>${clienteNombre}</strong><br>
+            <span class="text-muted">${clienteTel}</span>
           </td>
-          <td data-label="Servicio">${t.servicioNombre}</td>
-          <td data-label="Profesional"><strong>Marian</strong></td>
-          <td data-label="Precio"><strong>$${Number(t.precio).toLocaleString("es-AR")}</strong></td>
-          <td data-label="Estado"><span class="status-badge status-${t.estado.toLowerCase()}">${t.estado}</span></td>
+          <td data-label="Servicio">${servNombre}</td>
+          <td data-label="Profesional"><strong>${profNombre}</strong></td>
+          <td data-label="Precio"><strong>$${precio}</strong></td>
+          <td data-label="Estado"><span class="status-badge status-${estadoClass}">${estadoLabel}</span></td>
           <td data-label="Acciones">
             <div class="action-buttons-group">
-              ${t.estado === 'Pendiente' ? `<button class="btn-action btn-act-confirm" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Confirmado')" title="Confirmar" aria-label="Confirmar turno">✓</button>` : ''}
-              ${t.estado !== 'Completado' && t.estado !== 'Cancelado' ? `<button class="btn-action btn-act-complete" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Completado')" title="Completar" aria-label="Completar turno">★</button>` : ''}
-              ${t.estado !== 'Cancelado' ? `<button class="btn-action btn-act-cancel" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Cancelado')" title="Cancelar" aria-label="Cancelar turno">✕</button>` : ''}
+              ${stUpper === 'PENDIENTE' ? `<button class="btn-action btn-act-confirm" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Confirmada')" title="Confirmar" aria-label="Confirmar turno">✓</button>` : ''}
+              ${stUpper !== 'COMPLETADA' && stUpper !== 'COMPLETADO' && stUpper !== 'CANCELADA' && stUpper !== 'CANCELADO' ? `<button class="btn-action btn-act-complete" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Completada')" title="Completar" aria-label="Completar turno">★</button>` : ''}
+              ${stUpper !== 'CANCELADA' && stUpper !== 'CANCELADO' ? `<button class="btn-action btn-act-cancel" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Cancelada')" title="Cancelar" aria-label="Cancelar turno">✕</button>` : ''}
             </div>
           </td>
         </tr>
-      `).join("");
+      `;
+      }).join("");
     }
   }
 
@@ -307,46 +340,67 @@ class AdminDashboard {
       fecha: this.turnosDateFilter ? this.turnosDateFilter.value : ""
     };
 
-    const turnos = await window.StorageService.getTurnos(filtros);
+    let turnos = [];
+    if (typeof window.apiObtenerReservas === "function") {
+      try {
+        turnos = await window.apiObtenerReservas(filtros);
+      } catch (e) {
+        console.warn("[Admin] Fallback a StorageService para turnos:", e);
+        turnos = await window.StorageService.getTurnos(filtros);
+      }
+    } else {
+      turnos = await window.StorageService.getTurnos(filtros);
+    }
 
     if (turnos.length === 0) {
       this.turnosTableBody.innerHTML = `<tr><td colspan="9" class="text-center" style="padding: 30px;">No se encontraron turnos con los filtros seleccionados.</td></tr>`;
       return;
     }
 
-    this.turnosTableBody.innerHTML = turnos.map(t => `
+    this.turnosTableBody.innerHTML = turnos.map(t => {
+      const dur = t.duracionMinutos || t.duracion_minutos || 60;
+      const srvNombre = t.servicioNombre || t.servicio_nombre || "Servicio";
+      const clienteNombre = t.cliente?.nombre ? `${t.cliente.nombre} ${t.cliente.apellido || ''}` : (t.cliente_nombre || 'Cliente');
+      const clienteTel = t.cliente?.telefono || t.cliente_telefono || '';
+      const clienteEmail = t.cliente?.email || t.cliente_email || '';
+      const notas = t.cliente?.notas || t.observaciones || '';
+      const stUpper = String(t.estado || 'PENDIENTE').toUpperCase();
+      const estadoLabel = stUpper === 'PENDIENTE' ? 'Pendiente' : (stUpper === 'CONFIRMADA' || stUpper === 'CONFIRMADO' ? 'Confirmada' : (stUpper === 'COMPLETADA' || stUpper === 'COMPLETADO' ? 'Completada' : 'Cancelada'));
+      const estadoClass = stUpper === 'PENDIENTE' ? 'pendiente' : (stUpper === 'CONFIRMADA' || stUpper === 'CONFIRMADO' ? 'confirmado' : (stUpper === 'COMPLETADA' || stUpper === 'COMPLETADO' ? 'completado' : 'cancelado'));
+
+      return `
       <tr>
-        <td data-label="ID"><code>#${t.id.slice(-5)}</code></td>
+        <td data-label="ID"><code>#${String(t.id).slice(-5)}</code></td>
         <td data-label="Fecha &amp; Hora">
           <strong>${t.fecha}</strong><br>
-          <span class="text-muted">${t.hora} hs (${t.duracionMinutos} min)</span>
+          <span class="text-muted">${t.hora} hs (${dur} min)</span>
         </td>
         <td data-label="Clienta">
-          <strong>${t.cliente?.nombre || ''} ${t.cliente?.apellido || ''}</strong>
-          ${t.cliente?.notas ? `<br><small class="text-muted" title="${t.cliente.notas}">📝 ${t.cliente.notas.slice(0, 24)}...</small>` : ''}
+          <strong>${clienteNombre}</strong>
+          ${notas ? `<br><small class="text-muted" title="${notas}">📝 ${notas.slice(0, 24)}...</small>` : ''}
         </td>
         <td data-label="Contacto">
-          <a href="tel:${t.cliente?.telefono}" class="contact-link">📱 ${t.cliente?.telefono}</a><br>
-          <span class="text-muted">✉️ ${t.cliente?.email}</span>
+          <a href="tel:${clienteTel}" class="contact-link">📱 ${clienteTel || 'Sin teléfono'}</a><br>
+          <span class="text-muted">✉️ ${clienteEmail || 'Sin email'}</span>
         </td>
-        <td data-label="Servicio"><strong>${t.servicioNombre}</strong></td>
+        <td data-label="Servicio"><strong>${srvNombre}</strong></td>
         <td data-label="Profesional">Marian</td>
         <td data-label="Precio"><strong>$${Number(t.precio).toLocaleString("es-AR")}</strong></td>
-        <td data-label="Estado"><span class="status-badge status-${t.estado.toLowerCase()}">${t.estado}</span></td>
+        <td data-label="Estado"><span class="status-badge status-${estadoClass}">${estadoLabel}</span></td>
         <td data-label="Acciones">
           <div class="action-buttons-group">
-            ${t.estado === 'Pendiente' ? `
-              <button class="btn btn-sm btn-action-pill btn-pill-confirm" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Confirmado')" aria-label="Confirmar turno">
+            ${stUpper === 'PENDIENTE' ? `
+              <button class="btn btn-sm btn-action-pill btn-pill-confirm" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Confirmada')" aria-label="Confirmar turno">
                 Confirmar
               </button>
             ` : ''}
-            ${t.estado === 'Confirmado' ? `
-              <button class="btn btn-sm btn-action-pill btn-pill-complete" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Completado')" aria-label="Completar turno">
+            ${stUpper === 'CONFIRMADA' || stUpper === 'CONFIRMADO' ? `
+              <button class="btn btn-sm btn-action-pill btn-pill-complete" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Completada')" aria-label="Completar turno">
                 Completar
               </button>
             ` : ''}
-            ${t.estado !== 'Cancelado' ? `
-              <button class="btn btn-sm btn-action-pill btn-pill-cancel" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Cancelado')" aria-label="Cancelar turno">
+            ${stUpper !== 'CANCELADA' && stUpper !== 'CANCELADO' ? `
+              <button class="btn btn-sm btn-action-pill btn-pill-cancel" onclick="window.adminDashboard.cambiarEstadoTurno('${t.id}', 'Cancelada')" aria-label="Cancelar turno">
                 Cancelar
               </button>
             ` : `
@@ -357,7 +411,8 @@ class AdminDashboard {
           </div>
         </td>
       </tr>
-    `).join("");
+    `;
+    }).join("");
   }
 
   filterTurnosTable() {
@@ -366,7 +421,14 @@ class AdminDashboard {
 
   async cambiarEstadoTurno(id, nuevoEstado) {
     try {
-      await window.StorageService.updateTurnoEstado(id, nuevoEstado);
+      if (typeof window.apiActualizarEstadoReserva === "function") {
+        await window.apiActualizarEstadoReserva(id, nuevoEstado);
+      } else {
+        await window.StorageService.updateTurnoEstado(id, nuevoEstado);
+      }
+      try {
+        await window.StorageService.updateTurnoEstado(id, nuevoEstado);
+      } catch (e) {}
       this.showToast(`Turno actualizado a estado "${nuevoEstado}".`, "success");
       await this.loadAllData();
     } catch (err) {
@@ -378,7 +440,14 @@ class AdminDashboard {
   async eliminarTurno(id) {
     if (!confirm("¿Estás seguro de que deseas eliminar este turno definitivamente?")) return;
     try {
-      await window.StorageService.deleteTurno(id);
+      if (typeof window.apiCancelarReserva === "function") {
+        await window.apiCancelarReserva(id);
+      } else {
+        await window.StorageService.deleteTurno(id);
+      }
+      try {
+        await window.StorageService.deleteTurno(id);
+      } catch (e) {}
       this.showToast("Turno eliminado con éxito.", "success");
       await this.loadAllData();
     } catch (err) {
@@ -393,34 +462,54 @@ class AdminDashboard {
   async loadClientesTable() {
     if (!this.clientesTableBody) return;
 
-    const clientes = await window.StorageService.getClientes();
+    let clientes = null;
+    if (typeof window.apiGetClientes === "function") {
+      try {
+        clientes = await window.apiGetClientes();
+      } catch (e) {
+        console.warn("[Admin] Fallback a StorageService para clientes:", e);
+      }
+    }
+    if (!clientes) {
+      clientes = await window.StorageService.getClientes();
+    }
 
-    if (clientes.length === 0) {
+    if (!clientes || clientes.length === 0) {
       this.clientesTableBody.innerHTML = `<tr><td colspan="6" class="text-center" style="padding: 30px;">No hay clientas registradas aún.</td></tr>`;
       return;
     }
 
-    this.clientesTableBody.innerHTML = clientes.map(c => `
+    this.clientesTableBody.innerHTML = clientes.map(c => {
+      const nom = c.nombre || "Cliente";
+      const ape = c.apellido || "";
+      const tel = c.telefono || "Sin teléfono";
+      const email = c.email || "Sin email";
+      const cant = Number(c.cantidadTurnos || 0);
+      const ult = c.ultimoTurno || "Sin turnos";
+      const iniciales = `${nom.charAt(0)}${ape ? ape.charAt(0) : ''}`.toUpperCase();
+
+      return `
       <tr>
         <td>
           <div class="client-avatar-cell">
-            <div class="client-avatar-circle">${c.nombre.charAt(0)}${c.apellido.charAt(0)}</div>
+            <div class="client-avatar-circle">${iniciales}</div>
             <div>
-              <strong>${c.nombre} ${c.apellido}</strong>
+              <strong>${nom} ${ape}</strong>
             </div>
           </div>
         </td>
-        <td><a href="tel:${c.telefono}">📱 ${c.telefono}</a></td>
-        <td>✉️ ${c.email}</td>
-        <td><span class="count-badge">${c.cantidadTurnos} ${c.cantidadTurnos === 1 ? 'turno' : 'turnos'}</span></td>
-        <td>${c.ultimoTurno}</td>
+        <td><a href="tel:${tel}">📱 ${tel}</a></td>
+        <td>✉️ ${email}</td>
+        <td><span class="count-badge">${cant} ${cant === 1 ? 'turno' : 'turnos'}</span></td>
+        <td>${ult}</td>
         <td>
-          ${c.cantidadTurnos >= 3
+          ${cant >= 3
         ? `<span class="badge-gold">👑 Clienta Frecuente</span>`
         : `<span class="badge-regular">Cliente Estándar</span>`}
         </td>
       </tr>
-    `).join("");
+    `;
+    }).join("");
   }
 
   // ==========================================
@@ -429,9 +518,22 @@ class AdminDashboard {
   async loadServicesGrid() {
     if (!this.serviciosGrid) return;
 
-    const servicios = await window.StorageService.getServicios();
+    let servicios = [];
+    if (typeof window.apiGetServicios === "function") {
+      try {
+        servicios = await window.apiGetServicios(false);
+      } catch (e) {
+        console.warn("[Admin] Fallback a StorageService al cargar servicios:", e);
+        servicios = await window.StorageService.getServicios();
+      }
+    } else {
+      servicios = await window.StorageService.getServicios();
+    }
+
+    this.cachedServicios = servicios;
 
     this.serviciosGrid.innerHTML = servicios.map(s => {
+      const duracion = s.duracionMinutos || s.duracion_minutos || 60;
       const imgSrc = (s.imagen && !s.imagen.startsWith("http") && !s.imagen.startsWith("data:"))
         ? (s.imagen.startsWith("../") ? s.imagen : `../${s.imagen}`)
         : s.imagen;
@@ -450,7 +552,7 @@ class AdminDashboard {
           </div>
           <p class="admin-srv-desc">${s.descripcion}</p>
           <div class="admin-srv-meta">
-            <span>⏱ ${s.duracionMinutos} min</span>
+            <span>⏱ ${duracion} min</span>
             <div class="admin-srv-actions">
               <button class="btn btn-secondary btn-sm" onclick="window.adminDashboard.openEditServiceModal('${s.id}')">
                 Editar
@@ -479,7 +581,7 @@ class AdminDashboard {
       document.getElementById("crud-service-nombre").value = servicio.nombre;
       document.getElementById("crud-service-categoria").value = servicio.categoria || "Iluminación";
       document.getElementById("crud-service-precio").value = servicio.precio;
-      document.getElementById("crud-service-duracion").value = servicio.duracionMinutos;
+      document.getElementById("crud-service-duracion").value = servicio.duracionMinutos || servicio.duracion_minutos || 60;
       document.getElementById("crud-service-activo").value = servicio.activo ? "true" : "false";
       document.getElementById("crud-service-desc").value = servicio.descripcion;
       document.getElementById("crud-service-img").value = servicio.imagen;
@@ -493,7 +595,18 @@ class AdminDashboard {
   }
 
   async openEditServiceModal(id) {
-    const servicio = await window.StorageService.getServicioById(id);
+    let servicio = null;
+    if (this.cachedServicios) {
+      servicio = this.cachedServicios.find(s => String(s.id) === String(id));
+    }
+    if (!servicio && typeof window.apiGetServicioById === "function") {
+      try {
+        servicio = await window.apiGetServicioById(id);
+      } catch (e) {}
+    }
+    if (!servicio && window.StorageService) {
+      servicio = await window.StorageService.getServicioById(id);
+    }
     if (servicio) {
       this.openServiceModal(servicio);
     }
@@ -522,28 +635,62 @@ class AdminDashboard {
       imagen = "https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=800&q=80";
     }
 
-    const payload = { nombre, categoria, precio, duracionMinutos, activo, descripcion, imagen };
+    const payload = { 
+      nombre, 
+      categoria, 
+      precio, 
+      duracionMinutos, 
+      duracion_minutos: duracionMinutos, 
+      activo, 
+      descripcion, 
+      imagen 
+    };
 
     try {
       if (id) {
-        await window.StorageService.updateServicio(id, payload);
+        if (typeof window.apiUpdateServicio === "function") {
+          await window.apiUpdateServicio(id, payload);
+        } else {
+          await window.StorageService.updateServicio(id, payload);
+        }
         this.showToast("Servicio actualizado correctamente.", "success");
       } else {
-        await window.StorageService.saveServicio(payload);
+        if (typeof window.apiCreateServicio === "function") {
+          await window.apiCreateServicio(payload);
+        } else {
+          await window.StorageService.saveServicio(payload);
+        }
         this.showToast("Nuevo servicio agregado con éxito.", "success");
       }
+
+      // Sincronizar en StorageService local como fallback
+      try {
+        if (id) {
+          await window.StorageService.updateServicio(id, payload);
+        } else {
+          await window.StorageService.saveServicio(payload);
+        }
+      } catch (errLocal) {}
 
       this.closeServiceModal();
       await this.loadServicesGrid();
     } catch (err) {
       console.error(err);
-      this.showToast("Error al guardar servicio.", "danger");
+      this.showToast("Error al guardar servicio: " + (err.message || ""), "danger");
     }
   }
 
   async toggleServiceState(id, nuevoEstado) {
     try {
-      await window.StorageService.updateServicio(id, { activo: nuevoEstado });
+      if (typeof window.apiUpdateServicio === "function") {
+        await window.apiUpdateServicio(id, { activo: nuevoEstado });
+      } else {
+        await window.StorageService.updateServicio(id, { activo: nuevoEstado });
+      }
+      try {
+        await window.StorageService.updateServicio(id, { activo: nuevoEstado });
+      } catch (errLocal) {}
+
       this.showToast(`Servicio ${nuevoEstado ? 'activado' : 'desactivado'} con éxito.`, "info");
       await this.loadServicesGrid();
     } catch (err) {

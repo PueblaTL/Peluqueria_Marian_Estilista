@@ -161,7 +161,12 @@ class BookingWizard {
       const servicios = (typeof window.apiGetServicios === "function")
         ? await window.apiGetServicios(true)
         : await window.StorageService.getServicios(true);
-      const matched = servicios.find(s => String(s.id) === String(serviceParam));
+      const cleanParam = String(serviceParam).replace(/^srv-/, "");
+      const matched = servicios.find(s => 
+        String(s.id) === String(serviceParam) || 
+        String(s.id) === cleanParam ||
+        `srv-${s.id}` === String(serviceParam)
+      );
       if (matched) {
         this.selectService(matched);
       }
@@ -191,9 +196,19 @@ class BookingWizard {
       return;
     }
 
+    // Garantizar que todos los servicios tengan duracion_minutos y duracionMinutos normalizados
+    const serviciosNorm = servicios.map(s => {
+      const dur = Number(s.duracion_minutos || s.duracionMinutos || 60);
+      return {
+        ...s,
+        duracion_minutos: dur,
+        duracionMinutos: dur
+      };
+    });
+
     this.servicesContainer.innerHTML = "";
 
-    servicios.forEach(s => {
+    serviciosNorm.forEach(s => {
       const card = document.createElement("div");
 
       // ==========================================
@@ -249,7 +264,7 @@ class BookingWizard {
         <div class="book-srv-meta">
 
           <span class="book-srv-duration">
-            ⏱ ${s.duracionMinutos} min
+            ⏱ ${s.duracionMinutos || s.duracion_minutos || 60} min
           </span>
 
           <span class="book-srv-select-btn">
@@ -571,7 +586,7 @@ class BookingWizard {
         </div>
         <div class="ticket-meta-block">
           <span class="ticket-meta-label">⏰ Horario</span>
-          <span class="ticket-meta-val">${this.state.hora} hs (${this.state.servicio?.duracionMinutos} min)</span>
+          <span class="ticket-meta-val">${this.state.hora} hs (${this.state.servicio?.duracionMinutos || this.state.servicio?.duracion_minutos || 60} min)</span>
         </div>
         <div class="ticket-meta-block">
           <span class="ticket-meta-label">👤 Clienta</span>

@@ -91,7 +91,15 @@ class StorageService {
   // ==========================================
 
   static async getServicios(soloActivos = false) {
-    const servicios = this._getItem(STORAGE_KEYS.SERVICIOS, []);
+    const rawServicios = this._getItem(STORAGE_KEYS.SERVICIOS, []);
+    const servicios = rawServicios.map(s => {
+      const dur = Number(s.duracionMinutos || s.duracion_minutos || 60);
+      return {
+        ...s,
+        duracionMinutos: dur,
+        duracion_minutos: dur
+      };
+    });
     return soloActivos ? servicios.filter(s => s.activo) : servicios;
   }
 
@@ -102,13 +110,15 @@ class StorageService {
 
   static async saveServicio(servicioDto) {
     const servicios = await this.getServicios();
+    const dur = Number(servicioDto.duracionMinutos || servicioDto.duracion_minutos || 60);
     const nuevo = {
       id: `srv-${Date.now()}`,
       nombre: servicioDto.nombre,
       categoria: servicioDto.categoria || "General",
       descripcion: servicioDto.descripcion || "",
       precio: Number(servicioDto.precio) || 0,
-      duracionMinutos: Number(servicioDto.duracionMinutos) || 60,
+      duracionMinutos: dur,
+      duracion_minutos: dur,
       imagen: servicioDto.imagen || "assets/images/mechas_balayage.webp",
       destacado: !!servicioDto.destacado,
       activo: servicioDto.activo !== undefined ? servicioDto.activo : true
@@ -124,13 +134,18 @@ class StorageService {
     const index = servicios.findIndex(s => s.id === id);
     if (index === -1) throw new Error(`Servicio ${id} no encontrado`);
 
+    const dur = servicioDto.duracionMinutos !== undefined
+      ? Number(servicioDto.duracionMinutos)
+      : (servicioDto.duracion_minutos !== undefined ? Number(servicioDto.duracion_minutos) : servicios[index].duracionMinutos);
+
     servicios[index] = {
       ...servicios[index],
       nombre: servicioDto.nombre ?? servicios[index].nombre,
       categoria: servicioDto.categoria ?? servicios[index].categoria,
       descripcion: servicioDto.descripcion ?? servicios[index].descripcion,
       precio: servicioDto.precio !== undefined ? Number(servicioDto.precio) : servicios[index].precio,
-      duracionMinutos: servicioDto.duracionMinutos !== undefined ? Number(servicioDto.duracionMinutos) : servicios[index].duracionMinutos,
+      duracionMinutos: dur,
+      duracion_minutos: dur,
       imagen: servicioDto.imagen ?? servicios[index].imagen,
       destacado: servicioDto.destacado !== undefined ? !!servicioDto.destacado : servicios[index].destacado,
       activo: servicioDto.activo !== undefined ? !!servicioDto.activo : servicios[index].activo
@@ -181,11 +196,23 @@ class StorageService {
   static async getTurnos(filtros = {}) {
     let turnos = this._getItem(STORAGE_KEYS.TURNOS, []);
 
+    turnos = turnos.map(t => {
+      const dur = Number(t.duracionMinutos || t.duracion_minutos || 60);
+      const servNom = t.servicioNombre || t.servicio_nombre || "Servicio";
+      return {
+        ...t,
+        duracionMinutos: dur,
+        duracion_minutos: dur,
+        servicioNombre: servNom,
+        servicio_nombre: servNom
+      };
+    });
+
     if (filtros.fecha) {
       turnos = turnos.filter(t => t.fecha === filtros.fecha);
     }
     if (filtros.estado && filtros.estado !== "todos") {
-      turnos = turnos.filter(t => t.estado.toLowerCase() === filtros.estado.toLowerCase());
+      turnos = turnos.filter(t => String(t.estado).toLowerCase() === String(filtros.estado).toLowerCase());
     }
     if (filtros.search) {
       const q = filtros.search.toLowerCase();
@@ -213,24 +240,28 @@ class StorageService {
   static async saveTurno(reservaDto) {
     const turnos = this._getItem(STORAGE_KEYS.TURNOS, []);
     const profesional = await this.getProfesional();
+    const dur = Number(reservaDto.duracionMinutos || reservaDto.duracion_minutos || 60);
+    const servNom = reservaDto.servicioNombre || reservaDto.servicio_nombre || "Servicio";
 
     const nuevoTurno = {
       id: `trn-${Date.now().toString().slice(-6)}`,
-      servicioId: reservaDto.servicioId,
-      servicioNombre: reservaDto.servicioNombre,
+      servicioId: reservaDto.servicioId || reservaDto.servicio_id,
+      servicioNombre: servNom,
+      servicio_nombre: servNom,
       profesionalId: profesional.id,
       profesionalNombre: profesional.nombre,
       fecha: reservaDto.fecha,
       hora: reservaDto.hora,
-      duracionMinutos: Number(reservaDto.duracionMinutos) || 60,
+      duracionMinutos: dur,
+      duracion_minutos: dur,
       precio: Number(reservaDto.precio) || 0,
       estado: "Pendiente", // Por defecto al reservar online
       cliente: {
-        nombre: reservaDto.cliente.nombre,
-        apellido: reservaDto.cliente.apellido,
-        telefono: reservaDto.cliente.telefono,
-        email: reservaDto.cliente.email,
-        notas: reservaDto.cliente.notas || ""
+        nombre: reservaDto.cliente?.nombre || "",
+        apellido: reservaDto.cliente?.apellido || "",
+        telefono: reservaDto.cliente?.telefono || "",
+        email: reservaDto.cliente?.email || "",
+        notas: reservaDto.cliente?.notas || ""
       },
       creadoEn: new Date().toISOString()
     };

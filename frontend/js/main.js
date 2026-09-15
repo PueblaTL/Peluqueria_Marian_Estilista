@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   initNavbar();
   initHeroCarousel();
+  initServicesSection();
   initSalonMap();
   initGalleryFiltersAndLightbox();
   initCourseSection();
@@ -546,5 +547,57 @@ function showToast(message, type = "info") {
 // Exportar globalmente para otros scripts si es necesario
 if (typeof window !== "undefined") {
   window.showToast = showToast;
+}
+
+/* --- RENDERIZADO DINÁMICO DE SERVICIOS EN LANDING PAGE --- */
+async function initServicesSection() {
+  const servicesGrid = document.querySelector(".services-grid");
+  if (!servicesGrid) return;
+
+  try {
+    const servicios = (typeof window.apiGetServicios === "function")
+      ? await window.apiGetServicios(true)
+      : (window.StorageService ? await window.StorageService.getServicios(true) : []);
+
+    if (!servicios || servicios.length === 0) return;
+
+    servicesGrid.innerHTML = servicios.map(s => {
+      const dur = s.duracionMinutos || s.duracion_minutos || 60;
+      const precioFmt = Number(s.precio) > 0 
+        ? `$${Number(s.precio).toLocaleString("es-AR")}` 
+        : "A consultar";
+      const imgSrc = s.imagen || "assets/images/mechas_balayage.webp";
+
+      return `
+        <article class="service-card">
+          <div class="service-img-wrap">
+            <img src="${imgSrc}" alt="${s.nombre}" class="service-img" loading="lazy" />
+            <span class="service-category-badge">${s.categoria || "Servicio"}</span>
+          </div>
+          <div class="service-body">
+            <div class="service-meta-top">
+              <span class="service-price">${precioFmt}</span>
+              <span class="service-duration">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                ${dur} min
+              </span>
+            </div>
+            <h3 class="service-title">${s.nombre}</h3>
+            <p class="service-desc">${s.descripcion || ""}</p>
+            <div class="service-footer">
+              <a href="pages/reservas.html?servicio=${s.id}" class="btn btn-secondary" style="width: 100%;">
+                Reservar turno
+              </a>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join("");
+  } catch (err) {
+    console.warn("[Landing] No se pudieron cargar servicios dinámicos:", err);
+  }
 }
 

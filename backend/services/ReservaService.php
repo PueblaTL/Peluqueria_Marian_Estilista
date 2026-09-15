@@ -183,10 +183,32 @@ class ReservaService {
             throw new Exception("La reserva con ID $id no existe.", 404);
         }
 
+        // Normalizar estados: el frontend puede enviar variantes como "Confirmado", "Cancelado",
+        // "Completado", "Pendiente". Las mapeamos a los valores ENUM exactos de MySQL.
+        $mapaEstados = [
+            // Valores del ENUM (ya correctos)
+            'PENDIENTE'  => 'PENDIENTE',
+            'CONFIRMADA' => 'CONFIRMADA',
+            'CANCELADA'  => 'CANCELADA',
+            'COMPLETADA' => 'COMPLETADA',
+            // Variantes PascalCase del frontend
+            'PENDIENTE'   => 'PENDIENTE',
+            'CONFIRMADO'  => 'CONFIRMADA',  // "Confirmado" → strtoupper → "CONFIRMADO" → mapea a CONFIRMADA
+            'CANCELADO'   => 'CANCELADA',   // "Cancelado"  → strtoupper → "CANCELADO"  → mapea a CANCELADA
+            'COMPLETADO'  => 'COMPLETADA',  // "Completado" → strtoupper → "COMPLETADO" → mapea a COMPLETADA
+            // Inglés (por compatibilidad)
+            'CONFIRMED'   => 'CONFIRMADA',
+            'CANCELLED'   => 'CANCELADA',
+            'CANCELED'    => 'CANCELADA',
+            'COMPLETED'   => 'COMPLETADA',
+        ];
+
         $nuevoEstado = strtoupper(trim($nuevoEstado));
+        $nuevoEstado = $mapaEstados[$nuevoEstado] ?? $nuevoEstado;
+
         $estadosValidos = ['PENDIENTE', 'CONFIRMADA', 'CANCELADA', 'COMPLETADA'];
         if (!in_array($nuevoEstado, $estadosValidos, true)) {
-            throw new Exception("Estado inválido. Opciones: " . implode(', ', $estadosValidos), 400);
+            throw new Exception("Estado inválido '$nuevoEstado'. Opciones: " . implode(', ', $estadosValidos), 400);
         }
 
         // Regla de autorización:

@@ -328,7 +328,7 @@ async function initMisReservasPage() {
           </div>
           <div class="reserva-meta-item">
             <span>⏰</span>
-            <span>${reserva.hora} hs (${reserva.duracion_minutos} min)</span>
+            <span>${reserva.hora} hs (${reserva.duracion_minutos || reserva.duracionMinutos || 60} min)</span>
           </div>
           <div class="reserva-meta-item">
             <span>💇‍♂️</span>
