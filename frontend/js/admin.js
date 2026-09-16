@@ -296,7 +296,7 @@ class AdminDashboard {
         const clienteTel = t.cliente?.telefono || t.cliente_telefono || '';
         const servNombre = t.servicioNombre || t.servicio_nombre || 'Servicio';
         const profNombre = t.profesionalNombre || t.profesional_nombre || 'Marian';
-        const precio = Number(t.precio || 0).toLocaleString("es-AR");
+        const precio = t.precioTexto || ('$' + Number(t.precio || 0).toLocaleString("es-AR"));
         const stUpper = String(t.estado || 'PENDIENTE').toUpperCase();
         const estadoLabel = stUpper === 'PENDIENTE' ? 'Pendiente' : (stUpper === 'CONFIRMADA' || stUpper === 'CONFIRMADO' ? 'Confirmada' : (stUpper === 'COMPLETADA' || stUpper === 'COMPLETADO' ? 'Completada' : 'Cancelada'));
         const estadoClass = stUpper === 'PENDIENTE' ? 'pendiente' : (stUpper === 'CONFIRMADA' || stUpper === 'CONFIRMADO' ? 'confirmado' : (stUpper === 'COMPLETADA' || stUpper === 'COMPLETADO' ? 'completado' : 'cancelado'));
@@ -313,7 +313,7 @@ class AdminDashboard {
           </td>
           <td data-label="Servicio">${servNombre}</td>
           <td data-label="Profesional"><strong>${profNombre}</strong></td>
-          <td data-label="Precio"><strong>$${precio}</strong></td>
+          <td data-label="Precio"><strong>${precio}</strong></td>
           <td data-label="Estado"><span class="status-badge status-${estadoClass}">${estadoLabel}</span></td>
           <td data-label="Acciones">
             <div class="action-buttons-group">
@@ -385,7 +385,7 @@ class AdminDashboard {
         </td>
         <td data-label="Servicio"><strong>${srvNombre}</strong></td>
         <td data-label="Profesional">Marian</td>
-        <td data-label="Precio"><strong>$${Number(t.precio).toLocaleString("es-AR")}</strong></td>
+        <td data-label="Precio"><strong>${t.precioTexto || ('$' + Number(t.precio || 0).toLocaleString("es-AR"))}</strong></td>
         <td data-label="Estado"><span class="status-badge status-${estadoClass}">${estadoLabel}</span></td>
         <td data-label="Acciones">
           <div class="action-buttons-group">
@@ -548,7 +548,7 @@ class AdminDashboard {
         <div class="admin-srv-body">
           <div class="admin-srv-top">
             <h4>${s.nombre}</h4>
-            <span class="admin-srv-price">$${Number(s.precio).toLocaleString("es-AR")}</span>
+            <span class="admin-srv-price">${s.precioTexto || ('$' + Number(s.precio).toLocaleString("es-AR"))}</span>
           </div>
           <p class="admin-srv-desc">${s.descripcion}</p>
           <div class="admin-srv-meta">
@@ -581,6 +581,8 @@ class AdminDashboard {
       document.getElementById("crud-service-nombre").value = servicio.nombre;
       document.getElementById("crud-service-categoria").value = servicio.categoria || "Iluminación";
       document.getElementById("crud-service-precio").value = servicio.precio;
+      const ptInput = document.getElementById("crud-service-precio-texto");
+      if (ptInput) ptInput.value = servicio.precioTexto || "";
       document.getElementById("crud-service-duracion").value = servicio.duracionMinutos || servicio.duracion_minutos || 60;
       document.getElementById("crud-service-activo").value = servicio.activo ? "true" : "false";
       document.getElementById("crud-service-desc").value = servicio.descripcion;
@@ -588,6 +590,8 @@ class AdminDashboard {
     } else {
       titleElem.textContent = "Agregar Nuevo Servicio";
       idInput.value = "";
+      const ptInput = document.getElementById("crud-service-precio-texto");
+      if (ptInput) ptInput.value = "";
     }
 
     this.serviceModal.classList.add("active");
@@ -626,6 +630,8 @@ class AdminDashboard {
     const nombre = document.getElementById("crud-service-nombre").value.trim();
     const categoria = document.getElementById("crud-service-categoria").value;
     const precio = Number(document.getElementById("crud-service-precio").value);
+    const ptInput = document.getElementById("crud-service-precio-texto");
+    const precioTexto = ptInput && ptInput.value.trim() ? ptInput.value.trim() : undefined;
     const duracionMinutos = Number(document.getElementById("crud-service-duracion").value);
     const activo = document.getElementById("crud-service-activo").value === "true";
     const descripcion = document.getElementById("crud-service-desc").value.trim();
@@ -639,6 +645,8 @@ class AdminDashboard {
       nombre, 
       categoria, 
       precio, 
+      ...(precioTexto ? { precioTexto, precio_texto: precioTexto } : {}),
+      duracion: duracionMinutos,
       duracionMinutos, 
       duracion_minutos: duracionMinutos, 
       activo, 

@@ -51,21 +51,121 @@ class UsuarioRepository {
      * @return int ID generado
      */
     public function create(Usuario $usuario): int {
-        $sql = "INSERT INTO `usuarios` (`nombre`, `apellido`, `email`, `password`, `telefono`, `rol`, `activo`, `created_at`)
-                VALUES (:nombre, :apellido, :email, :password, :telefono, :rol, :activo, NOW())";
+        $sql = "INSERT INTO `usuarios` (`nombre`, `apellido`, `email`, `password`, `telefono`, `rol`, `email_verificado`, `token_verificacion`, `token_expiracion`, `ultimo_reenvio_correo`, `activo`, `created_at`)
+                VALUES (:nombre, :apellido, :email, :password, :telefono, :rol, :email_verificado, :token_verificacion, :token_expiracion, :ultimo_reenvio_correo, :activo, NOW())";
         
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            ':nombre'   => $usuario->nombre,
-            ':apellido' => $usuario->apellido,
-            ':email'    => $usuario->email,
-            ':password' => $usuario->password,
-            ':telefono' => $usuario->telefono,
-            ':rol'      => $usuario->rol,
-            ':activo'   => $usuario->activo ? 1 : 0
+            ':nombre'                => $usuario->nombre,
+            ':apellido'              => $usuario->apellido,
+            ':email'                 => $usuario->email,
+            ':password'              => $usuario->password,
+            ':telefono'              => $usuario->telefono,
+            ':rol'                   => $usuario->rol,
+            ':email_verificado'      => $usuario->emailVerificado ? 1 : 0,
+            ':token_verificacion'    => $usuario->tokenVerificacion,
+            ':token_expiracion'      => $usuario->tokenExpiracion,
+            ':ultimo_reenvio_correo' => $usuario->ultimoReenvioCorreo,
+            ':activo'                => $usuario->activo ? 1 : 0
         ]);
 
         return (int)$this->db->lastInsertId();
+    }
+
+    /**
+     * Busca un usuario mediante su token de verificación activo.
+     *
+     * @param string $token
+     * @return Usuario|null
+     */
+    public function findByToken(string $token): ?Usuario {
+        $sql = "SELECT * FROM `usuarios` WHERE `token_verificacion` = :token LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':token' => trim($token)]);
+        $row = $stmt->fetch();
+
+        return $row ? new Usuario($row) : null;
+    }
+
+    /**
+     * Marca el correo de un usuario como verificado y elimina el token de un solo uso.
+     *
+     * @param int $userId
+     * @return bool
+     */
+    public function marcarEmailVerificado(int $userId): bool {
+        $sql = "UPDATE `usuarios` 
+                SET `email_verificado` = 1,
+                    `token_verificacion` = NULL,
+                    `token_expiracion` = NULL,
+                    `updated_at` = NOW()
+                WHERE `id` = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([':id' => $userId]);
+    }
+
+    /**
+     * Actualiza el token de verificación y la fecha del último reenvío (con control anti-spam).
+     *
+     * @param int $userId
+     * @param string $token
+     * @param string $expiracion (formato YYYY-MM-DD HH:MM:SS)
+     * @return bool
+     */
+    public function actualizarTokenVerificacion(int $userId, string $token, string $expiracion): bool {
+        $sql = "UPDATE `usuarios` 
+                SET `token_verificacion` = :token,
+                    `token_expiracion` = :expiracion,
+                    `ultimo_reenvio_correo` = NOW(),
+                    `updated_at` = NOW()
+                WHERE `id` = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':id'         => $userId,
+            ':token'      => $token,
+            ':expiracion' => $expiracion
+        ]);
+    }
+
+    /**
+     * Actualiza el teléfono de un cliente si difiere o si estaba vacío.
+     *
+     * @param int $userId
+     * @param string $telefono
+     * @return bool
+     */
+    public function actualizarTelefono(int $userId, string $telefono): bool {
+        $sql = "UPDATE `usuarios` SET `telefono` = :telefono, `updated_at` = NOW() WHERE `id` = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':id'       => $userId,
+            ':telefono' => $telefono
+        ]);
+    }
+
+    /**
+     * Actualiza datos básicos de contacto del cliente (nombre, apellido, teléfono).
+     *
+     * @param int $userId
+     * @param string $nombre
+     * @param string $apellido
+     * @param string $telefono
+     * @return bool
+     */
+    public function actualizarDatosCliente(int $userId, string $nombre, string $apellido, string $telefono): bool {
+        $sql = "UPDATE `usuarios` 
+                SET `nombre` = :nombre,
+                    `apellido` = :apellido,
+                    `telefono` = :telefono,
+                    `updated_at` = NOW()
+                WHERE `id` = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':id'       => $userId,
+            ':nombre'   => $nombre,
+            ':apellido' => $apellido,
+            ':telefono' => $telefono
+        ]);
     }
 
     /**

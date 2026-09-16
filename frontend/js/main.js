@@ -48,17 +48,27 @@ function initHeroCarousel() {
   const AUTOPLAY_INTERVAL = 5000;
 
   const goToSlide = (targetIndex) => {
-    // Normalizar índice circular
-    const newIndex = (targetIndex + totalSlides) % totalSlides;
+    // Normalizar índice circular garantizando loop infinito continuo
+    const newIndex = ((targetIndex % totalSlides) + totalSlides) % totalSlides;
 
-    slides[currentIndex].classList.remove("active");
-    slides[newIndex].classList.add("active");
+    slides.forEach((slide, idx) => {
+      if (idx === newIndex) {
+        slide.classList.add("active");
+      } else {
+        slide.classList.remove("active");
+      }
+    });
 
     if (dots.length) {
-      dots[currentIndex].classList.remove("active");
-      dots[currentIndex].setAttribute("aria-selected", "false");
-      dots[newIndex].classList.add("active");
-      dots[newIndex].setAttribute("aria-selected", "true");
+      dots.forEach((dot, idx) => {
+        if (idx === newIndex) {
+          dot.classList.add("active");
+          dot.setAttribute("aria-selected", "true");
+        } else {
+          dot.classList.remove("active");
+          dot.setAttribute("aria-selected", "false");
+        }
+      });
     }
 
     currentIndex = newIndex;

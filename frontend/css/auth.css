@@ -405,3 +405,61 @@
   background: #b33939;
   color: #ffffff;
 }
+
+/* ==========================================================================
+   MOSTRAR / OCULTAR CONTRASEÑA (LOGIN & REGISTRO)
+   ========================================================================== */
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.password-input-wrapper .form-input-custom {
+  padding-right: 48px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.btn-toggle-password {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #7a6e62;
+  font-size: 1.15rem;
+  transition: all 0.2s ease;
+  padding: 0;
+  user-select: none;
+  outline: none;
+  z-index: 2;
+}
+
+.btn-toggle-password:hover {
+  color: #2b2219;
+  background-color: rgba(197, 168, 128, 0.22);
+}
+
+.btn-toggle-password:focus-visible {
+  outline: 2px solid #a17522;
+  outline-offset: 1px;
+}
+
+.btn-toggle-password .toggle-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}

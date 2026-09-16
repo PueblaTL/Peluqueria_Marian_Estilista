@@ -7,7 +7,7 @@
  */
 
 const STORAGE_KEYS = {
-  SERVICIOS: "marian_servicios_v2",
+  SERVICIOS: "marian_servicios_v3",
   PROFESIONAL: "marian_profesional_v1",
   TURNOS: "marian_turnos_v2",
   CURSO: "marian_curso_v1",
@@ -17,7 +17,7 @@ const STORAGE_KEYS = {
 
 class StorageService {
   /**
-   * Inicializa localStorage con datos semilla si es la primera vez
+   * Inicializa localStorage con datos semilla si es la primera vez o si hay datos obsoletos
    */
   static init() {
     if (!window.SEED_DATA) {
@@ -25,9 +25,48 @@ class StorageService {
       return;
     }
 
-    if (!localStorage.getItem(STORAGE_KEYS.SERVICIOS)) {
+    // Limpiar claves viejas de versiones anteriores
+    try {
+      localStorage.removeItem("marian_servicios_v1");
+      localStorage.removeItem("marian_servicios_v2");
+    } catch (e) {}
+
+    // Validar si los servicios guardados corresponden exactamente al catálogo definitivo
+    const rawStored = localStorage.getItem(STORAGE_KEYS.SERVICIOS);
+    let necesitaRefresco = false;
+    const nombresDefinitivos = [
+      "Alisado Láser 6D",
+      "Mechas Balayage",
+      "Mechas Localizadas",
+      "Mechas Babylight",
+      "Peinados para Eventos"
+    ];
+
+    if (!rawStored) {
+      necesitaRefresco = true;
+    } else {
+      try {
+        const parsed = JSON.parse(rawStored);
+        if (!Array.isArray(parsed) || parsed.length !== 5) {
+          necesitaRefresco = true;
+        } else {
+          // Verificar que todos sean los definitivos y que tengan precioTexto
+          const nombresEnStorage = parsed.map(s => s.nombre);
+          const faltante = nombresDefinitivos.some(nd => !nombresEnStorage.includes(nd));
+          const sinPrecioTexto = parsed.some(s => !s.precioTexto);
+          if (faltante || sinPrecioTexto) {
+            necesitaRefresco = true;
+          }
+        }
+      } catch (err) {
+        necesitaRefresco = true;
+      }
+    }
+
+    if (necesitaRefresco) {
       localStorage.setItem(STORAGE_KEYS.SERVICIOS, JSON.stringify(window.SEED_DATA.servicios));
     }
+
     if (!localStorage.getItem(STORAGE_KEYS.PROFESIONAL)) {
       localStorage.setItem(STORAGE_KEYS.PROFESIONAL, JSON.stringify(window.SEED_DATA.profesional));
     }
@@ -94,8 +133,11 @@ class StorageService {
     const rawServicios = this._getItem(STORAGE_KEYS.SERVICIOS, []);
     const servicios = rawServicios.map(s => {
       const dur = Number(s.duracionMinutos || s.duracion_minutos || 60);
+      const precioTxt = s.precioTexto || (s.nombre?.includes('Peinado') ? 'Desde $30.000' : (s.nombre?.includes('Alisado') || s.nombre?.includes('Mechas') ? '$150.000 a $180.000' : ('$' + Number(s.precio || 0).toLocaleString("es-AR"))));
       return {
         ...s,
+        precioTexto: precioTxt,
+        duracion: dur,
         duracionMinutos: dur,
         duracion_minutos: dur
       };
@@ -117,11 +159,14 @@ class StorageService {
       categoria: servicioDto.categoria || "General",
       descripcion: servicioDto.descripcion || "",
       precio: Number(servicioDto.precio) || 0,
+      precioTexto: servicioDto.precioTexto || ('$' + Number(servicioDto.precio || 0).toLocaleString("es-AR")),
+      duracion: dur,
       duracionMinutos: dur,
       duracion_minutos: dur,
       imagen: servicioDto.imagen || "assets/images/mechas_balayage.webp",
       destacado: !!servicioDto.destacado,
-      activo: servicioDto.activo !== undefined ? servicioDto.activo : true
+      activo: servicioDto.activo !== undefined ? servicioDto.activo : true,
+      detalles: servicioDto.detalles || null
     };
     servicios.push(nuevo);
     this._setItem(STORAGE_KEYS.SERVICIOS, servicios);
@@ -144,11 +189,14 @@ class StorageService {
       categoria: servicioDto.categoria ?? servicios[index].categoria,
       descripcion: servicioDto.descripcion ?? servicios[index].descripcion,
       precio: servicioDto.precio !== undefined ? Number(servicioDto.precio) : servicios[index].precio,
+      precioTexto: servicioDto.precioTexto ?? servicios[index].precioTexto,
+      duracion: dur,
       duracionMinutos: dur,
       duracion_minutos: dur,
       imagen: servicioDto.imagen ?? servicios[index].imagen,
       destacado: servicioDto.destacado !== undefined ? !!servicioDto.destacado : servicios[index].destacado,
-      activo: servicioDto.activo !== undefined ? !!servicioDto.activo : servicios[index].activo
+      activo: servicioDto.activo !== undefined ? !!servicioDto.activo : servicios[index].activo,
+      detalles: servicioDto.detalles ?? servicios[index].detalles
     };
     this._setItem(STORAGE_KEYS.SERVICIOS, servicios);
     return servicios[index];

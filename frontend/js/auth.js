@@ -149,6 +149,9 @@ async function initLoginPage() {
 
   if (!form) return;
 
+  // Inicializar toggle de mostrar/ocultar contraseña
+  setupPasswordToggle("login-password", "btn-toggle-password");
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -156,7 +159,16 @@ async function initLoginPage() {
     const password = passwordInput.value;
 
     if (!email || !password) {
-      window.showToast?.("Por favor completa tu email y contraseña.", "warning");
+      if (typeof window.showAlertModal === "function") {
+        window.showAlertModal({
+          title: "⚠ Datos incompletos",
+          message: "Ingresá tu correo electrónico y contraseña para continuar.",
+          type: "warning",
+          buttonText: "Entendido"
+        });
+      } else {
+        window.showToast?.("Ingresá tu correo electrónico y contraseña para continuar.", "warning");
+      }
       return;
     }
 
@@ -165,7 +177,7 @@ async function initLoginPage() {
 
     try {
       const usuario = await window.apiLogin(email, password);
-      window.showToast?.(`¡Bienvenida ${usuario.nombre}!`, "success");
+      window.showToast?.(`✓ Inicio de sesión exitoso`, "success");
 
       // Redirigir según rol o parámetro de retorno
       setTimeout(() => {
@@ -178,15 +190,144 @@ async function initLoginPage() {
         } else {
           window.location.href = "reservas.html";
         }
-      }, 700);
+      }, 600);
     } catch (err) {
       console.error("Error en login:", err);
-      const msg = err.data?.message || err.message || "Credenciales incorrectas.";
-      window.showToast?.(msg, "danger");
       submitBtn.disabled = false;
       submitBtn.textContent = "Iniciar Sesión";
+
+      const errType = err.type || err.data?.type || "";
+      const status = err.status || 0;
+      const email_login = emailInput.value.trim();
+
+      if (typeof window.showAlertModal === "function") {
+        if (errType === "user_not_found") {
+          window.showAlertModal({
+            title: "⚠ Cuenta no encontrada",
+            message: "No existe una cuenta registrada con ese correo electrónico.",
+            type: "warning",
+            buttonText: "Entendido"
+          });
+        } else if (errType === "invalid_password") {
+          window.showAlertModal({
+            title: "⚠ Contraseña incorrecta",
+            message: "La contraseña ingresada no es correcta.",
+            type: "warning",
+            buttonText: "Entendido"
+          });
+        } else if (errType === "email_not_verified" || status === 403) {
+          window.showAlertModal({
+            title: "⚠ Correo no verificado",
+            message: "Debés verificar tu correo electrónico antes de iniciar sesión.",
+            type: "unverified_email",
+            buttonText: "Entendido",
+            actionLabel: "Reenviar correo",
+            onAction: () => _reenviarVerificacionDesdeLogin(email_login)
+          });
+        } else if (errType === "network_error" || status === 0) {
+          window.showAlertModal({
+            title: "⚠ Error de conexión",
+            message: "No pudimos comunicarnos con el servidor.\nVerificá tu conexión e intentá nuevamente.",
+            type: "danger",
+            buttonText: "Entendido"
+          });
+        } else if (errType === "server_error" || status >= 500) {
+          window.showAlertModal({
+            title: "⚠ Error del servidor",
+            message: "No pudimos iniciar sesión. Intentá nuevamente.",
+            type: "danger",
+            buttonText: "Entendido"
+          });
+        } else {
+          window.showAlertModal({
+            title: "⚠ Atención",
+            message: err.data?.message || err.message || "No pudimos iniciar sesión. Intentá nuevamente.",
+            type: "warning",
+            buttonText: "Entendido"
+          });
+        }
+      } else {
+        window.showToast?.(err.data?.message || err.message || "Error al iniciar sesión.", "danger");
+      }
     }
   });
+}
+
+/**
+ * Configura la funcionalidad accesible de mostrar/ocultar contraseña en un input.
+ * @param {string} inputId
+ * @param {string} toggleBtnId
+ */
+function setupPasswordToggle(inputId, toggleBtnId) {
+  const input = document.getElementById(inputId);
+  const btn = document.getElementById(toggleBtnId);
+  if (!input || !btn) return;
+
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const isPassword = input.getAttribute("type") === "password";
+    if (isPassword) {
+      input.setAttribute("type", "text");
+      btn.setAttribute("aria-label", "Ocultar contraseña");
+      btn.setAttribute("title", "Ocultar contraseña");
+      const icon = btn.querySelector(".toggle-icon");
+      if (icon) icon.textContent = "🙈";
+    } else {
+      input.setAttribute("type", "password");
+      btn.setAttribute("aria-label", "Mostrar contraseña");
+      btn.setAttribute("title", "Mostrar contraseña");
+      const icon = btn.querySelector(".toggle-icon");
+      if (icon) icon.textContent = "👁";
+    }
+  });
+}
+
+/**
+ * Solicita el reenvío del correo de verificación desde la pantalla de login.
+ * @param {string} email
+ */
+async function _reenviarVerificacionDesdeLogin(email) {
+  if (!email) {
+    window.showAlertModal?.({
+      title: "⚠ Ingresá tu correo",
+      message: "Ingresá tu correo electrónico en el campo superior para que podamos reenviarte el enlace de activación.",
+      type: "warning",
+      buttonText: "Entendido"
+    });
+    return;
+  }
+  try {
+    const res = await fetch(`${window.API_BASE}/auth/resend-verification.php`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json().catch(() => null);
+    if (res.ok && data?.success) {
+      window.showAlertModal?.({
+        title: "✓ Correo enviado",
+        message: data.message || "Te enviamos un nuevo enlace de activación a tu correo electrónico.",
+        type: "success",
+        buttonText: "Entendido"
+      });
+    } else {
+      window.showAlertModal?.({
+        title: "⚠ No se pudo reenviar",
+        message: data?.message || "No se pudo reenviar el correo de verificación. Por favor esperá unos minutos e intentá nuevamente.",
+        type: "warning",
+        buttonText: "Entendido"
+      });
+    }
+  } catch (e) {
+    window.showAlertModal?.({
+      title: "⚠ Error de conexión",
+      message: "No pudimos comunicarnos con el servidor para reenviar el correo. Verificá tu conexión.",
+      type: "danger",
+      buttonText: "Entendido"
+    });
+  }
 }
 
 // ==============================================================================
@@ -199,6 +340,10 @@ async function initRegisterPage() {
     window.location.href = "reservas.html";
     return;
   }
+
+  // Inicializar toggles de contraseñas
+  setupPasswordToggle("reg-password", "btn-toggle-reg-password");
+  setupPasswordToggle("reg-confirm-password", "btn-toggle-reg-confirm-password");
 
   const form = document.getElementById("form-registro");
   const submitBtn = document.getElementById("btn-submit-registro");
@@ -215,18 +360,75 @@ async function initRegisterPage() {
     const password = document.getElementById("reg-password")?.value || "";
     const confirmPassword = document.getElementById("reg-confirm-password")?.value || "";
 
-    if (!nombre || !apellido || !email || !password) {
-      window.showToast?.("Por favor completa los campos requeridos.", "warning");
+    const showModal = typeof window.showAlertModal === "function" 
+      ? window.showAlertModal 
+      : (opts) => window.showToast?.(opts.message, "warning");
+
+    // 1. Validar nombre
+    const validarNombre = window.validarNombreCliente || ((str) => str && str.length >= 2);
+    if (!validarNombre(nombre)) {
+      showModal({
+        title: "⚠ Datos incorrectos",
+        message: "El nombre ingresado no es válido. Revisá que contenga únicamente letras válidas (entre 2 y 60 caracteres).",
+        type: "warning",
+        buttonText: "Entendido"
+      });
       return;
     }
 
+    // 2. Validar apellido
+    if (!validarNombre(apellido)) {
+      showModal({
+        title: "⚠ Datos incorrectos",
+        message: "El apellido ingresado no es válido. Revisá que contenga únicamente letras válidas (entre 2 y 60 caracteres).",
+        type: "warning",
+        buttonText: "Entendido"
+      });
+      return;
+    }
+
+    // 3. Validar email
+    const validarEmail = window.validarEmailCliente || ((str) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str));
+    if (!validarEmail(email)) {
+      showModal({
+        title: "⚠ Datos incorrectos",
+        message: "El correo electrónico ingresado no tiene un formato válido.",
+        type: "warning",
+        buttonText: "Entendido"
+      });
+      return;
+    }
+
+    // 4. Validar teléfono flexible
+    const validarTel = window.validarTelefonoCliente || ((str) => str && str.length >= 7);
+    if (!validarTel(telefono)) {
+      showModal({
+        title: "⚠ Datos incorrectos",
+        message: "El número de teléfono ingresado no es válido. Ingresá un número con código de área (por ejemplo: 2920382930 o +54 9 294 455-8899).",
+        type: "warning",
+        buttonText: "Entendido"
+      });
+      return;
+    }
+
+    // 5. Validar contraseña
     if (password.length < 6) {
-      window.showToast?.("La contraseña debe tener al menos 6 caracteres.", "warning");
+      showModal({
+        title: "⚠ Datos incorrectos",
+        message: "La contraseña debe tener al menos 6 caracteres.",
+        type: "warning",
+        buttonText: "Entendido"
+      });
       return;
     }
 
     if (password !== confirmPassword) {
-      window.showToast?.("Las contraseñas ingresadas no coinciden.", "danger");
+      showModal({
+        title: "⚠ Datos incorrectos",
+        message: "Las contraseñas ingresadas no coinciden.",
+        type: "warning",
+        buttonText: "Entendido"
+      });
       return;
     }
 
@@ -234,7 +436,7 @@ async function initRegisterPage() {
     submitBtn.textContent = "Creando cuenta...";
 
     try {
-      const nuevoUsuario = await window.apiRegister({
+      const resultado = await window.apiRegister({
         nombre,
         apellido,
         email,
@@ -243,17 +445,39 @@ async function initRegisterPage() {
         confirm_password: confirmPassword
       });
 
-      window.showToast?.(`✨ ¡Cuenta creada exitosamente! Bienvenida ${nuevoUsuario.nombre}.`, "success");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Crear Cuenta";
 
-      setTimeout(() => {
-        window.location.href = "reservas.html";
-      }, 800);
+      if (typeof window.showAlertModal === "function") {
+        window.showAlertModal({
+          title: "✓ Cuenta creada correctamente",
+          message: "Te enviamos un correo para verificar tu dirección.\n\nPor favor revisá tu bandeja de entrada o correo no deseado y hacé clic en el enlace para activar tu cuenta.",
+          type: "success",
+          buttonText: "Ir a Iniciar Sesión",
+          onConfirm: () => {
+            window.location.href = "login.html";
+          }
+        });
+      } else {
+        window.showToast?.("Cuenta creada correctamente. Te enviamos un correo para verificar tu dirección.", "success");
+        setTimeout(() => { window.location.href = "login.html"; }, 1500);
+      }
     } catch (err) {
       console.error("Error en registro:", err);
-      const msg = err.data?.message || err.message || "Error al registrar la cuenta.";
-      window.showToast?.(msg, "danger");
       submitBtn.disabled = false;
-      submitBtn.textContent = "Registrarse e Iniciar Sesión";
+      submitBtn.textContent = "Crear Cuenta";
+
+      const msg = err.data?.message || err.message || "No se pudo crear la cuenta. Intentá nuevamente.";
+      if (typeof window.showAlertModal === "function") {
+        window.showAlertModal({
+          title: "⚠ No pudimos registrar la cuenta",
+          message: msg,
+          type: "warning",
+          buttonText: "Entendido"
+        });
+      } else {
+        window.showToast?.(msg, "danger");
+      }
     }
   });
 }

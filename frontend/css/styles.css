@@ -1305,6 +1305,65 @@ h6 {
   line-height: 1.3;
 }
 
+/* --- Tarjetas de peinado con imagen (Peinados para Eventos) --- */
+
+.peinados-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.peinado-card {
+  background: var(--white);
+  border: 1px solid rgba(197, 168, 128, 0.3);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.peinado-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(197, 168, 128, 0.25);
+}
+
+.peinado-img-wrap {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.peinado-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.peinado-card:hover .peinado-img-wrap img {
+  transform: scale(1.05);
+}
+
+.peinado-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 8px;
+}
+
+.peinado-nombre {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.3;
+}
+
+.peinado-precio {
+  font-size: 0.71rem;
+  font-weight: 700;
+  color: var(--color-gold, #C5A880);
+}
+
 /* --- 8. GALERÍA SECTION --- */
 
 /* Sección fondo alternado */

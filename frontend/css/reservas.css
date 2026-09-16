@@ -754,3 +754,175 @@ body {
     text-align: left;
   }
 }
+
+/* ==========================================================================
+   COMPROBANTE DE TURNO CONFIRMADO (VOUCHER VIP)
+   ========================================================================== */
+.voucher-card {
+  max-width: 520px;
+  margin: 0 auto 32px auto;
+  background: linear-gradient(145deg, #21140E 0%, #160D09 100%);
+  border: 1px solid #5C4B43;
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(217, 140, 22, 0.15);
+  overflow: hidden;
+  position: relative;
+  text-align: left;
+}
+
+.voucher-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, transparent 0%, #B36B00 30%, #D98C16 50%, #B36B00 70%, transparent 100%);
+}
+
+.voucher-header {
+  background: #160D09;
+  padding: 26px 28px 20px 28px;
+  text-align: center;
+  border-bottom: 1px dashed #42322A;
+}
+
+.voucher-brand-symbol {
+  width: 44px;
+  height: 44px;
+  line-height: 44px;
+  margin: 0 auto 10px auto;
+  background: #B36B00;
+  color: #FCF9F5;
+  font-family: var(--font-serif, "Playfair Display", Georgia, serif);
+  font-size: 22px;
+  font-weight: 700;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(179, 107, 0, 0.4);
+}
+
+.voucher-brand-title {
+  font-family: var(--font-serif, "Playfair Display", Georgia, serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #FCF9F5;
+  letter-spacing: 1.5px;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.voucher-brand-sub {
+  font-size: 0.76rem;
+  color: #D98C16;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+.voucher-badge-confirmed {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 6px 18px;
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ECC71;
+  border: 1px solid #2ECC71;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.voucher-body {
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.voucher-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.voucher-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.voucher-label {
+  font-size: 0.88rem;
+  color: #A89B91;
+  font-weight: 500;
+}
+
+.voucher-value {
+  font-size: 0.95rem;
+  color: #FCF9F5;
+  font-weight: 600;
+  text-align: right;
+}
+
+.voucher-status-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #1e7e44;
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.voucher-footer {
+  background: #120A07;
+  padding: 14px 28px;
+  text-align: center;
+  border-top: 1px solid #362218;
+  font-size: 0.78rem;
+  color: #8A7C73;
+}
+
+.voucher-actions-group {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.voucher-actions-group .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .voucher-card {
+    border-radius: 12px;
+  }
+  .voucher-header {
+    padding: 20px 16px;
+  }
+  .voucher-body {
+    padding: 18px 16px;
+  }
+  .voucher-actions-group {
+    flex-direction: column;
+    width: 100%;
+  }
+  .voucher-actions-group .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

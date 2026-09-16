@@ -56,16 +56,20 @@ async function requestApi(endpoint, options = {}) {
       const errorMsg = data?.message || `Error HTTP ${res.status}${statusDetail}`;
       const err = new Error(errorMsg);
       err.status = res.status;
+      err.type = data?.type || (res.status === 401 ? 'auth' : (res.status === 403 ? 'unverified_email' : (res.status >= 500 ? 'server_error' : 'error')));
       err.data = data;
       throw err;
     }
 
     return data;
   } catch (err) {
-    // Si la API no está disponible (ej: MySQL o Apache apagados)
-    if (err.name === "TypeError" && err.message.includes("fetch")) {
+    // Si la API no está disponible (ej: fallo de conexión de red o servidor apagado)
+    if (err.name === "TypeError" && err.message && err.message.includes("fetch")) {
       console.warn(`[API] El backend no respondió en ${url}.`);
-      throw new Error("No se pudo conectar con el servidor backend. Verifique que Apache y MySQL estén iniciados.");
+      const netErr = new Error("No pudimos comunicarnos con el servidor. Verificá tu conexión e intentá nuevamente.");
+      netErr.status = 0;
+      netErr.type = "network_error";
+      throw netErr;
     }
     throw err;
   }
@@ -117,9 +121,13 @@ async function apiGetServicios(soloActivos = true) {
     const res = await requestApi(endpoint, { method: "GET" });
     const items = res.data || [];
     return items.map(s => {
-      const dur = s.duracion_minutos !== undefined ? Number(s.duracion_minutos) : Number(s.duracionMinutos || 60);
+      const dur = s.duracion_minutos !== undefined ? Number(s.duracion_minutos) : Number(s.duracionMinutos || s.duracion || 60);
+      const precioTxt = s.precioTexto || s.precio_texto || (s.nombre?.includes('Peinado') ? 'Desde $30.000' : (s.nombre?.includes('Alisado') || s.nombre?.includes('Mechas') ? '$150.000 a $180.000' : ('$' + Number(s.precio || 0).toLocaleString("es-AR"))));
       return {
         ...s,
+        precioTexto: precioTxt,
+        precio_texto: precioTxt,
+        duracion: dur,
         duracion_minutos: dur,
         duracionMinutos: dur
       };
@@ -129,8 +137,14 @@ async function apiGetServicios(soloActivos = true) {
     if (window.StorageService) {
       const locales = await window.StorageService.getServicios(soloActivos);
       return locales.map(s => {
-        const dur = s.duracionMinutos !== undefined ? Number(s.duracionMinutos) : Number(s.duracion_minutos || 60);
-        return { ...s, duracionMinutos: dur, duracion_minutos: dur };
+        const dur = s.duracionMinutos !== undefined ? Number(s.duracionMinutos) : Number(s.duracion_minutos || s.duracion || 60);
+        return {
+          ...s,
+          precioTexto: s.precioTexto || ('$' + Number(s.precio || 0).toLocaleString("es-AR")),
+          duracion: dur,
+          duracionMinutos: dur,
+          duracion_minutos: dur
+        };
       });
     }
     return window.SEED_DATA?.servicios || [];
@@ -140,7 +154,11 @@ async function apiGetServicios(soloActivos = true) {
 async function apiGetServicioById(id) {
   const res = await requestApi(`/servicios/get.php?id=${id}`, { method: "GET" });
   if (res.data) {
-    const dur = res.data.duracion_minutos !== undefined ? Number(res.data.duracion_minutos) : Number(res.data.duracionMinutos || 60);
+    const dur = res.data.duracion_minutos !== undefined ? Number(res.data.duracion_minutos) : Number(res.data.duracionMinutos || res.data.duracion || 60);
+    const precioTxt = res.data.precioTexto || res.data.precio_texto || (res.data.nombre?.includes('Peinado') ? 'Desde $30.000' : (res.data.nombre?.includes('Alisado') || res.data.nombre?.includes('Mechas') ? '$150.000 a $180.000' : ('$' + Number(res.data.precio || 0).toLocaleString("es-AR"))));
+    res.data.precioTexto = precioTxt;
+    res.data.precio_texto = precioTxt;
+    res.data.duracion = dur;
     res.data.duracion_minutos = dur;
     res.data.duracionMinutos = dur;
   }

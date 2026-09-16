@@ -59,22 +59,39 @@ class ServicioRepository {
      * @return int ID generado
      */
     public function create(Servicio $servicio): int {
-        $sql = "INSERT INTO `servicios` (`nombre`, `categoria`, `descripcion`, `precio`, `duracion_minutos`, `imagen`, `destacado`, `activo`, `created_at`)
-                VALUES (:nombre, :categoria, :descripcion, :precio, :duracion_minutos, :imagen, :destacado, :activo, NOW())";
-        
-        $stmt = $this->db->prepare($sql);
-        $stmt->execute([
-            ':nombre'           => $servicio->nombre,
-            ':categoria'        => $servicio->categoria,
-            ':descripcion'      => $servicio->descripcion,
-            ':precio'           => $servicio->precio,
-            ':duracion_minutos' => $servicio->duracionMinutos,
-            ':imagen'           => $servicio->imagen,
-            ':destacado'        => $servicio->destacado ? 1 : 0,
-            ':activo'           => $servicio->activo ? 1 : 0
-        ]);
-
-        return (int)$this->db->lastInsertId();
+        try {
+            $sql = "INSERT INTO `servicios` (`nombre`, `categoria`, `descripcion`, `precio`, `precio_texto`, `duracion_minutos`, `imagen`, `destacado`, `activo`, `detalles`, `created_at`)
+                    VALUES (:nombre, :categoria, :descripcion, :precio, :precio_texto, :duracion_minutos, :imagen, :destacado, :activo, :detalles, NOW())";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                ':nombre'           => $servicio->nombre,
+                ':categoria'        => $servicio->categoria,
+                ':descripcion'      => $servicio->descripcion,
+                ':precio'           => $servicio->precio,
+                ':precio_texto'     => $servicio->precioTexto,
+                ':duracion_minutos' => $servicio->duracionMinutos,
+                ':imagen'           => $servicio->imagen,
+                ':destacado'        => $servicio->destacado ? 1 : 0,
+                ':activo'           => $servicio->activo ? 1 : 0,
+                ':detalles'         => $servicio->detalles ? json_encode($servicio->detalles, JSON_UNESCAPED_UNICODE) : null
+            ]);
+            return (int)$this->db->lastInsertId();
+        } catch (Throwable $e) {
+            $sql = "INSERT INTO `servicios` (`nombre`, `categoria`, `descripcion`, `precio`, `duracion_minutos`, `imagen`, `destacado`, `activo`, `created_at`)
+                    VALUES (:nombre, :categoria, :descripcion, :precio, :duracion_minutos, :imagen, :destacado, :activo, NOW())";
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([
+                ':nombre'           => $servicio->nombre,
+                ':categoria'        => $servicio->categoria,
+                ':descripcion'      => $servicio->descripcion,
+                ':precio'           => $servicio->precio,
+                ':duracion_minutos' => $servicio->duracionMinutos,
+                ':imagen'           => $servicio->imagen,
+                ':destacado'        => $servicio->destacado ? 1 : 0,
+                ':activo'           => $servicio->activo ? 1 : 0
+            ]);
+            return (int)$this->db->lastInsertId();
+        }
     }
 
     /**
@@ -84,29 +101,57 @@ class ServicioRepository {
      * @return bool
      */
     public function update(Servicio $servicio): bool {
-        $sql = "UPDATE `servicios` SET
-                    `nombre` = :nombre,
-                    `categoria` = :categoria,
-                    `descripcion` = :descripcion,
-                    `precio` = :precio,
-                    `duracion_minutos` = :duracion_minutos,
-                    `imagen` = :imagen,
-                    `destacado` = :destacado,
-                    `activo` = :activo
-                WHERE `id` = :id";
-        
-        $stmt = $this->db->prepare($sql);
-        return $stmt->execute([
-            ':id'               => $servicio->id,
-            ':nombre'           => $servicio->nombre,
-            ':categoria'        => $servicio->categoria,
-            ':descripcion'      => $servicio->descripcion,
-            ':precio'           => $servicio->precio,
-            ':duracion_minutos' => $servicio->duracionMinutos,
-            ':imagen'           => $servicio->imagen,
-            ':destacado'        => $servicio->destacado ? 1 : 0,
-            ':activo'           => $servicio->activo ? 1 : 0
-        ]);
+        try {
+            $sql = "UPDATE `servicios` SET
+                        `nombre` = :nombre,
+                        `categoria` = :categoria,
+                        `descripcion` = :descripcion,
+                        `precio` = :precio,
+                        `precio_texto` = :precio_texto,
+                        `duracion_minutos` = :duracion_minutos,
+                        `imagen` = :imagen,
+                        `destacado` = :destacado,
+                        `activo` = :activo,
+                        `detalles` = :detalles
+                    WHERE `id` = :id";
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute([
+                ':id'               => $servicio->id,
+                ':nombre'           => $servicio->nombre,
+                ':categoria'        => $servicio->categoria,
+                ':descripcion'      => $servicio->descripcion,
+                ':precio'           => $servicio->precio,
+                ':precio_texto'     => $servicio->precioTexto,
+                ':duracion_minutos' => $servicio->duracionMinutos,
+                ':imagen'           => $servicio->imagen,
+                ':destacado'        => $servicio->destacado ? 1 : 0,
+                ':activo'           => $servicio->activo ? 1 : 0,
+                ':detalles'         => $servicio->detalles ? json_encode($servicio->detalles, JSON_UNESCAPED_UNICODE) : null
+            ]);
+        } catch (Throwable $e) {
+            $sql = "UPDATE `servicios` SET
+                        `nombre` = :nombre,
+                        `categoria` = :categoria,
+                        `descripcion` = :descripcion,
+                        `precio` = :precio,
+                        `duracion_minutos` = :duracion_minutos,
+                        `imagen` = :imagen,
+                        `destacado` = :destacado,
+                        `activo` = :activo
+                    WHERE `id` = :id";
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute([
+                ':id'               => $servicio->id,
+                ':nombre'           => $servicio->nombre,
+                ':categoria'        => $servicio->categoria,
+                ':descripcion'      => $servicio->descripcion,
+                ':precio'           => $servicio->precio,
+                ':duracion_minutos' => $servicio->duracionMinutos,
+                ':imagen'           => $servicio->imagen,
+                ':destacado'        => $servicio->destacado ? 1 : 0,
+                ':activo'           => $servicio->activo ? 1 : 0
+            ]);
+        }
     }
 
     /**

@@ -22,11 +22,16 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `password` VARCHAR(255) NOT NULL,
   `telefono` VARCHAR(50) NULL,
   `rol` ENUM('CLIENTE', 'ADMIN') NOT NULL DEFAULT 'CLIENTE',
+  `email_verificado` TINYINT(1) NOT NULL DEFAULT 0,
+  `token_verificacion` VARCHAR(100) NULL,
+  `token_expiracion` DATETIME NULL,
+  `ultimo_reenvio_correo` DATETIME NULL,
   `activo` TINYINT(1) NOT NULL DEFAULT 1,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   INDEX `idx_usuarios_email` (`email`),
-  INDEX `idx_usuarios_rol` (`rol`)
+  INDEX `idx_usuarios_rol` (`rol`),
+  INDEX `idx_usuarios_token` (`token_verificacion`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------------------------
@@ -55,10 +60,12 @@ CREATE TABLE IF NOT EXISTS `servicios` (
   `categoria` VARCHAR(100) NOT NULL DEFAULT 'General',
   `descripcion` TEXT NULL,
   `precio` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  `precio_texto` VARCHAR(100) NULL,
   `duracion_minutos` INT NOT NULL DEFAULT 60,
   `imagen` VARCHAR(255) NULL,
   `destacado` TINYINT(1) NOT NULL DEFAULT 1,
   `activo` TINYINT(1) NOT NULL DEFAULT 1,
+  `detalles` JSON NULL,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   INDEX `idx_servicios_activo` (`activo`)

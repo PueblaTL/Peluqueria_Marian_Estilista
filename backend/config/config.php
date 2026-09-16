@@ -9,15 +9,27 @@ ini_set('display_errors', '0');
 ini_set('display_startup_errors', '0');
 error_reporting(E_ALL);
 
-// Manejador global de excepciones para responder siempre en JSON válido ante cualquier fallo
+// Manejador global de excepciones para responder siempre en JSON válido y seguro ante cualquier fallo
 set_exception_handler(function (Throwable $e) {
+    // Registrar error técnico completo en los logs del servidor para el desarrollador
+    error_log(sprintf(
+        "[Marian Estilista Server Error] %s en %s:%d\nTrace:\n%s",
+        $e->getMessage(),
+        $e->getFile(),
+        $e->getLine(),
+        $e->getTraceAsString()
+    ));
+
     if (!headers_sent()) {
         header('Content-Type: application/json; charset=utf-8');
         http_response_code(500);
     }
+
+    // Mensaje seguro para el usuario final sin exponer detalles internos ni consultas SQL
     echo json_encode([
         'success' => false,
-        'message' => $e->getMessage(),
+        'type'    => 'server',
+        'message' => 'No pudimos completar la operación. Ocurrió un inconveniente temporal en el servidor. Por favor intentá nuevamente en unos minutos.',
         'error'   => 'SERVER_ERROR'
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit();
@@ -50,6 +62,20 @@ if ($isLocalEnvironment) {
     define('DB_PORT', getenv('DB_PORT') ?: '3306');
 }
 define('DB_CHARSET', 'utf8mb4');
+
+// ==============================================================================
+// CONFIGURACIÓN DE CORREO SALIENTE (SMTP DEL HOSTING)
+// ==============================================================================
+// Remitente oficial de verificación y notificaciones:
+define('MAIL_FROM_ADDRESS', getenv('MAIL_FROM_ADDRESS') ?: 'jesusechavarria@marianestilista.online');
+define('MAIL_FROM_NAME', getenv('MAIL_FROM_NAME') ?: 'Marian Estilista');
+
+// Parámetros del servidor SMTP del hosting (configurables en servidor o variables de entorno):
+define('SMTP_HOST', getenv('SMTP_HOST') ?: 'mail.marianestilista.online');
+define('SMTP_PORT', (int)(getenv('SMTP_PORT') ?: 465)); // 465 (SSL) o 587 (TLS)
+define('SMTP_USERNAME', getenv('SMTP_USERNAME') ?: 'jesusechavarria@marianestilista.online');
+define('SMTP_PASSWORD', getenv('SMTP_PASSWORD') !== false ? getenv('SMTP_PASSWORD') : '');
+define('SMTP_ENCRYPTION', getenv('SMTP_ENCRYPTION') ?: 'ssl'); // 'ssl' o 'tls'
 
 
 // Configuración de Sesión Segura en PHP

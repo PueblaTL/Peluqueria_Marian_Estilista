@@ -1,0 +1,215 @@
+/**
+ * alerts.css - Sistema de Alertas Visuales y Modales Premium
+ * Marian Estilista — Estética Monocromática, Negro Profundo y Detalles Dorados
+ */
+
+/* Backdrop general del Modal */
+.marian-alert-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(18, 10, 7, 0.78);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  z-index: 99999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.marian-alert-backdrop.is-active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Caja Modal */
+.marian-alert-modal {
+  background: linear-gradient(145deg, #21140E 0%, #160D09 100%);
+  border: 1px solid #5C4B43;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(217, 140, 22, 0.15);
+  padding: 30px 24px;
+  text-align: center;
+  box-sizing: border-box;
+  transform: scale(0.92) translateY(10px);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  position: relative;
+}
+
+.marian-alert-backdrop.is-active .marian-alert-modal {
+  transform: scale(1) translateY(0);
+}
+
+/* Borde superior decorativo dorado */
+.marian-alert-modal::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, #B36B00 30%, #D98C16 50%, #B36B00 70%, transparent 100%);
+}
+
+/* Ícono de Estado */
+.marian-alert-icon {
+  width: 58px;
+  height: 58px;
+  line-height: 58px;
+  font-size: 26px;
+  border-radius: 50%;
+  margin: 0 auto 16px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.marian-alert-icon.warning {
+  background: rgba(217, 140, 22, 0.15);
+  color: #D98C16;
+  border: 1.5px solid #D98C16;
+}
+
+.marian-alert-icon.danger,
+.marian-alert-icon.error {
+  background: rgba(231, 76, 60, 0.15);
+  color: #E74C3C;
+  border: 1.5px solid #E74C3C;
+}
+
+.marian-alert-icon.success {
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ECC71;
+  border: 1.5px solid #2ECC71;
+}
+
+.marian-alert-icon.info,
+.marian-alert-icon.unverified_email {
+  background: rgba(179, 107, 0, 0.15);
+  color: #EEDDCA;
+  border: 1.5px solid #B36B00;
+}
+
+/* Título */
+.marian-alert-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #FCF9F5;
+  margin: 0 0 10px 0;
+  letter-spacing: 0.5px;
+  line-height: 1.3;
+}
+
+/* Mensaje / Descripción */
+.marian-alert-msg {
+  font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: #D1C7C0;
+  margin: 0 0 24px 0;
+  word-wrap: break-word;
+  white-space: pre-line;
+}
+
+/* Botones y Acciones */
+.marian-alert-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.marian-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  min-height: 44px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  outline: none;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.marian-btn-gold {
+  background: #B36B00;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 12px rgba(179, 107, 0, 0.35);
+}
+
+.marian-btn-gold:hover,
+.marian-btn-gold:focus-visible {
+  background: #D98C16;
+  box-shadow: 0 6px 16px rgba(217, 140, 22, 0.45);
+  transform: translateY(-1px);
+}
+
+.marian-btn-secondary {
+  background: transparent;
+  color: #D1C7C0 !important;
+  border: 1px solid #5C4B43;
+}
+
+.marian-btn-secondary:hover,
+.marian-btn-secondary:focus-visible {
+  background: rgba(255, 255, 255, 0.05);
+  color: #FCF9F5 !important;
+  border-color: #8A7C73;
+}
+
+/* Responsive específico */
+@media (max-width: 480px) {
+  .marian-alert-modal {
+    padding: 24px 18px;
+    max-width: 100%;
+  }
+
+  .marian-alert-title {
+    font-size: 18px;
+  }
+
+  .marian-alert-msg {
+    font-size: 13.5px;
+    margin-bottom: 20px;
+  }
+
+  .marian-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .marian-alert-actions {
+    flex-direction: column-reverse;
+  }
+}
+
+@media (max-width: 340px) {
+  .marian-alert-modal {
+    padding: 20px 14px;
+  }
+  .marian-alert-title {
+    font-size: 17px;
+  }
+  .marian-alert-msg {
+    font-size: 13px;
+  }
+}
