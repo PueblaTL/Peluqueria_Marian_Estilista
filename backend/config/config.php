@@ -35,6 +35,29 @@ set_exception_handler(function (Throwable $e) {
     exit();
 });
 
+// Carga de variables de entorno desde .env si existe (raíz o carpeta backend)
+$envPaths = [__DIR__ . '/../../.env', __DIR__ . '/../.env'];
+foreach ($envPaths as $envFile) {
+    if (file_exists($envFile)) {
+        $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if ($line === '' || str_starts_with($line, '#')) continue;
+            if (strpos($line, '=') !== false) {
+                list($envKey, $envVal) = explode('=', $line, 2);
+                $envKey = trim($envKey);
+                $envVal = trim($envVal, " \t\n\r\0\x0B\"'");
+                if (getenv($envKey) === false) {
+                    putenv("$envKey=$envVal");
+                    $_ENV[$envKey] = $envVal;
+                    $_SERVER[$envKey] = $envVal;
+                }
+            }
+        }
+        break;
+    }
+}
+
 // Detección de entorno: Local (XAMPP / Laragon / CLI) vs Producción (Hosting)
 $httpHost = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? '';
 $isLocalHost = (bool) preg_match('#^(localhost|127\.0\.0\.1|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+)(:\d+)?$#i', $httpHost);
@@ -64,19 +87,18 @@ if ($isLocalEnvironment) {
 define('DB_CHARSET', 'utf8mb4');
 
 // ==============================================================================
-// CONFIGURACIÓN DE CORREO SALIENTE (SMTP DEL HOSTING DONWEB)
+// CONFIGURACIÓN DE CORREO SALIENTE (SMTP DEL HOSTING DONWEB / FEROZO)
 // ==============================================================================
 // Remitente oficial de verificación y notificaciones:
 define('MAIL_FROM_ADDRESS', getenv('MAIL_FROM_ADDRESS') ?: 'noreply@marianestilista.com.ar');
 define('MAIL_FROM_NAME', getenv('MAIL_FROM_NAME') ?: 'Marian Estilista');
 
-// Parámetros del servidor SMTP DonWeb (configurables vía variables de entorno o constantes):
-// Hostname de DonWeb: habitualmente mail.marianestilista.com.ar o el servidor Ferozo asignado (ej: cXXX.ferozo.com / dtcwin039.ferozo.com)
-define('SMTP_HOST', getenv('SMTP_HOST') ?: 'mail.marianestilista.com.ar');
-define('SMTP_PORT', (int)(getenv('SMTP_PORT') ?: 465)); // 465 (SSL) o 587 (TLS)
-define('SMTP_USERNAME', getenv('MAIL_USERNAME') ?: (getenv('SMTP_USERNAME') ?: 'noreply@marianestilista.com.ar'));
-define('SMTP_PASSWORD', getenv('MAIL_PASSWORD') !== false ? getenv('MAIL_PASSWORD') : (getenv('SMTP_PASSWORD') !== false ? getenv('SMTP_PASSWORD') : 'CasaMoneda5050/'));
-define('SMTP_ENCRYPTION', getenv('SMTP_ENCRYPTION') ?: 'ssl'); // 'ssl' (puerto 465) o 'tls' (puerto 587)
+// Parámetros del servidor SMTP DonWeb/Ferozo:
+define('SMTP_HOST', getenv('SMTP_HOST') ?: 'a0190776.ferozo.com');
+define('SMTP_PORT', (int)(getenv('SMTP_PORT') ?: 465)); // 465 (SSL/SMTPS) o 587 (TLS)
+define('SMTP_USERNAME', getenv('SMTP_USERNAME') ?: (getenv('MAIL_USERNAME') ?: 'noreply@marianestilista.com.ar'));
+define('SMTP_PASSWORD', getenv('SMTP_PASSWORD') !== false ? getenv('SMTP_PASSWORD') : (getenv('MAIL_PASSWORD') !== false ? getenv('MAIL_PASSWORD') : 'CasaMoneda5050/'));
+define('SMTP_ENCRYPTION', getenv('SMTP_ENCRYPTION') ?: 'ssl'); // 'ssl' (SMTPS, puerto 465) o 'tls' (puerto 587)
 
 // Correo de Marian para notificaciones de nuevos turnos:
 define('MARIAN_NOTIFICATION_EMAIL', getenv('MARIAN_NOTIFICATION_EMAIL') ?: 'marianestilista@gmail.com');

@@ -37,10 +37,10 @@ class Servicio {
         }
         $this->precioTexto = $pt;
 
-        // Asignación de opciones de peinado si corresponde
-        if (isset($data['detalles'])) {
+        // Asignación de opciones de peinado si corresponde (únicamente para la tarjeta informativa agrupada 'Peinados para Eventos')
+        if (isset($data['detalles']) && $data['detalles'] !== null) {
             $this->detalles = is_string($data['detalles']) ? json_decode($data['detalles'], true) : $data['detalles'];
-        } else if (stripos($this->nombre, 'Peinado') !== false) {
+        } else if (mb_strtolower(trim($this->nombre), 'UTF-8') === 'peinados para eventos') {
             $this->detalles = self::getDefaultPeinadoDetalles();
         } else {
             $this->detalles = null;
