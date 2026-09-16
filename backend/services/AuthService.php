@@ -107,6 +107,10 @@ class AuthService {
 
         // 9. Enviar correo de verificación
         $mailResult = MailerService::enviarCorreoVerificacion($email, $nombre, $tokenVerificacion);
+        if (empty($mailResult['success'])) {
+            error_log("[AuthService] Falló el envío del correo de verificación para el usuario ID {$nuevoId} ($email).");
+            throw new Exception("Tu cuenta fue registrada, pero no pudimos enviar el correo de activación debido a un inconveniente temporal con el servidor de correo. Por favor solicitá el reenvío de activación.", 502);
+        }
 
         // NO iniciamos sesión automáticamente: la cuenta requiere verificación
         return [
@@ -238,7 +242,11 @@ class AuthService {
         $this->usuarioRepo->actualizarTokenVerificacion($usuario->id, $nuevoToken, $nuevaExpiracion);
 
         // Enviar nuevo correo
-        MailerService::enviarCorreoVerificacion($email, $usuario->nombre, $nuevoToken);
+        $mailResult = MailerService::enviarCorreoVerificacion($email, $usuario->nombre, $nuevoToken);
+        if (empty($mailResult['success'])) {
+            error_log("[AuthService] Falló el reenvío del correo de verificación para el usuario ID {$usuario->id} ($email).");
+            throw new Exception("No pudimos enviar el correo de verificación en este momento. Por favor intentá nuevamente en unos minutos.", 502);
+        }
 
         return [
             'success' => true,

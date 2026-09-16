@@ -64,18 +64,22 @@ if ($isLocalEnvironment) {
 define('DB_CHARSET', 'utf8mb4');
 
 // ==============================================================================
-// CONFIGURACIÓN DE CORREO SALIENTE (SMTP DEL HOSTING)
+// CONFIGURACIÓN DE CORREO SALIENTE (SMTP DEL HOSTING DONWEB)
 // ==============================================================================
 // Remitente oficial de verificación y notificaciones:
-define('MAIL_FROM_ADDRESS', getenv('MAIL_FROM_ADDRESS') ?: 'jesusechavarria@marianestilista.online');
+define('MAIL_FROM_ADDRESS', getenv('MAIL_FROM_ADDRESS') ?: 'noreply@marianestilista.com.ar');
 define('MAIL_FROM_NAME', getenv('MAIL_FROM_NAME') ?: 'Marian Estilista');
 
-// Parámetros del servidor SMTP del hosting (configurables en servidor o variables de entorno):
-define('SMTP_HOST', getenv('SMTP_HOST') ?: 'mail.marianestilista.online');
+// Parámetros del servidor SMTP DonWeb (configurables vía variables de entorno o constantes):
+// Hostname de DonWeb: habitualmente mail.marianestilista.com.ar o el servidor Ferozo asignado (ej: cXXX.ferozo.com / dtcwin039.ferozo.com)
+define('SMTP_HOST', getenv('SMTP_HOST') ?: 'mail.marianestilista.com.ar');
 define('SMTP_PORT', (int)(getenv('SMTP_PORT') ?: 465)); // 465 (SSL) o 587 (TLS)
-define('SMTP_USERNAME', getenv('SMTP_USERNAME') ?: 'jesusechavarria@marianestilista.online');
-define('SMTP_PASSWORD', getenv('SMTP_PASSWORD') !== false ? getenv('SMTP_PASSWORD') : '');
-define('SMTP_ENCRYPTION', getenv('SMTP_ENCRYPTION') ?: 'ssl'); // 'ssl' o 'tls'
+define('SMTP_USERNAME', getenv('MAIL_USERNAME') ?: (getenv('SMTP_USERNAME') ?: 'noreply@marianestilista.com.ar'));
+define('SMTP_PASSWORD', getenv('MAIL_PASSWORD') !== false ? getenv('MAIL_PASSWORD') : (getenv('SMTP_PASSWORD') !== false ? getenv('SMTP_PASSWORD') : 'CasaMoneda5050/'));
+define('SMTP_ENCRYPTION', getenv('SMTP_ENCRYPTION') ?: 'ssl'); // 'ssl' (puerto 465) o 'tls' (puerto 587)
+
+// Correo de Marian para notificaciones de nuevos turnos:
+define('MARIAN_NOTIFICATION_EMAIL', getenv('MARIAN_NOTIFICATION_EMAIL') ?: 'marianestilista@gmail.com');
 
 
 // Configuración de Sesión Segura en PHP

@@ -51,11 +51,14 @@ class Servicio {
     }
 
     public static function inferPrecioTexto(string $nombre, float $precio): string {
-        $n = mb_strtolower($nombre, 'UTF-8');
+        $n = mb_strtolower(trim($nombre), 'UTF-8');
         if (strpos($n, 'alisado') !== false || strpos($n, 'balayage') !== false || strpos($n, 'localizadas') !== false || strpos($n, 'babylight') !== false) {
             return '$150.000 a $180.000';
         }
-        if (strpos($n, 'peinado') !== false) {
+        if (strpos($n, 'novia') !== false) {
+            return 'Desde $80.000';
+        }
+        if ($n === 'peinados para eventos') {
             return 'Desde $30.000';
         }
         return '$' . number_format($precio, 0, ',', '.');

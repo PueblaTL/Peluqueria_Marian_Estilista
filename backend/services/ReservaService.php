@@ -128,17 +128,20 @@ class ReservaService {
         }
 
         // 4. Validar profesional (si no viene, asignar el titular Mariano)
+        $profNombre = 'Mariano';
         if ($profesionalId <= 0) {
             $defaultProf = $this->profesionalRepo->getDefault();
             if (!$defaultProf) {
                 throw new Exception("No hay profesional disponible en este momento.", 500);
             }
             $profesionalId = $defaultProf->id;
+            $profNombre = $defaultProf->nombre;
         } else {
             $prof = $this->profesionalRepo->getById($profesionalId);
             if (!$prof || !$prof->activo) {
                 throw new Exception("El profesional seleccionado no está disponible.", 400);
             }
+            $profNombre = $prof->nombre;
         }
 
         // 5. Validar formato de fecha (YYYY-MM-DD)
@@ -213,7 +216,46 @@ class ReservaService {
             throw new Exception("No pudimos completar la reserva. Hubo un problema al guardar tu turno. Verificá los datos e intentá nuevamente.", 500);
         }
 
-        return $reservaCreada ? $reservaCreada->toArray() : ['id' => $nuevoId];
+        $reservaArray = $reservaCreada ? $reservaCreada->toArray() : ['id' => $nuevoId];
+        $reservaArray['servicio'] = [
+            'nombre'           => $servicio->nombre,
+            'precio'           => $servicio->precio,
+            'precio_texto'     => $servicio->precioTexto ?? ('$' . number_format($servicio->precio, 0, ',', '.')),
+            'duracion_minutos' => $duracionMinutos
+        ];
+        $reservaArray['profesional'] = [
+            'nombre' => $profNombre ?? 'Mariano'
+        ];
+        $reservaArray['cliente'] = [
+            'nombre'   => $usuario->nombre,
+            'apellido' => $usuario->apellido,
+            'email'    => $usuario->email,
+            'telefono' => $usuario->telefono
+        ];
+
+        // 9. Generar comprobante PDF del turno y despachar notificaciones por correo
+        try {
+            require_once __DIR__ . '/PdfTicketService.php';
+            require_once __DIR__ . '/MailerService.php';
+
+            $pdfContent = PdfTicketService::generarTicketPdf($reservaArray);
+
+            // Enviar notificación oficial a Marian con ticket PDF adjunto
+            $marianResult = MailerService::enviarNotificacionTurnoMarian($reservaArray, $pdfContent);
+            if (!$marianResult['success']) {
+                error_log("[ReservaService] Notificación a Marian no enviada: " . ($marianResult['error'] ?? 'desconocido'));
+            }
+
+            // Enviar confirmación al cliente con ticket PDF adjunto
+            $clienteResult = MailerService::enviarConfirmacionTurnoCliente($reservaArray, $pdfContent);
+            if (!$clienteResult['success']) {
+                error_log("[ReservaService] Confirmación al cliente no enviada: " . ($clienteResult['error'] ?? 'desconocido'));
+            }
+        } catch (Throwable $ePdfMail) {
+            error_log("[ReservaService EXCEPTION PDF/MAIL] " . $ePdfMail->getMessage());
+        }
+
+        return $reservaArray;
     }
 
     /**

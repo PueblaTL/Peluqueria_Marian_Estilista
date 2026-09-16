@@ -571,12 +571,15 @@ async function initServicesSection() {
 
     if (!servicios || servicios.length === 0) return;
 
-    servicesGrid.innerHTML = servicios.map(s => {
+    // Separar tratamientos de peinados: en la landing los peinados se agrupan en UNA SOLA TARJETA
+    const tratamientos = servicios.filter(s => s.categoria !== "Peinados" && s.nombre !== "Peinados para Eventos");
+
+    let html = tratamientos.map(s => {
       const dur = s.duracionMinutos || s.duracion_minutos || 60;
-      const precioFmt = Number(s.precio) > 0 
+      const precioFmt = s.precioTexto || s.precio_texto || (Number(s.precio) > 0 
         ? `$${Number(s.precio).toLocaleString("es-AR")}` 
-        : "A consultar";
-      const imgSrc = s.imagen || "assets/images/mechas_balayage.webp";
+        : "A consultar");
+      const imgSrc = s.imagen || "assets/images/mechas_balayage_2.webp";
 
       return `
         <article class="service-card">
@@ -606,6 +609,58 @@ async function initServicesSection() {
         </article>
       `;
     }).join("");
+
+    // Tarjeta única de Peinados para Eventos agrupando los 7 estilos
+    html += `
+      <article class="service-card service-card--featured">
+        <div class="service-img-wrap">
+          <img src="assets/images/peinados_1.webp" alt="Peinados para Eventos" class="service-img" loading="lazy" />
+          <span class="service-category-badge">Peinados</span>
+        </div>
+        <div class="service-body">
+          <div class="service-meta-top">
+            <span class="service-price">Desde $30.000</span>
+            <span class="service-duration">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              60 min
+            </span>
+          </div>
+
+          <h3 class="service-title">Peinados para Eventos</h3>
+
+          <p class="service-desc">
+            Peinados personalizados para quinceañeras, bodas y ocasiones especiales.
+            Diseños pensados para que luzcas increíble en cada momento importante,
+            adaptados a tu estilo, personalidad y ocasión.
+          </p>
+
+          <div class="service-specialties">
+            <span class="service-specialties-title">Opciones y precios:</span>
+
+            <div class="service-tags-list">
+              <span class="service-tag-chip">Ondas / Brushing con ondas — $30.000</span>
+              <span class="service-tag-chip">Semirrecogido — $40.000</span>
+              <span class="service-tag-chip">Recogido — $50.000</span>
+              <span class="service-tag-chip">Peinado social / fiesta — $55.000</span>
+              <span class="service-tag-chip">Peinado 15 años — $65.000</span>
+              <span class="service-tag-chip">Peinado de novia — desde $80.000</span>
+              <span class="service-tag-chip">Prueba de peinado — $35.000</span>
+            </div>
+          </div>
+
+          <div class="service-footer">
+            <a href="pages/reservas.html" class="btn btn-secondary" style="width: 100%;">
+              Reservar turno
+            </a>
+          </div>
+        </div>
+      </article>
+    `;
+
+    servicesGrid.innerHTML = html;
   } catch (err) {
     console.warn("[Landing] No se pudieron cargar servicios dinámicos:", err);
   }

@@ -21,7 +21,7 @@ class MailerService {
         $htmlBody = self::construirPlantillaVerificacion($nombre, $verificationUrl);
         $textBody = "MARIAN ESTILISTA\nPeluquería & Colorimetría\n\nConfirmá tu correo electrónico\n\n¡Hola {$nombre}!\nGracias por registrarte.\nPara activar tu cuenta, hacé clic en el siguiente enlace:\n\n{$verificationUrl}\n\nEste enlace es válido durante 24 horas.\nSi no realizaste este registro, podés ignorar este correo.\n\nMarian Estilista — Galería La Catedral, San Carlos de Bariloche";
 
-        $fromAddress = defined('MAIL_FROM_ADDRESS') ? MAIL_FROM_ADDRESS : 'jesusechavarria@marianestilista.online';
+        $fromAddress = defined('MAIL_FROM_ADDRESS') ? MAIL_FROM_ADDRESS : 'noreply@marianestilista.com.ar';
         $fromName    = defined('MAIL_FROM_NAME') ? MAIL_FROM_NAME : 'Marian Estilista';
 
         // Cabeceras MIME para HTML en UTF-8

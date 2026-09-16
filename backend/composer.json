@@ -1,0 +1,15 @@
+{
+  "name": "marian-estilista/backend",
+  "description": "Backend API para Marian Estilista - Salón de Peluquería y Colorimetría en Bariloche",
+  "type": "project",
+  "require": {
+    "php": ">=8.0",
+    "phpmailer/phpmailer": "^6.9",
+    "setasign/fpdf": "^1.86"
+  },
+  "autoload": {
+    "psr-4": {
+      "PHPMailer\\PHPMailer\\": "libs/PHPMailer/"
+    }
+  }
+}

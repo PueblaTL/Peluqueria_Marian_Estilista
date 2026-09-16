@@ -122,7 +122,19 @@ async function apiGetServicios(soloActivos = true) {
     const items = res.data || [];
     return items.map(s => {
       const dur = s.duracion_minutos !== undefined ? Number(s.duracion_minutos) : Number(s.duracionMinutos || s.duracion || 60);
-      const precioTxt = s.precioTexto || s.precio_texto || (s.nombre?.includes('Peinado') ? 'Desde $30.000' : (s.nombre?.includes('Alisado') || s.nombre?.includes('Mechas') ? '$150.000 a $180.000' : ('$' + Number(s.precio || 0).toLocaleString("es-AR"))));
+      const nom = (s.nombre || '').toLowerCase();
+      let precioTxt = s.precioTexto || s.precio_texto;
+      if (!precioTxt) {
+        if (nom.includes('novia')) {
+          precioTxt = 'Desde $80.000';
+        } else if (nom === 'peinados para eventos') {
+          precioTxt = 'Desde $30.000';
+        } else if (nom.includes('alisado') || nom.includes('mechas')) {
+          precioTxt = '$150.000 a $180.000';
+        } else {
+          precioTxt = '$' + Number(s.precio || 0).toLocaleString("es-AR");
+        }
+      }
       return {
         ...s,
         precioTexto: precioTxt,
@@ -138,9 +150,16 @@ async function apiGetServicios(soloActivos = true) {
       const locales = await window.StorageService.getServicios(soloActivos);
       return locales.map(s => {
         const dur = s.duracionMinutos !== undefined ? Number(s.duracionMinutos) : Number(s.duracion_minutos || s.duracion || 60);
+        const nom = (s.nombre || '').toLowerCase();
+        let precioTxt = s.precioTexto || s.precio_texto;
+        if (!precioTxt) {
+          if (nom.includes('novia')) precioTxt = 'Desde $80.000';
+          else if (nom === 'peinados para eventos') precioTxt = 'Desde $30.000';
+          else precioTxt = '$' + Number(s.precio || 0).toLocaleString("es-AR");
+        }
         return {
           ...s,
-          precioTexto: s.precioTexto || ('$' + Number(s.precio || 0).toLocaleString("es-AR")),
+          precioTexto: precioTxt,
           duracion: dur,
           duracionMinutos: dur,
           duracion_minutos: dur
@@ -155,7 +174,14 @@ async function apiGetServicioById(id) {
   const res = await requestApi(`/servicios/get.php?id=${id}`, { method: "GET" });
   if (res.data) {
     const dur = res.data.duracion_minutos !== undefined ? Number(res.data.duracion_minutos) : Number(res.data.duracionMinutos || res.data.duracion || 60);
-    const precioTxt = res.data.precioTexto || res.data.precio_texto || (res.data.nombre?.includes('Peinado') ? 'Desde $30.000' : (res.data.nombre?.includes('Alisado') || res.data.nombre?.includes('Mechas') ? '$150.000 a $180.000' : ('$' + Number(res.data.precio || 0).toLocaleString("es-AR"))));
+    const nom = (res.data.nombre || '').toLowerCase();
+    let precioTxt = res.data.precioTexto || res.data.precio_texto;
+    if (!precioTxt) {
+      if (nom.includes('novia')) precioTxt = 'Desde $80.000';
+      else if (nom === 'peinados para eventos') precioTxt = 'Desde $30.000';
+      else if (nom.includes('alisado') || nom.includes('mechas')) precioTxt = '$150.000 a $180.000';
+      else precioTxt = '$' + Number(res.data.precio || 0).toLocaleString("es-AR");
+    }
     res.data.precioTexto = precioTxt;
     res.data.precio_texto = precioTxt;
     res.data.duracion = dur;

@@ -7,7 +7,7 @@
  */
 
 const STORAGE_KEYS = {
-  SERVICIOS: "marian_servicios_v3",
+  SERVICIOS: "marian_servicios_v4",
   PROFESIONAL: "marian_profesional_v1",
   TURNOS: "marian_turnos_v2",
   CURSO: "marian_curso_v1",
@@ -29,9 +29,10 @@ class StorageService {
     try {
       localStorage.removeItem("marian_servicios_v1");
       localStorage.removeItem("marian_servicios_v2");
+      localStorage.removeItem("marian_servicios_v3");
     } catch (e) {}
 
-    // Validar si los servicios guardados corresponden exactamente al catálogo definitivo
+    // Validar si los servicios guardados corresponden al catálogo oficial actualizado
     const rawStored = localStorage.getItem(STORAGE_KEYS.SERVICIOS);
     let necesitaRefresco = false;
     const nombresDefinitivos = [
@@ -39,7 +40,13 @@ class StorageService {
       "Mechas Balayage",
       "Mechas Localizadas",
       "Mechas Babylight",
-      "Peinados para Eventos"
+      "Ondas / Brushing con ondas",
+      "Semirrecogido",
+      "Recogido",
+      "Peinado social / fiesta",
+      "Peinado 15 años",
+      "Peinado de novia",
+      "Prueba de peinado"
     ];
 
     if (!rawStored) {
@@ -47,14 +54,12 @@ class StorageService {
     } else {
       try {
         const parsed = JSON.parse(rawStored);
-        if (!Array.isArray(parsed) || parsed.length !== 5) {
+        if (!Array.isArray(parsed) || parsed.length < 11) {
           necesitaRefresco = true;
         } else {
-          // Verificar que todos sean los definitivos y que tengan precioTexto
           const nombresEnStorage = parsed.map(s => s.nombre);
           const faltante = nombresDefinitivos.some(nd => !nombresEnStorage.includes(nd));
-          const sinPrecioTexto = parsed.some(s => !s.precioTexto);
-          if (faltante || sinPrecioTexto) {
+          if (faltante) {
             necesitaRefresco = true;
           }
         }
