@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   initNavbar();
   initHeroCarousel();
+  initServicesSection();
   initSalonMap();
   initGalleryFiltersAndLightbox();
   initCourseSection();
@@ -47,17 +48,27 @@ function initHeroCarousel() {
   const AUTOPLAY_INTERVAL = 5000;
 
   const goToSlide = (targetIndex) => {
-    // Normalizar índice circular
-    const newIndex = (targetIndex + totalSlides) % totalSlides;
+    // Normalizar índice circular garantizando loop infinito continuo
+    const newIndex = ((targetIndex % totalSlides) + totalSlides) % totalSlides;
 
-    slides[currentIndex].classList.remove("active");
-    slides[newIndex].classList.add("active");
+    slides.forEach((slide, idx) => {
+      if (idx === newIndex) {
+        slide.classList.add("active");
+      } else {
+        slide.classList.remove("active");
+      }
+    });
 
     if (dots.length) {
-      dots[currentIndex].classList.remove("active");
-      dots[currentIndex].setAttribute("aria-selected", "false");
-      dots[newIndex].classList.add("active");
-      dots[newIndex].setAttribute("aria-selected", "true");
+      dots.forEach((dot, idx) => {
+        if (idx === newIndex) {
+          dot.classList.add("active");
+          dot.setAttribute("aria-selected", "true");
+        } else {
+          dot.classList.remove("active");
+          dot.setAttribute("aria-selected", "false");
+        }
+      });
     }
 
     currentIndex = newIndex;
@@ -546,5 +557,112 @@ function showToast(message, type = "info") {
 // Exportar globalmente para otros scripts si es necesario
 if (typeof window !== "undefined") {
   window.showToast = showToast;
+}
+
+/* --- RENDERIZADO DINÁMICO DE SERVICIOS EN LANDING PAGE --- */
+async function initServicesSection() {
+  const servicesGrid = document.querySelector(".services-grid");
+  if (!servicesGrid) return;
+
+  try {
+    const servicios = (typeof window.apiGetServicios === "function")
+      ? await window.apiGetServicios(true)
+      : (window.StorageService ? await window.StorageService.getServicios(true) : []);
+
+    if (!servicios || servicios.length === 0) return;
+
+    // Separar tratamientos de peinados: en la landing los peinados se agrupan en UNA SOLA TARJETA
+    const tratamientos = servicios.filter(s => s.categoria !== "Peinados" && s.nombre !== "Peinados para Eventos");
+
+    let html = tratamientos.map(s => {
+      const dur = s.duracionMinutos || s.duracion_minutos || 60;
+      const precioFmt = s.precioTexto || s.precio_texto || (Number(s.precio) > 0 
+        ? `$${Number(s.precio).toLocaleString("es-AR")}` 
+        : "A consultar");
+      const imgSrc = s.imagen || "assets/images/mechas_balayage_2.webp";
+
+      return `
+        <article class="service-card">
+          <div class="service-img-wrap">
+            <img src="${imgSrc}" alt="${s.nombre}" class="service-img" loading="lazy" />
+            <span class="service-category-badge">${s.categoria || "Servicio"}</span>
+          </div>
+          <div class="service-body">
+            <div class="service-meta-top">
+              <span class="service-price">${precioFmt}</span>
+              <span class="service-duration">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                ${dur} min
+              </span>
+            </div>
+            <h3 class="service-title">${s.nombre}</h3>
+            <p class="service-desc">${s.descripcion || ""}</p>
+            <div class="service-footer">
+              <a href="pages/reservas.html?servicio=${s.id}" class="btn btn-secondary" style="width: 100%;">
+                Reservar turno
+              </a>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join("");
+
+    // Tarjeta única de Peinados para Eventos agrupando los 7 estilos
+    html += `
+      <article class="service-card service-card--featured">
+        <div class="service-img-wrap">
+          <img src="assets/images/peinados_1.webp" alt="Peinados para Eventos" class="service-img" loading="lazy" />
+          <span class="service-category-badge">Peinados</span>
+        </div>
+        <div class="service-body">
+          <div class="service-meta-top">
+            <span class="service-price">Desde $30.000</span>
+            <span class="service-duration">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              60 min
+            </span>
+          </div>
+
+          <h3 class="service-title">Peinados para Eventos</h3>
+
+          <p class="service-desc">
+            Peinados personalizados para quinceañeras, bodas y ocasiones especiales.
+            Diseños pensados para que luzcas increíble en cada momento importante,
+            adaptados a tu estilo, personalidad y ocasión.
+          </p>
+
+          <div class="service-specialties">
+            <span class="service-specialties-title">Opciones y precios:</span>
+
+            <div class="service-tags-list">
+              <span class="service-tag-chip">Ondas / Brushing con ondas — $30.000</span>
+              <span class="service-tag-chip">Semirrecogido — $40.000</span>
+              <span class="service-tag-chip">Recogido — $50.000</span>
+              <span class="service-tag-chip">Peinado social / fiesta — $55.000</span>
+              <span class="service-tag-chip">Peinado 15 años — $65.000</span>
+              <span class="service-tag-chip">Peinado de novia — desde $80.000</span>
+              <span class="service-tag-chip">Prueba de peinado — $35.000</span>
+            </div>
+          </div>
+
+          <div class="service-footer">
+            <a href="pages/reservas.html" class="btn btn-secondary" style="width: 100%;">
+              Reservar turno
+            </a>
+          </div>
+        </div>
+      </article>
+    `;
+
+    servicesGrid.innerHTML = html;
+  } catch (err) {
+    console.warn("[Landing] No se pudieron cargar servicios dinámicos:", err);
+  }
 }
 

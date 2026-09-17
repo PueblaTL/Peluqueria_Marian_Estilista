@@ -22,11 +22,16 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `password` VARCHAR(255) NOT NULL,
   `telefono` VARCHAR(50) NULL,
   `rol` ENUM('CLIENTE', 'ADMIN') NOT NULL DEFAULT 'CLIENTE',
+  `email_verificado` TINYINT(1) NOT NULL DEFAULT 0,
+  `token_verificacion` VARCHAR(100) NULL,
+  `token_expiracion` DATETIME NULL,
+  `ultimo_reenvio_correo` DATETIME NULL,
   `activo` TINYINT(1) NOT NULL DEFAULT 1,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   INDEX `idx_usuarios_email` (`email`),
-  INDEX `idx_usuarios_rol` (`rol`)
+  INDEX `idx_usuarios_rol` (`rol`),
+  INDEX `idx_usuarios_token` (`token_verificacion`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ------------------------------------------------------------------------------
@@ -55,12 +60,15 @@ CREATE TABLE IF NOT EXISTS `servicios` (
   `categoria` VARCHAR(100) NOT NULL DEFAULT 'General',
   `descripcion` TEXT NULL,
   `precio` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  `precio_texto` VARCHAR(100) NULL,
   `duracion_minutos` INT NOT NULL DEFAULT 60,
   `imagen` VARCHAR(255) NULL,
   `destacado` TINYINT(1) NOT NULL DEFAULT 1,
   `activo` TINYINT(1) NOT NULL DEFAULT 1,
+  `detalles` JSON NULL,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY `idx_servicios_nombre` (`nombre`),
   INDEX `idx_servicios_activo` (`activo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -89,3 +97,44 @@ CREATE TABLE IF NOT EXISTS `reservas` (
   INDEX `idx_reservas_usuario_fecha` (`usuario_id`, `fecha`),
   INDEX `idx_reservas_estado` (`estado`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------------------------
+-- 5. TABLA: password_resets
+-- Tokens seguros de recuperación de contraseña con expiración y un solo uso
+-- ------------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `password_resets` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `usuario_id` INT NOT NULL,
+  `token_hash` VARCHAR(64) NOT NULL,
+  `expiracion` DATETIME NOT NULL,
+  `utilizado_en` DATETIME NULL,
+  `ip_address` VARCHAR(45) NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT `fk_password_resets_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  INDEX `idx_password_resets_token` (`token_hash`),
+  INDEX `idx_password_resets_usuario` (`usuario_id`),
+  INDEX `idx_password_resets_expiracion` (`expiracion`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------------------------
+-- 6. TABLA: inscripciones_curso
+-- Registro oficial de postulaciones e inscripciones al Curso Profesional
+-- Estados: 'Pendiente', 'Contactado', 'Inscripto'
+-- ------------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `inscripciones_curso` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `curso_id` VARCHAR(50) NOT NULL DEFAULT 'cur-1',
+  `nombre` VARCHAR(100) NOT NULL,
+  `apellido` VARCHAR(100) NULL,
+  `telefono` VARCHAR(50) NOT NULL,
+  `email` VARCHAR(150) NOT NULL,
+  `estado` ENUM('Pendiente', 'Contactado', 'Inscripto') NOT NULL DEFAULT 'Pendiente',
+  `fecha` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX `idx_inscripciones_email` (`email`),
+  INDEX `idx_inscripciones_estado` (`estado`),
+  INDEX `idx_inscripciones_fecha` (`fecha`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+

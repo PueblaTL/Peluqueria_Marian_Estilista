@@ -4,14 +4,17 @@
  * Marian Estilista - Backend
  */
 
+require_once __DIR__ . '/../config/helpers.php';
 require_once __DIR__ . '/../repositories/ReservaRepository.php';
 require_once __DIR__ . '/../repositories/ServicioRepository.php';
 require_once __DIR__ . '/../repositories/ProfesionalRepository.php';
+require_once __DIR__ . '/../repositories/UsuarioRepository.php';
 
 class ReservaService {
     private ReservaRepository $reservaRepo;
     private ServicioRepository $servicioRepo;
     private ProfesionalRepository $profesionalRepo;
+    private UsuarioRepository $usuarioRepo;
 
     // Horarios oficiales de Marian Estilista en Galería La Catedral
     private const HORA_APERTURA = "09:00";
@@ -24,6 +27,7 @@ class ReservaService {
         $this->reservaRepo = new ReservaRepository();
         $this->servicioRepo = new ServicioRepository();
         $this->profesionalRepo = new ProfesionalRepository();
+        $this->usuarioRepo = new UsuarioRepository();
     }
 
     /**
@@ -78,33 +82,69 @@ class ReservaService {
         // Regla de seguridad: el usuario siempre es el autenticado, no se permite suplantar a otro cliente
         $usuarioId = (int)$usuarioAutenticado['id'];
 
+        // 1. Validar que el usuario tenga su correo verificado
+        $usuario = $this->usuarioRepo->findById($usuarioId);
+        if (!$usuario || !$usuario->emailVerificado) {
+            throw new Exception("Antes de reservar tenés que verificar tu dirección de correo electrónico.", 403);
+        }
+
+        // 2. Validar y normalizar teléfono del cliente
+        $telefono = trim($data['telefono'] ?? ($data['cliente']['telefono'] ?? ''));
+        $nombre = trim($data['nombre'] ?? ($data['cliente']['nombre'] ?? ''));
+        $apellido = trim($data['apellido'] ?? ($data['cliente']['apellido'] ?? ''));
+
+        if (!empty($telefono)) {
+            if (!validarTelefono($telefono)) {
+                throw new Exception("El número de teléfono ingresado no es válido. Ingresá un número con código de área (por ejemplo: 2920382930 o +54 9 294 455-8899).", 400);
+            }
+            $telNormalizado = normalizarTelefono($telefono);
+            if ($usuario->telefono !== $telNormalizado) {
+                $this->usuarioRepo->actualizarTelefono($usuarioId, $telNormalizado);
+                $usuario->telefono = $telNormalizado;
+            }
+        } elseif (empty($usuario->telefono)) {
+            throw new Exception("El número de teléfono es obligatorio para confirmar tu turno. Por favor completá tu teléfono de contacto.", 400);
+        }
+
+        // Actualizar nombres si se proporcionaron válidos
+        if (!empty($nombre) && !empty($apellido)) {
+            if (validarNombre($nombre) && validarNombre($apellido)) {
+                if ($usuario->nombre !== $nombre || $usuario->apellido !== $apellido) {
+                    $this->usuarioRepo->actualizarDatosCliente($usuarioId, $nombre, $apellido, $usuario->telefono ?? '');
+                }
+            }
+        }
+
         $servicioId = (int)($data['servicio_id'] ?? $data['servicioId'] ?? 0);
         $profesionalId = (int)($data['profesional_id'] ?? $data['profesionalId'] ?? 0);
         $fecha = trim($data['fecha'] ?? '');
         $hora = trim($data['hora'] ?? '');
         $observaciones = trim($data['observaciones'] ?? $data['notas'] ?? '');
 
-        // 1. Validar existencia del servicio
+        // 3. Validar existencia del servicio
         $servicio = $this->servicioRepo->getById($servicioId);
         if (!$servicio || !$servicio->activo) {
             throw new Exception("El servicio seleccionado no está disponible o no existe.", 400);
         }
 
-        // 2. Validar profesional (si no viene, asignar el titular Mariano)
+        // 4. Validar profesional (si no viene, asignar el titular Mariano)
+        $profNombre = 'Mariano';
         if ($profesionalId <= 0) {
             $defaultProf = $this->profesionalRepo->getDefault();
             if (!$defaultProf) {
                 throw new Exception("No hay profesional disponible en este momento.", 500);
             }
             $profesionalId = $defaultProf->id;
+            $profNombre = $defaultProf->nombre;
         } else {
             $prof = $this->profesionalRepo->getById($profesionalId);
             if (!$prof || !$prof->activo) {
                 throw new Exception("El profesional seleccionado no está disponible.", 400);
             }
+            $profNombre = $prof->nombre;
         }
 
-        // 3. Validar formato de fecha (YYYY-MM-DD)
+        // 5. Validar formato de fecha (YYYY-MM-DD)
         $dtFecha = DateTime::createFromFormat('Y-m-d', $fecha);
         if (!$dtFecha || $dtFecha->format('Y-m-d') !== $fecha) {
             throw new Exception("Formato de fecha inválido. Use AAAA-MM-DD.", 400);
@@ -122,7 +162,7 @@ class ReservaService {
             throw new Exception("El salón se encuentra cerrado los días domingos y lunes. Por favor elija de martes a sábado.", 400);
         }
 
-        // 4. Validar horario (formato HH:MM)
+        // 6. Validar horario (formato HH:MM)
         if (!preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $hora)) {
             throw new Exception("Formato de hora inválido. Use HH:MM.", 400);
         }
@@ -143,13 +183,19 @@ class ReservaService {
             throw new Exception("El horario seleccionado excede la jornada de atención del salón (09:00 a 19:00 hs).", 400);
         }
 
-        // 5. Verificación de disponibilidad y colisiones en base de datos
-        $colisiones = $this->reservaRepo->findOverlapping($profesionalId, $fecha, $hora, $duracionMinutos);
-        if (!empty($colisiones)) {
-            throw new Exception("El horario seleccionado ya no se encuentra disponible. Por favor seleccione otro horario.", 409);
+        // 7. Verificación de disponibilidad y colisiones en base de datos
+        try {
+            $colisiones = $this->reservaRepo->findOverlapping($profesionalId, $fecha, $hora, $duracionMinutos);
+        } catch (Throwable $e) {
+            error_log("[ReservaService] Error en findOverlapping: " . $e->getMessage());
+            throw new Exception("No pudimos consultar la disponibilidad en este momento. Por favor intentá nuevamente.", 500);
         }
 
-        // 6. Crear la reserva
+        if (!empty($colisiones)) {
+            throw new Exception("El horario seleccionado ya no se encuentra disponible. Por favor elegí otro horario disponible.", 409);
+        }
+
+        // 8. Crear la reserva
         $reserva = new Reserva([
             'usuario_id'       => $usuarioId,
             'profesional_id'   => $profesionalId,
@@ -158,14 +204,58 @@ class ReservaService {
             'hora'             => $hora . (strlen($hora) === 5 ? ':00' : ''),
             'duracion_minutos' => $duracionMinutos,
             'precio'           => $servicio->precio,
-            'estado'           => 'PENDIENTE',
+            'estado'           => 'CONFIRMADA',
             'observaciones'    => $observaciones
         ]);
 
-        $nuevoId = $this->reservaRepo->create($reserva);
-        $reservaCreada = $this->reservaRepo->getById($nuevoId);
+        try {
+            $nuevoId = $this->reservaRepo->create($reserva);
+            $reservaCreada = $this->reservaRepo->getById($nuevoId);
+        } catch (Throwable $e) {
+            error_log("[ReservaService] Error en create reserva: " . $e->getMessage());
+            throw new Exception("No pudimos completar la reserva. Hubo un problema al guardar tu turno. Verificá los datos e intentá nuevamente.", 500);
+        }
 
-        return $reservaCreada ? $reservaCreada->toArray() : ['id' => $nuevoId];
+        $reservaArray = $reservaCreada ? $reservaCreada->toArray() : ['id' => $nuevoId];
+        $reservaArray['servicio'] = [
+            'nombre'           => $servicio->nombre,
+            'precio'           => $servicio->precio,
+            'precio_texto'     => $servicio->precioTexto ?? ('$' . number_format($servicio->precio, 0, ',', '.')),
+            'duracion_minutos' => $duracionMinutos
+        ];
+        $reservaArray['profesional'] = [
+            'nombre' => $profNombre ?? 'Mariano'
+        ];
+        $reservaArray['cliente'] = [
+            'nombre'   => $usuario->nombre,
+            'apellido' => $usuario->apellido,
+            'email'    => $usuario->email,
+            'telefono' => $usuario->telefono
+        ];
+
+        // 9. Generar comprobante PDF del turno y despachar notificaciones por correo
+        try {
+            require_once __DIR__ . '/PdfTicketService.php';
+            require_once __DIR__ . '/MailerService.php';
+
+            $pdfContent = PdfTicketService::generarTicketPdf($reservaArray);
+
+            // Enviar notificación oficial a Marian con ticket PDF adjunto
+            $marianResult = MailerService::enviarNotificacionTurnoMarian($reservaArray, $pdfContent);
+            if (!$marianResult['success']) {
+                error_log("[ReservaService] Notificación a Marian no enviada: " . ($marianResult['error'] ?? 'desconocido'));
+            }
+
+            // Enviar confirmación al cliente con ticket PDF adjunto
+            $clienteResult = MailerService::enviarConfirmacionTurnoCliente($reservaArray, $pdfContent);
+            if (!$clienteResult['success']) {
+                error_log("[ReservaService] Confirmación al cliente no enviada: " . ($clienteResult['error'] ?? 'desconocido'));
+            }
+        } catch (Throwable $ePdfMail) {
+            error_log("[ReservaService EXCEPTION PDF/MAIL] " . $ePdfMail->getMessage());
+        }
+
+        return $reservaArray;
     }
 
     /**
@@ -183,10 +273,32 @@ class ReservaService {
             throw new Exception("La reserva con ID $id no existe.", 404);
         }
 
+        // Normalizar estados: el frontend puede enviar variantes como "Confirmado", "Cancelado",
+        // "Completado", "Pendiente". Las mapeamos a los valores ENUM exactos de MySQL.
+        $mapaEstados = [
+            // Valores del ENUM (ya correctos)
+            'PENDIENTE'  => 'PENDIENTE',
+            'CONFIRMADA' => 'CONFIRMADA',
+            'CANCELADA'  => 'CANCELADA',
+            'COMPLETADA' => 'COMPLETADA',
+            // Variantes PascalCase del frontend
+            'PENDIENTE'   => 'PENDIENTE',
+            'CONFIRMADO'  => 'CONFIRMADA',  // "Confirmado" → strtoupper → "CONFIRMADO" → mapea a CONFIRMADA
+            'CANCELADO'   => 'CANCELADA',   // "Cancelado"  → strtoupper → "CANCELADO"  → mapea a CANCELADA
+            'COMPLETADO'  => 'COMPLETADA',  // "Completado" → strtoupper → "COMPLETADO" → mapea a COMPLETADA
+            // Inglés (por compatibilidad)
+            'CONFIRMED'   => 'CONFIRMADA',
+            'CANCELLED'   => 'CANCELADA',
+            'CANCELED'    => 'CANCELADA',
+            'COMPLETED'   => 'COMPLETADA',
+        ];
+
         $nuevoEstado = strtoupper(trim($nuevoEstado));
+        $nuevoEstado = $mapaEstados[$nuevoEstado] ?? $nuevoEstado;
+
         $estadosValidos = ['PENDIENTE', 'CONFIRMADA', 'CANCELADA', 'COMPLETADA'];
         if (!in_array($nuevoEstado, $estadosValidos, true)) {
-            throw new Exception("Estado inválido. Opciones: " . implode(', ', $estadosValidos), 400);
+            throw new Exception("Estado inválido '$nuevoEstado'. Opciones: " . implode(', ', $estadosValidos), 400);
         }
 
         // Regla de autorización:

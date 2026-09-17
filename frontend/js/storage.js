@@ -7,7 +7,7 @@
  */
 
 const STORAGE_KEYS = {
-  SERVICIOS: "marian_servicios_v2",
+  SERVICIOS: "marian_servicios_v4",
   PROFESIONAL: "marian_profesional_v1",
   TURNOS: "marian_turnos_v2",
   CURSO: "marian_curso_v1",
@@ -17,7 +17,7 @@ const STORAGE_KEYS = {
 
 class StorageService {
   /**
-   * Inicializa localStorage con datos semilla si es la primera vez
+   * Inicializa localStorage con datos semilla si es la primera vez o si hay datos obsoletos
    */
   static init() {
     if (!window.SEED_DATA) {
@@ -25,9 +25,53 @@ class StorageService {
       return;
     }
 
-    if (!localStorage.getItem(STORAGE_KEYS.SERVICIOS)) {
+    // Limpiar claves viejas de versiones anteriores
+    try {
+      localStorage.removeItem("marian_servicios_v1");
+      localStorage.removeItem("marian_servicios_v2");
+      localStorage.removeItem("marian_servicios_v3");
+    } catch (e) {}
+
+    // Validar si los servicios guardados corresponden al catálogo oficial actualizado
+    const rawStored = localStorage.getItem(STORAGE_KEYS.SERVICIOS);
+    let necesitaRefresco = false;
+    const nombresDefinitivos = [
+      "Alisado Láser 6D",
+      "Mechas Balayage",
+      "Mechas Localizadas",
+      "Mechas Babylight",
+      "Ondas / Brushing con ondas",
+      "Semirrecogido",
+      "Recogido",
+      "Peinado social / fiesta",
+      "Peinado 15 años",
+      "Peinado de novia",
+      "Prueba de peinado"
+    ];
+
+    if (!rawStored) {
+      necesitaRefresco = true;
+    } else {
+      try {
+        const parsed = JSON.parse(rawStored);
+        if (!Array.isArray(parsed) || parsed.length < 11) {
+          necesitaRefresco = true;
+        } else {
+          const nombresEnStorage = parsed.map(s => s.nombre);
+          const faltante = nombresDefinitivos.some(nd => !nombresEnStorage.includes(nd));
+          if (faltante) {
+            necesitaRefresco = true;
+          }
+        }
+      } catch (err) {
+        necesitaRefresco = true;
+      }
+    }
+
+    if (necesitaRefresco) {
       localStorage.setItem(STORAGE_KEYS.SERVICIOS, JSON.stringify(window.SEED_DATA.servicios));
     }
+
     if (!localStorage.getItem(STORAGE_KEYS.PROFESIONAL)) {
       localStorage.setItem(STORAGE_KEYS.PROFESIONAL, JSON.stringify(window.SEED_DATA.profesional));
     }
@@ -37,9 +81,10 @@ class StorageService {
     if (!localStorage.getItem(STORAGE_KEYS.CURSO)) {
       localStorage.setItem(STORAGE_KEYS.CURSO, JSON.stringify(window.SEED_DATA.curso));
     }
-    if (!localStorage.getItem(STORAGE_KEYS.INSCRIPCIONES)) {
-      localStorage.setItem(STORAGE_KEYS.INSCRIPCIONES, JSON.stringify(window.SEED_DATA.inscripcionesCurso));
-    }
+    // NOTA: STORAGE_KEYS.INSCRIPCIONES ya no se inicializa en localStorage. Las inscripciones se gestionan exclusivamente en MySQL.
+    try {
+      localStorage.removeItem(STORAGE_KEYS.INSCRIPCIONES);
+    } catch (e) {}
     if (!localStorage.getItem(STORAGE_KEYS.NEGOCIO)) {
       localStorage.setItem(STORAGE_KEYS.NEGOCIO, JSON.stringify(window.SEED_DATA.negocio));
     }
@@ -81,7 +126,7 @@ class StorageService {
     localStorage.setItem(STORAGE_KEYS.PROFESIONAL, JSON.stringify(window.SEED_DATA.profesional));
     localStorage.setItem(STORAGE_KEYS.TURNOS, JSON.stringify(window.SEED_DATA.turnos));
     localStorage.setItem(STORAGE_KEYS.CURSO, JSON.stringify(window.SEED_DATA.curso));
-    localStorage.setItem(STORAGE_KEYS.INSCRIPCIONES, JSON.stringify(window.SEED_DATA.inscripcionesCurso));
+    // Las inscripciones residen en MySQL; no se recrean en localStorage
     localStorage.setItem(STORAGE_KEYS.NEGOCIO, JSON.stringify(window.SEED_DATA.negocio));
     return true;
   }
@@ -91,7 +136,18 @@ class StorageService {
   // ==========================================
 
   static async getServicios(soloActivos = false) {
-    const servicios = this._getItem(STORAGE_KEYS.SERVICIOS, []);
+    const rawServicios = this._getItem(STORAGE_KEYS.SERVICIOS, []);
+    const servicios = rawServicios.map(s => {
+      const dur = Number(s.duracionMinutos || s.duracion_minutos || 60);
+      const precioTxt = s.precioTexto || (s.nombre?.includes('Peinado') ? 'Desde $30.000' : (s.nombre?.includes('Alisado') || s.nombre?.includes('Mechas') ? '$150.000 a $180.000' : ('$' + Number(s.precio || 0).toLocaleString("es-AR"))));
+      return {
+        ...s,
+        precioTexto: precioTxt,
+        duracion: dur,
+        duracionMinutos: dur,
+        duracion_minutos: dur
+      };
+    });
     return soloActivos ? servicios.filter(s => s.activo) : servicios;
   }
 
@@ -102,16 +158,21 @@ class StorageService {
 
   static async saveServicio(servicioDto) {
     const servicios = await this.getServicios();
+    const dur = Number(servicioDto.duracionMinutos || servicioDto.duracion_minutos || 60);
     const nuevo = {
       id: `srv-${Date.now()}`,
       nombre: servicioDto.nombre,
       categoria: servicioDto.categoria || "General",
       descripcion: servicioDto.descripcion || "",
       precio: Number(servicioDto.precio) || 0,
-      duracionMinutos: Number(servicioDto.duracionMinutos) || 60,
+      precioTexto: servicioDto.precioTexto || ('$' + Number(servicioDto.precio || 0).toLocaleString("es-AR")),
+      duracion: dur,
+      duracionMinutos: dur,
+      duracion_minutos: dur,
       imagen: servicioDto.imagen || "assets/images/mechas_balayage.webp",
       destacado: !!servicioDto.destacado,
-      activo: servicioDto.activo !== undefined ? servicioDto.activo : true
+      activo: servicioDto.activo !== undefined ? servicioDto.activo : true,
+      detalles: servicioDto.detalles || null
     };
     servicios.push(nuevo);
     this._setItem(STORAGE_KEYS.SERVICIOS, servicios);
@@ -124,16 +185,24 @@ class StorageService {
     const index = servicios.findIndex(s => s.id === id);
     if (index === -1) throw new Error(`Servicio ${id} no encontrado`);
 
+    const dur = servicioDto.duracionMinutos !== undefined
+      ? Number(servicioDto.duracionMinutos)
+      : (servicioDto.duracion_minutos !== undefined ? Number(servicioDto.duracion_minutos) : servicios[index].duracionMinutos);
+
     servicios[index] = {
       ...servicios[index],
       nombre: servicioDto.nombre ?? servicios[index].nombre,
       categoria: servicioDto.categoria ?? servicios[index].categoria,
       descripcion: servicioDto.descripcion ?? servicios[index].descripcion,
       precio: servicioDto.precio !== undefined ? Number(servicioDto.precio) : servicios[index].precio,
-      duracionMinutos: servicioDto.duracionMinutos !== undefined ? Number(servicioDto.duracionMinutos) : servicios[index].duracionMinutos,
+      precioTexto: servicioDto.precioTexto ?? servicios[index].precioTexto,
+      duracion: dur,
+      duracionMinutos: dur,
+      duracion_minutos: dur,
       imagen: servicioDto.imagen ?? servicios[index].imagen,
       destacado: servicioDto.destacado !== undefined ? !!servicioDto.destacado : servicios[index].destacado,
-      activo: servicioDto.activo !== undefined ? !!servicioDto.activo : servicios[index].activo
+      activo: servicioDto.activo !== undefined ? !!servicioDto.activo : servicios[index].activo,
+      detalles: servicioDto.detalles ?? servicios[index].detalles
     };
     this._setItem(STORAGE_KEYS.SERVICIOS, servicios);
     return servicios[index];
@@ -181,11 +250,23 @@ class StorageService {
   static async getTurnos(filtros = {}) {
     let turnos = this._getItem(STORAGE_KEYS.TURNOS, []);
 
+    turnos = turnos.map(t => {
+      const dur = Number(t.duracionMinutos || t.duracion_minutos || 60);
+      const servNom = t.servicioNombre || t.servicio_nombre || "Servicio";
+      return {
+        ...t,
+        duracionMinutos: dur,
+        duracion_minutos: dur,
+        servicioNombre: servNom,
+        servicio_nombre: servNom
+      };
+    });
+
     if (filtros.fecha) {
       turnos = turnos.filter(t => t.fecha === filtros.fecha);
     }
     if (filtros.estado && filtros.estado !== "todos") {
-      turnos = turnos.filter(t => t.estado.toLowerCase() === filtros.estado.toLowerCase());
+      turnos = turnos.filter(t => String(t.estado).toLowerCase() === String(filtros.estado).toLowerCase());
     }
     if (filtros.search) {
       const q = filtros.search.toLowerCase();
@@ -213,24 +294,28 @@ class StorageService {
   static async saveTurno(reservaDto) {
     const turnos = this._getItem(STORAGE_KEYS.TURNOS, []);
     const profesional = await this.getProfesional();
+    const dur = Number(reservaDto.duracionMinutos || reservaDto.duracion_minutos || 60);
+    const servNom = reservaDto.servicioNombre || reservaDto.servicio_nombre || "Servicio";
 
     const nuevoTurno = {
       id: `trn-${Date.now().toString().slice(-6)}`,
-      servicioId: reservaDto.servicioId,
-      servicioNombre: reservaDto.servicioNombre,
+      servicioId: reservaDto.servicioId || reservaDto.servicio_id,
+      servicioNombre: servNom,
+      servicio_nombre: servNom,
       profesionalId: profesional.id,
       profesionalNombre: profesional.nombre,
       fecha: reservaDto.fecha,
       hora: reservaDto.hora,
-      duracionMinutos: Number(reservaDto.duracionMinutos) || 60,
+      duracionMinutos: dur,
+      duracion_minutos: dur,
       precio: Number(reservaDto.precio) || 0,
       estado: "Pendiente", // Por defecto al reservar online
       cliente: {
-        nombre: reservaDto.cliente.nombre,
-        apellido: reservaDto.cliente.apellido,
-        telefono: reservaDto.cliente.telefono,
-        email: reservaDto.cliente.email,
-        notas: reservaDto.cliente.notas || ""
+        nombre: reservaDto.cliente?.nombre || "",
+        apellido: reservaDto.cliente?.apellido || "",
+        telefono: reservaDto.cliente?.telefono || "",
+        email: reservaDto.cliente?.email || "",
+        notas: reservaDto.cliente?.notas || ""
       },
       creadoEn: new Date().toISOString()
     };
@@ -339,7 +424,7 @@ class StorageService {
   }
 
   // ==========================================
-  // CURSO & INSCRIPCIONES
+  // CURSO & INSCRIPCIONES (Persistencia en MySQL vía API)
   // ==========================================
 
   static async getCursoInfo() {
@@ -347,43 +432,62 @@ class StorageService {
   }
 
   static async getInscripciones() {
-    const inscripciones = this._getItem(STORAGE_KEYS.INSCRIPCIONES, []);
-    return inscripciones.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    if (typeof window.apiGetInscripciones === "function") {
+      try {
+        const inscripciones = await window.apiGetInscripciones();
+        return (inscripciones || []).sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+      } catch (err) {
+        console.error("[StorageService] Error al obtener inscripciones de la API:", err);
+        throw err;
+      }
+    }
+    if (typeof window.requestApi === "function") {
+      const res = await window.requestApi("/inscripciones/list.php", { method: "GET" });
+      return (res?.data || []).sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    }
+    return [];
   }
 
   static async saveInscripcion(datos) {
-    const inscripciones = this._getItem(STORAGE_KEYS.INSCRIPCIONES, []);
-    const nueva = {
-      id: `ins-${Date.now().toString().slice(-6)}`,
-      cursoId: "cur-1",
-      nombre: datos.nombre,
-      apellido: datos.apellido || "",
-      telefono: datos.telefono,
-      email: datos.email,
-      fecha: new Date().toISOString(),
-      estado: "Pendiente" // Pendiente, Contactado, Inscripto
-    };
-
-    inscripciones.push(nueva);
-    this._setItem(STORAGE_KEYS.INSCRIPCIONES, inscripciones);
-    return nueva;
+    if (typeof window.apiCreateInscripcion === "function") {
+      return await window.apiCreateInscripcion(datos);
+    }
+    if (typeof window.requestApi === "function") {
+      const res = await window.requestApi("/inscripciones/create.php", {
+        method: "POST",
+        body: datos
+      });
+      return res.data;
+    }
+    throw new Error("No hay conexión con la API de inscripciones.");
   }
 
   static async updateInscripcionEstado(id, nuevoEstado) {
-    const inscripciones = this._getItem(STORAGE_KEYS.INSCRIPCIONES, []);
-    const index = inscripciones.findIndex(i => i.id === id);
-    if (index === -1) throw new Error(`Inscripción ${id} no encontrada`);
-
-    inscripciones[index].estado = nuevoEstado;
-    this._setItem(STORAGE_KEYS.INSCRIPCIONES, inscripciones);
-    return inscripciones[index];
+    if (typeof window.apiUpdateInscripcionEstado === "function") {
+      return await window.apiUpdateInscripcionEstado(id, nuevoEstado);
+    }
+    if (typeof window.requestApi === "function") {
+      const res = await window.requestApi("/inscripciones/update_estado.php", {
+        method: "POST",
+        body: { id: Number(id), estado: nuevoEstado }
+      });
+      return res.data;
+    }
+    throw new Error("No hay conexión con la API de inscripciones.");
   }
 
   static async deleteInscripcion(id) {
-    let inscripciones = this._getItem(STORAGE_KEYS.INSCRIPCIONES, []);
-    inscripciones = inscripciones.filter(i => i.id !== id);
-    this._setItem(STORAGE_KEYS.INSCRIPCIONES, inscripciones);
-    return true;
+    if (typeof window.apiDeleteInscripcion === "function") {
+      return await window.apiDeleteInscripcion(id);
+    }
+    if (typeof window.requestApi === "function") {
+      const res = await window.requestApi("/inscripciones/delete.php", {
+        method: "POST",
+        body: { id: Number(id) }
+      });
+      return res.success;
+    }
+    throw new Error("No hay conexión con la API de inscripciones.");
   }
 
   // ==========================================

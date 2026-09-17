@@ -1618,3 +1618,63 @@
     padding: var(--sp-3);
   }
 }
+
+/* --------------------------------------------------------------------------
+   BOTÓN "AGREGAR USUARIO MANUALMENTE" — Inscripciones Curso
+   -------------------------------------------------------------------------- */
+#btn-nueva-inscripcion {
+  /* Base */
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 9px var(--sp-5);
+  font-family: var(--font-main);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition:
+    background var(--t-std),
+    box-shadow var(--t-std),
+    transform var(--t-fast),
+    border-color var(--t-std);
+
+  /* Paleta dorada elegante */
+  background: linear-gradient(135deg, #c9973a 0%, #a07020 100%);
+  color: #fff;
+  border: 1px solid rgba(180, 130, 40, 0.6);
+  box-shadow:
+    0 2px 8px rgba(160, 112, 32, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+#btn-nueva-inscripcion:hover {
+  background: linear-gradient(135deg, #d9a84a 0%, #b08030 100%);
+  border-color: rgba(200, 150, 50, 0.8);
+  box-shadow:
+    0 4px 16px rgba(160, 112, 32, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  transform: translateY(-1px);
+}
+
+#btn-nueva-inscripcion:active {
+  background: linear-gradient(135deg, #a07020 0%, #8a5e18 100%);
+  box-shadow: 0 1px 4px rgba(100, 70, 10, 0.35);
+  transform: translateY(0);
+}
+
+#btn-nueva-inscripcion:focus-visible {
+  outline: 2px solid #c9973a;
+  outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+  #btn-nueva-inscripcion {
+    width: 100%;
+    justify-content: center;
+    margin-top: var(--sp-3);
+  }
+}

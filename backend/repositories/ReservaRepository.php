@@ -73,8 +73,13 @@ class ReservaRepository {
         }
 
         if (!empty($filtros['search'])) {
-            $sql .= " AND (u.nombre LIKE :search OR u.apellido LIKE :search OR u.email LIKE :search OR u.telefono LIKE :search OR s.nombre LIKE :search)";
-            $params[':search'] = '%' . $filtros['search'] . '%';
+            $sql .= " AND (u.nombre LIKE :s_nom OR u.apellido LIKE :s_ape OR u.email LIKE :s_mail OR u.telefono LIKE :s_tel OR s.nombre LIKE :s_srv)";
+            $searchTerm = '%' . $filtros['search'] . '%';
+            $params[':s_nom']  = $searchTerm;
+            $params[':s_ape']  = $searchTerm;
+            $params[':s_mail'] = $searchTerm;
+            $params[':s_tel']  = $searchTerm;
+            $params[':s_srv']  = $searchTerm;
         }
 
         $sql .= " ORDER BY r.fecha DESC, r.hora DESC";
@@ -187,14 +192,17 @@ class ReservaRepository {
                 WHERE `profesional_id` = :profesional_id
                   AND `fecha` = :fecha
                   AND `estado` != 'CANCELADA'
-                  AND `hora` < ADDTIME(:hora, SEC_TO_TIME(:duracion * 60))
-                  AND ADDTIME(`hora`, SEC_TO_TIME(`duracion_minutos` * 60)) > :hora";
+                  AND `hora` < ADDTIME(:hora_inicio, SEC_TO_TIME(:duracion * 60))
+                  AND ADDTIME(`hora`, SEC_TO_TIME(`duracion_minutos` * 60)) > :hora_limite";
+
+        $horaFormatted = strlen($hora) === 5 ? $hora . ':00' : $hora;
 
         $params = [
             ':profesional_id' => $profesionalId,
             ':fecha'          => $fecha,
-            ':hora'           => strlen($hora) === 5 ? $hora . ':00' : $hora,
-            ':duracion'       => $duracionMinutos
+            ':hora_inicio'    => $horaFormatted,
+            ':duracion'       => $duracionMinutos,
+            ':hora_limite'    => $horaFormatted
         ];
 
         if ($ignoreReservaId !== null) {

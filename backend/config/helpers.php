@@ -14,12 +14,35 @@ require_once __DIR__ . '/config.php';
  * @param mixed|null $data
  * @param int $statusCode
  * @param string|null $error
+ * @param string|null $type Tipo semántico de respuesta: 'validation', 'availability', 'unverified_email', 'auth', 'server', 'success'
  */
-function jsonResponse(bool $success, string $message, $data = null, int $statusCode = 200, ?string $error = null): void {
+function jsonResponse(bool $success, string $message, $data = null, int $statusCode = 200, ?string $error = null, ?string $type = null): void {
     http_response_code($statusCode);
+
+    // Deducir tipo semántico si no fue especificado explícitamente
+    if ($type === null) {
+        if ($success) {
+            $type = 'success';
+        } else {
+            if ($statusCode === 409 || $error === 'SCHEDULE_UNAVAILABLE') {
+                $type = 'availability';
+            } elseif ($error === 'UNVERIFIED_EMAIL' || $statusCode === 403) {
+                $type = 'unverified_email';
+            } elseif ($statusCode === 401 || $error === 'LOGIN_FAILED' || $error === 'UNAUTHENTICATED') {
+                $type = 'auth';
+            } elseif ($statusCode === 400 || $error === 'VALIDATION_ERROR' || $error === 'INVALID_INPUT') {
+                $type = 'validation';
+            } elseif ($statusCode >= 500) {
+                $type = 'server';
+            } else {
+                $type = 'error';
+            }
+        }
+    }
 
     $payload = [
         'success' => $success,
+        'type'    => $type,
         'message' => $message
     ];
 
@@ -33,6 +56,81 @@ function jsonResponse(bool $success, string $message, $data = null, int $statusC
 
     echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit();
+}
+
+/**
+ * Valida un nombre o apellido asegurando caracteres válidos en español (tildes, diéresis, ñ).
+ *
+ * @param string $nombre
+ * @return bool
+ */
+function validarNombre(string $nombre): bool {
+    $nombre = trim($nombre);
+    if (mb_strlen($nombre, 'UTF-8') < 2 || mb_strlen($nombre, 'UTF-8') > 60) {
+        return false;
+    }
+    // Permite todas las letras Unicode (incluyendo tildes, diéresis, ñ/Ñ), espacios, apóstrofes y guiones
+    return (bool)preg_match('/^[\p{L}\s\'-]{2,60}$/u', $nombre);
+}
+
+/**
+ * Valida un formato de número de teléfono flexible (con código de área, internacional, separadores).
+ * Permite números como: 2920382930, 2920 382930, 2920-382930, 2920 38-2930, +54 2920 382930, +5492920382930.
+ * Rechaza: letras, '123', '++++', valores sin suficientes dígitos.
+ *
+ * @param string $telefono
+ * @return bool
+ */
+function validarTelefono(string $telefono): bool {
+    $telefono = trim($telefono);
+    if (empty($telefono)) {
+        return false;
+    }
+
+    // Estructura general: opcional '+' inicial, seguido de dígitos, espacios, guiones o paréntesis
+    if (!preg_match('/^\+?[0-9\s\-\(\)]{7,25}$/', $telefono)) {
+        return false;
+    }
+
+    // Contar cantidad de dígitos limpios (debe tener entre 8 y 15 dígitos)
+    $digitos = preg_replace('/\D/', '', $telefono);
+    $cantDigitos = strlen($digitos);
+    if ($cantDigitos < 8 || $cantDigitos > 15) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Normaliza un número telefónico para almacenamiento uniforme y consistente en MySQL.
+ * Estrategia única:
+ * - Si comienza con '+', conserva el '+' y remueve espacios, guiones y paréntesis (ej: +5492920382930).
+ * - Si no tiene '+', extrae los dígitos limpios (ej: 2920382930).
+ *
+ * @param string $telefono
+ * @return string
+ */
+function normalizarTelefono(string $telefono): string {
+    $telefono = trim($telefono);
+    $tienePlus = str_starts_with($telefono, '+');
+    $digitos = preg_replace('/\D/', '', $telefono);
+
+    return $tienePlus ? ('+' . $digitos) : $digitos;
+}
+
+/**
+ * Valida el formato de un correo electrónico.
+ *
+ * @param string $email
+ * @return bool
+ */
+function validarEmail(string $email): bool {
+    $email = strtolower(trim($email));
+    if (empty($email) || strlen($email) > 150) {
+        return false;
+    }
+    return (bool)filter_var($email, FILTER_VALIDATE_EMAIL);
 }
 
 /**

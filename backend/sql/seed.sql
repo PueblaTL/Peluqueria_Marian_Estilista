@@ -1,52 +1,198 @@
 -- ==============================================================================
--- DATOS SEMILLA (SEED DATA): marian_estilista
--- Usuarios, profesionales, catálogo oficial y turnos de demostración
+-- SEED DATA: marian_estilista
+-- Datos de inicializacion - Compatible con entorno local y produccion
+-- Ejecutar DESPUES de schema.sql
 -- ==============================================================================
 
 USE `marian_estilista`;
 
--- Desactivar temporalmente revisión de llaves foráneas para reinserción limpia
-SET FOREIGN_KEY_CHECKS = 0;
-TRUNCATE TABLE `reservas`;
-TRUNCATE TABLE `servicios`;
-TRUNCATE TABLE `profesionales`;
-TRUNCATE TABLE `usuarios`;
-SET FOREIGN_KEY_CHECKS = 1;
+-- ==============================================================================
+-- LIMPIEZA DE CUENTAS DE DEMOSTRACION (si existen)
+-- Solo desactiva por email - NO hace DELETE ni TRUNCATE.
+-- Los usuarios reales creados por clientes NO se ven afectados.
+-- ==============================================================================
+UPDATE `usuarios`
+SET
+    `activo`             = 0,
+    `password`           = '$2y$10$DISABLED_DEMO_ACCOUNT_INVALID_HASH_FOR_PRODUCTION00000',
+    `token_verificacion` = NULL,
+    `token_expiracion`   = NULL,
+    `updated_at`         = NOW()
+WHERE `email` IN (
+    'admin@marianestilista.com',
+    'camila@gmail.com',
+    'valentina@gmail.com'
+);
 
--- ------------------------------------------------------------------------------
--- 1. USUARIOS DEMO
--- Contraseñas hasheadas con BCRYPT ($2y$10$...):
---   admin@marianestilista.com -> Admin123!  (Rol: ADMIN)
---   camila@gmail.com          -> Cliente123! (Rol: CLIENTE)
---   luciana@gmail.com         -> Cliente123! (Rol: CLIENTE)
--- ------------------------------------------------------------------------------
-INSERT INTO `usuarios` (`id`, `nombre`, `apellido`, `email`, `password`, `telefono`, `rol`, `activo`, `created_at`) VALUES
-(1, 'Mariano', 'Administrador', 'admin@marianestilista.com', '$2y$10$.d4et4MU2b8aFX6h98rXCezcl/.9WI2D235iYlspF2VU19eSBUMma', '+54 2920 359074', 'ADMIN', 1, NOW()),
-(2, 'Camila', 'Fernández', 'camila@gmail.com', '$2y$10$qU4/oCHRYC3T9zzD09GunOAoXTcESUnRBGJ8UeS3L5pPNVUf006JW', '+54 9 294 455-8899', 'CLIENTE', 1, NOW()),
-(3, 'Luciana', 'García', 'luciana@gmail.com', '$2y$10$qU4/oCHRYC3T9zzD09GunOAoXTcESUnRBGJ8UeS3L5pPNVUf006JW', '+54 9 294 477-2233', 'CLIENTE', 1, NOW());
+-- ==============================================================================
+-- CUENTA ADMINISTRADOR DE PRODUCCION
+--
+-- IMPORTANTE: Este INSERT usa un hash temporal de marcador.
+-- El hash real se genera via:
+--   backend/config/setup_production_admin.php
+-- Ejecutar ese script DESPUES de este seed para activar la cuenta
+-- con hash BCRYPT valido generado por password_hash().
+-- La contrasena en texto plano NO aparece en este archivo.
+-- ==============================================================================
+INSERT INTO `usuarios` (
+    `nombre`,
+    `apellido`,
+    `email`,
+    `password`,
+    `telefono`,
+    `rol`,
+    `email_verificado`,
+    `token_verificacion`,
+    `token_expiracion`,
+    `ultimo_reenvio_correo`,
+    `activo`,
+    `created_at`,
+    `updated_at`
+) VALUES (
+    'Jesus',
+    'Echavarria',
+    'jesusechavarria@marianestilista.online',
+    '$2y$10$PLACEHOLDER_MUST_RUN_setup_production_admin.phpXXXXXXXX',
+    '2944000000',
+    'ADMIN',
+    1,
+    NULL,
+    NULL,
+    NULL,
+    1,
+    NOW(),
+    NOW()
+)
+ON DUPLICATE KEY UPDATE
+    `nombre`             = VALUES(`nombre`),
+    `apellido`           = VALUES(`apellido`),
+    `rol`                = 'ADMIN',
+    `email_verificado`   = 1,
+    `activo`             = 1,
+    `token_verificacion` = NULL,
+    `token_expiracion`   = NULL,
+    `updated_at`         = NOW();
+-- NOTA: El campo `password` NO se actualiza aqui - setup_production_admin.php lo hace.
 
--- ------------------------------------------------------------------------------
--- 2. PROFESIONALES
--- Mariano: Estilista titular y fundador del salón en Bariloche
--- ------------------------------------------------------------------------------
-INSERT INTO `profesionales` (`id`, `nombre`, `apellido`, `especialidad`, `descripcion`, `imagen`, `activo`, `created_at`) VALUES
-(1, 'Mariano', 'Echavarría', 'Coloración, Balayage, Alisados y Peinados', 'Especialista en colorimetría avanzada, diseño de iluminación personalizada, alisados de alto brillo y tratamientos restauradores. Con más de 15 años de trayectoria en Bariloche.', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80', 1, NOW());
+-- ==============================================================================
+-- PROFESIONAL: Mariano (unico profesional del salon)
+-- ==============================================================================
+INSERT INTO `profesionales` (`nombre`, `apellido`, `especialidad`, `descripcion`, `imagen`, `activo`) VALUES
+(
+    'Mariano',
+    'Reyes',
+    'Colorimetria, Balayage & Peinados Creativos',
+    'Estilista profesional con mas de 10 anos de experiencia en colorimetria avanzada, tecnicas de iluminacion balayage y peinados de novia.',
+    'assets/images/profesional_mariano.webp',
+    1
+)
+ON DUPLICATE KEY UPDATE `especialidad` = VALUES(`especialidad`);
 
--- ------------------------------------------------------------------------------
--- 3. SERVICIOS OFICIALES DE MARIAN ESTILISTA
--- 5 servicios femeninos exclusivos
--- ------------------------------------------------------------------------------
-INSERT INTO `servicios` (`id`, `nombre`, `categoria`, `descripcion`, `precio`, `duracion_minutos`, `imagen`, `destacado`, `activo`, `created_at`) VALUES
-(1, 'Alisado Láser 6D', 'Alisados', 'Técnica avanzada de alisado y disciplina capilar. Incluye tratamiento termoactivo, sellado de la fibra, reducción del frizz y acabado ultra liso con brillo intenso.', 150000.00, 150, 'assets/images/alisado_6d.webp', 1, 1, NOW()),
-(2, 'Mechas Balayage', 'Iluminación', 'Técnica francesa de iluminación degradada a mano alzada. Incluye matización personalizada, baño de luz gloss, tratamiento nutritivo y peinado con ondas.', 95000.00, 180, 'assets/images/mechas_balayage.webp', 1, 1, NOW()),
-(3, 'Mechas Localizadas', 'Iluminación', 'Técnica de iluminación estratégica para realzar zonas específicas del cabello y potenciar los rasgos del rostro. Incluye aclaración, matización tonal y peinado.', 85000.00, 120, 'assets/images/mechas_localizadas.webp', 1, 1, NOW()),
-(4, 'Mechas Babylight', 'Iluminación', 'Técnica de iluminación ultrafina inspirada en reflejos naturales. Incluye aclaración delicada, matización personalizada, baño de luz gloss y peinado.', 88000.00, 150, 'assets/images/mechas_babylight_2.webp', 1, 1, NOW()),
-(5, 'Peinados para Eventos', 'Peinados', 'Peinados personalizados para novias, 15 años y eventos especiales. Diseños sofisticados y duraderos: ondas al agua, semirrecogidos y recogidos de autor.', 48000.00, 60, 'https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=800&q=80', 1, 1, NOW());
+-- ==============================================================================
+-- CATALOGO DE SERVICIOS
+-- ==============================================================================
+INSERT INTO `servicios` (`nombre`, `categoria`, `descripcion`, `precio`, `precio_texto`, `duracion_minutos`, `imagen`, `destacado`, `activo`, `detalles`) VALUES
+(
+    'Alisado Laser 6D',
+    'Alisados',
+    'Tecnica avanzada de alisado y disciplina capilar. Incluye tratamiento termoactivo, sellado de la fibra, reduccion del frizz y acabado ultra liso con brillo intenso.',
+    150000.00, '$150.000 a $180.000', 150,
+    'assets/images/alisado_6d.webp', 1, 1, NULL
+),
+(
+    'Mechas Balayage',
+    'Iluminacion',
+    'Iluminacion personalizada con efecto degradado y luminoso, disenada para aportar dimension, movimiento y un resultado natural y sofisticado.',
+    150000.00, '$150.000 a $180.000', 180,
+    'assets/images/mechas_balayage_2.webp', 1, 1, NULL
+),
+(
+    'Mechas Localizadas',
+    'Iluminacion',
+    'Tecnica personalizada que aporta luminosidad y dimension en zonas estrategicas del cabello, resaltando las facciones del rostro.',
+    150000.00, '$150.000 a $180.000', 120,
+    'assets/images/mechas_localizadas_2.webp', 1, 1, NULL
+),
+(
+    'Mechas Babylight',
+    'Iluminacion',
+    'Mechas finas y personalizadas que crean una iluminacion natural, delicada y luminosa.',
+    150000.00, '$150.000 a $180.000', 150,
+    'assets/images/mechas_babylight_2.webp', 1, 1, NULL
+),
+(
+    'Peinados para Eventos',
+    'Peinados',
+    'Peinados personalizados para quinceanieras, bodas y ocasiones especiales.',
+    30000.00, 'Desde $30.000', 60,
+    'assets/images/peinados_1.webp', 0, 0, NULL
+),
+(
+    'Ondas / Brushing con ondas',
+    'Peinados',
+    'Brushing con ondas suaves y definidas para lograr un acabado elegante, natural y con movimiento.',
+    30000.00, '$30.000', 60,
+    'assets/images/peinados/peinado_ondas.webp', 1, 1, NULL
+),
+(
+    'Semirrecogido',
+    'Peinados',
+    'Peinado elegante que combina el cabello suelto con secciones recogidas.',
+    40000.00, '$40.000', 60,
+    'assets/images/peinados/peinado_semirrecogido.webp', 1, 1, NULL
+),
+(
+    'Recogido',
+    'Peinados',
+    'Peinado completamente recogido, disenado para lograr un look sofisticado y duradero.',
+    50000.00, '$50.000', 60,
+    'assets/images/peinados/peinado_recogido.webp', 1, 1, NULL
+),
+(
+    'Peinado social / fiesta',
+    'Peinados',
+    'Peinado personalizado para fiestas y eventos, adaptado al estilo, vestido y ocasion de cada clienta.',
+    55000.00, '$55.000', 60,
+    'assets/images/peinados/peinado_social.webp', 1, 1, NULL
+),
+(
+    'Peinado 15 anos',
+    'Peinados',
+    'Peinado especialmente disenado para celebraciones de 15 anos.',
+    65000.00, '$65.000', 90,
+    'assets/images/peinados/peinado_15anios.webp', 1, 1, NULL
+),
+(
+    'Peinado de novia',
+    'Peinados',
+    'Peinado personalizado para novias. El precio es desde $80.000 y puede variar segun la complejidad del trabajo.',
+    80000.00, 'Desde $80.000', 90,
+    'assets/images/peinados/peinado_novia.webp', 1, 1, NULL
+),
+(
+    'Prueba de peinado',
+    'Peinados',
+    'Prueba previa para definir y ajustar el peinado elegido antes del evento.',
+    35000.00, '$35.000', 60,
+    'assets/images/peinados/peinado_prueba.webp', 1, 1, NULL
+)
+ON DUPLICATE KEY UPDATE
+    `categoria`         = VALUES(`categoria`),
+    `descripcion`       = VALUES(`descripcion`),
+    `precio`            = VALUES(`precio`),
+    `precio_texto`      = VALUES(`precio_texto`),
+    `duracion_minutos`  = VALUES(`duracion_minutos`),
+    `imagen`            = VALUES(`imagen`),
+    `destacado`         = VALUES(`destacado`),
+    `activo`            = VALUES(`activo`),
+    `detalles`          = VALUES(`detalles`);
 
--- ------------------------------------------------------------------------------
--- 4. RESERVAS INICIALES DE PRUEBA
--- ------------------------------------------------------------------------------
-INSERT INTO `reservas` (`id`, `usuario_id`, `profesional_id`, `servicio_id`, `fecha`, `hora`, `duracion_minutos`, `precio`, `estado`, `observaciones`, `created_at`) VALUES
-(1, 2, 1, 2, CURDATE(), '10:00:00', 180, 95000.00, 'CONFIRMADA', 'Quiere tonos beige manteca', NOW()),
-(2, 3, 1, 4, CURDATE(), '15:00:00', 150, 88000.00, 'PENDIENTE', 'Primera vez en el salón', NOW()),
-(3, 2, 1, 1, DATE_ADD(CURDATE(), INTERVAL 1 DAY), '11:00:00', 150, 150000.00, 'CONFIRMADA', 'Cabello largo con volumen', NOW());
+-- ==============================================================================
+-- PASO OBLIGATORIO POST-SEED
+-- ==============================================================================
+-- Despues de ejecutar este archivo, correr el script PHP:
+--   Via HTTP: https://marianestilista.online/backend/config/setup_production_admin.php
+--   Via CLI:  php backend/config/setup_production_admin.php
+-- Ese script genera el hash BCRYPT real con password_hash() y lo aplica.
+-- Eliminarlo o moverlo fuera del webroot una vez ejecutado.
+-- ==============================================================================

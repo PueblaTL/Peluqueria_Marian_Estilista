@@ -51,21 +51,121 @@ class UsuarioRepository {
      * @return int ID generado
      */
     public function create(Usuario $usuario): int {
-        $sql = "INSERT INTO `usuarios` (`nombre`, `apellido`, `email`, `password`, `telefono`, `rol`, `activo`, `created_at`)
-                VALUES (:nombre, :apellido, :email, :password, :telefono, :rol, :activo, NOW())";
+        $sql = "INSERT INTO `usuarios` (`nombre`, `apellido`, `email`, `password`, `telefono`, `rol`, `email_verificado`, `token_verificacion`, `token_expiracion`, `ultimo_reenvio_correo`, `activo`, `created_at`)
+                VALUES (:nombre, :apellido, :email, :password, :telefono, :rol, :email_verificado, :token_verificacion, :token_expiracion, :ultimo_reenvio_correo, :activo, NOW())";
         
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
-            ':nombre'   => $usuario->nombre,
-            ':apellido' => $usuario->apellido,
-            ':email'    => $usuario->email,
-            ':password' => $usuario->password,
-            ':telefono' => $usuario->telefono,
-            ':rol'      => $usuario->rol,
-            ':activo'   => $usuario->activo ? 1 : 0
+            ':nombre'                => $usuario->nombre,
+            ':apellido'              => $usuario->apellido,
+            ':email'                 => $usuario->email,
+            ':password'              => $usuario->password,
+            ':telefono'              => $usuario->telefono,
+            ':rol'                   => $usuario->rol,
+            ':email_verificado'      => $usuario->emailVerificado ? 1 : 0,
+            ':token_verificacion'    => $usuario->tokenVerificacion,
+            ':token_expiracion'      => $usuario->tokenExpiracion,
+            ':ultimo_reenvio_correo' => $usuario->ultimoReenvioCorreo,
+            ':activo'                => $usuario->activo ? 1 : 0
         ]);
 
         return (int)$this->db->lastInsertId();
+    }
+
+    /**
+     * Busca un usuario mediante su token de verificación activo.
+     *
+     * @param string $token
+     * @return Usuario|null
+     */
+    public function findByToken(string $token): ?Usuario {
+        $sql = "SELECT * FROM `usuarios` WHERE `token_verificacion` = :token LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':token' => trim($token)]);
+        $row = $stmt->fetch();
+
+        return $row ? new Usuario($row) : null;
+    }
+
+    /**
+     * Marca el correo de un usuario como verificado y elimina el token de un solo uso.
+     *
+     * @param int $userId
+     * @return bool
+     */
+    public function marcarEmailVerificado(int $userId): bool {
+        $sql = "UPDATE `usuarios` 
+                SET `email_verificado` = 1,
+                    `token_verificacion` = NULL,
+                    `token_expiracion` = NULL,
+                    `updated_at` = NOW()
+                WHERE `id` = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([':id' => $userId]);
+    }
+
+    /**
+     * Actualiza el token de verificación y la fecha del último reenvío (con control anti-spam).
+     *
+     * @param int $userId
+     * @param string $token
+     * @param string $expiracion (formato YYYY-MM-DD HH:MM:SS)
+     * @return bool
+     */
+    public function actualizarTokenVerificacion(int $userId, string $token, string $expiracion): bool {
+        $sql = "UPDATE `usuarios` 
+                SET `token_verificacion` = :token,
+                    `token_expiracion` = :expiracion,
+                    `ultimo_reenvio_correo` = NOW(),
+                    `updated_at` = NOW()
+                WHERE `id` = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':id'         => $userId,
+            ':token'      => $token,
+            ':expiracion' => $expiracion
+        ]);
+    }
+
+    /**
+     * Actualiza el teléfono de un cliente si difiere o si estaba vacío.
+     *
+     * @param int $userId
+     * @param string $telefono
+     * @return bool
+     */
+    public function actualizarTelefono(int $userId, string $telefono): bool {
+        $sql = "UPDATE `usuarios` SET `telefono` = :telefono, `updated_at` = NOW() WHERE `id` = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':id'       => $userId,
+            ':telefono' => $telefono
+        ]);
+    }
+
+    /**
+     * Actualiza datos básicos de contacto del cliente (nombre, apellido, teléfono).
+     *
+     * @param int $userId
+     * @param string $nombre
+     * @param string $apellido
+     * @param string $telefono
+     * @return bool
+     */
+    public function actualizarDatosCliente(int $userId, string $nombre, string $apellido, string $telefono): bool {
+        $sql = "UPDATE `usuarios` 
+                SET `nombre` = :nombre,
+                    `apellido` = :apellido,
+                    `telefono` = :telefono,
+                    `updated_at` = NOW()
+                WHERE `id` = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':id'       => $userId,
+            ':nombre'   => $nombre,
+            ':apellido' => $apellido,
+            ':telefono' => $telefono
+        ]);
     }
 
     /**
@@ -86,6 +186,47 @@ class UsuarioRepository {
     }
 
     /**
+     * Obtiene clientes (rol=CLIENTE) enriquecidos con estadísticas de sus reservas.
+     * Retorna: id, nombre, apellido, email, telefono, cantidadTurnos, ultimoTurno, gastoTotal.
+     *
+     * @return array
+     */
+    public function listClientes(): array {
+        $sql = "SELECT 
+                    u.id,
+                    u.nombre,
+                    u.apellido,
+                    u.email,
+                    u.telefono,
+                    u.activo,
+                    u.created_at,
+                    COUNT(r.id)          AS cantidad_turnos,
+                    MAX(r.fecha)         AS ultimo_turno,
+                    COALESCE(SUM(r.precio), 0) AS gasto_total
+                FROM `usuarios` u
+                LEFT JOIN `reservas` r ON r.usuario_id = u.id AND r.estado != 'CANCELADA'
+                WHERE u.rol = 'CLIENTE' AND u.activo = 1
+                GROUP BY u.id, u.nombre, u.apellido, u.email, u.telefono, u.activo, u.created_at
+                ORDER BY cantidad_turnos DESC, u.created_at DESC";
+
+        $stmt = $this->db->query($sql);
+        $rows = $stmt->fetchAll();
+
+        return array_map(fn($row) => [
+            'id'             => (int)$row['id'],
+            'nombre'         => $row['nombre'],
+            'apellido'       => $row['apellido'],
+            'email'          => $row['email'],
+            'telefono'       => $row['telefono'] ?? '',
+            'activo'         => (bool)$row['activo'],
+            'cantidadTurnos' => (int)$row['cantidad_turnos'],
+            'ultimoTurno'    => $row['ultimo_turno'] ?? 'Sin turnos',
+            'gastoTotal'     => (float)$row['gasto_total'],
+            'createdAt'      => $row['created_at']
+        ], $rows);
+    }
+
+    /**
      * Cuenta la cantidad total de clientes registrados.
      *
      * @return int
@@ -94,4 +235,103 @@ class UsuarioRepository {
         $sql = "SELECT COUNT(*) FROM `usuarios` WHERE `rol` = 'CLIENTE' AND `activo` = 1";
         return (int)$this->db->query($sql)->fetchColumn();
     }
+
+    /**
+     * Actualiza la contraseña hasheada de un usuario.
+     *
+     * @param int $userId
+     * @param string $passwordHash
+     * @return bool
+     */
+    public function actualizarPassword(int $userId, string $passwordHash): bool {
+        $sql = "UPDATE `usuarios` 
+                SET `password` = :password,
+                    `updated_at` = NOW()
+                WHERE `id` = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':id'       => $userId,
+            ':password' => $passwordHash
+        ]);
+    }
+
+    /**
+     * Inserta un nuevo token de recuperación de contraseña.
+     *
+     * @param int $userId
+     * @param string $tokenHash
+     * @param string $expiracion (YYYY-MM-DD HH:MM:SS)
+     * @param string|null $ip
+     * @return bool
+     */
+    public function crearTokenRecuperacion(int $userId, string $tokenHash, string $expiracion, ?string $ip = null): bool {
+        // Invalidar tokens previos pendientes del mismo usuario para evitar tokens duplicados
+        $sqlInvalidate = "UPDATE `password_resets` 
+                          SET `utilizado_en` = NOW() 
+                          WHERE `usuario_id` = :usuario_id AND `utilizado_en` IS NULL";
+        $stmtInv = $this->db->prepare($sqlInvalidate);
+        $stmtInv->execute([':usuario_id' => $userId]);
+
+        $sql = "INSERT INTO `password_resets` (`usuario_id`, `token_hash`, `expiracion`, `ip_address`, `created_at`)
+                VALUES (:usuario_id, :token_hash, :expiracion, :ip_address, NOW())";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':usuario_id' => $userId,
+            ':token_hash' => $tokenHash,
+            ':expiracion' => $expiracion,
+            ':ip_address' => $ip
+        ]);
+    }
+
+    /**
+     * Busca un token de recuperación activo, vigente y no utilizado.
+     *
+     * @param string $tokenHash
+     * @return array|null
+     */
+    public function buscarTokenRecuperacionValido(string $tokenHash): ?array {
+        $sql = "SELECT pr.*, u.email, u.nombre, u.activo
+                FROM `password_resets` pr
+                JOIN `usuarios` u ON u.id = pr.usuario_id
+                WHERE pr.token_hash = :token_hash
+                  AND pr.utilizado_en IS NULL
+                  AND pr.expiracion > NOW()
+                LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':token_hash' => $tokenHash]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $row ?: null;
+    }
+
+    /**
+     * Marca un token de recuperación como utilizado.
+     *
+     * @param int $tokenId
+     * @return bool
+     */
+    public function marcarTokenRecuperacionUtilizado(int $tokenId): bool {
+        $sql = "UPDATE `password_resets` SET `utilizado_en` = NOW() WHERE `id` = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([':id' => $tokenId]);
+    }
+
+    /**
+     * Verifica la cantidad de solicitudes de recuperación en los últimos N minutos para un usuario (control anti-abuso).
+     *
+     * @param int $userId
+     * @param int $minutos
+     * @return int
+     */
+    public function contarSolicitudesRecuperacionRecientes(int $userId, int $minutos = 2): int {
+        $sql = "SELECT COUNT(*) FROM `password_resets`
+                WHERE `usuario_id` = :usuario_id
+                  AND `created_at` > (NOW() - INTERVAL :minutos MINUTE)";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':usuario_id', $userId, PDO::PARAM_INT);
+        $stmt->bindValue(':minutos', $minutos, PDO::PARAM_INT);
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
+    }
 }
+

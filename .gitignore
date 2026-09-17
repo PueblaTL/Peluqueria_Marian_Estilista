@@ -1,0 +1,10 @@
+# Entorno local y credenciales
+.env
+.env.local
+*.log
+cookies.txt
+scratch/
+
+# Dependencias
+vendor/
+node_modules/
