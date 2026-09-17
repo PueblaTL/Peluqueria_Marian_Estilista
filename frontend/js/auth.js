@@ -355,11 +355,16 @@ async function initLoginPage() {
           });
         } else if (errType === "invalid_password") {
           window.showAlertModal({
-            title: "⚠ Contraseña incorrecta",
-            message: "La contraseña ingresada no es correcta.",
-            type: "warning",
+            title: "🔒 Contraseña incorrecta",
+            message: "Verifica tu contraseña e inténtalo nuevamente.",
+            type: "lock",
             buttonText: "Entendido"
           });
+          // Limpiar solo la contraseña; preservar el email para reintento fácil
+          if (passwordInput) {
+            passwordInput.value = "";
+            setTimeout(() => passwordInput.focus(), 80);
+          }
         } else if (errType === "email_not_verified" || status === 403) {
           window.showAlertModal({
             title: "⚠ Correo no verificado",

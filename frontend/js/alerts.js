@@ -98,6 +98,8 @@
       iconEl.textContent = "✕";
     } else if (type === "unverified_email" || type === "info") {
       iconEl.textContent = "✉";
+    } else if (type === "lock") {
+      iconEl.textContent = "🔒";
     } else {
       iconEl.textContent = "⚠";
     }
