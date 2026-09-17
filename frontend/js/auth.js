@@ -339,7 +339,7 @@ async function initLoginPage() {
     } catch (err) {
       console.error("Error en login:", err);
       submitBtn.disabled = false;
-      submitBtn.textContent = "Iniciar Sesión";
+      submitBtn.innerHTML = "<span>Iniciar Sesión</span>";
 
       const errType = err.type || err.data?.type || "";
       const status = err.status || 0;
@@ -349,22 +349,24 @@ async function initLoginPage() {
         if (errType === "user_not_found") {
           window.showAlertModal({
             title: "⚠ Cuenta no encontrada",
-            message: "No existe una cuenta registrada con ese correo electrónico.",
+            message: "No encontramos una cuenta asociada a ese correo electrónico.",
             type: "warning",
             buttonText: "Entendido"
           });
         } else if (errType === "invalid_password") {
           window.showAlertModal({
             title: "🔒 Contraseña incorrecta",
-            message: "Verifica tu contraseña e inténtalo nuevamente.",
+            message: "La contraseña ingresada no es correcta. Verifica tus datos e inténtalo nuevamente.",
             type: "lock",
-            buttonText: "Entendido"
+            buttonText: "Entendido",
+            onConfirm: () => {
+              // Limpiar contraseña y enfocar DESPUÉS de cerrar el modal
+              if (passwordInput) {
+                passwordInput.value = "";
+                passwordInput.focus();
+              }
+            }
           });
-          // Limpiar solo la contraseña; preservar el email para reintento fácil
-          if (passwordInput) {
-            passwordInput.value = "";
-            setTimeout(() => passwordInput.focus(), 80);
-          }
         } else if (errType === "email_not_verified" || status === 403) {
           window.showAlertModal({
             title: "⚠ Correo no verificado",
@@ -373,6 +375,13 @@ async function initLoginPage() {
             buttonText: "Entendido",
             actionLabel: "Reenviar correo",
             onAction: () => _reenviarVerificacionDesdeLogin(email_login)
+          });
+        } else if (errType === "account_disabled") {
+          window.showAlertModal({
+            title: "⚠ Cuenta desactivada",
+            message: "Esta cuenta se encuentra desactivada. Contactá con el soporte si creés que es un error.",
+            type: "warning",
+            buttonText: "Entendido"
           });
         } else if (errType === "network_error" || status === 0) {
           window.showAlertModal({
@@ -384,7 +393,7 @@ async function initLoginPage() {
         } else if (errType === "server_error" || status >= 500) {
           window.showAlertModal({
             title: "⚠ Error del servidor",
-            message: "No pudimos iniciar sesión. Intentá nuevamente.",
+            message: "No pudimos iniciar sesión. Intentá nuevamente en unos minutos.",
             type: "danger",
             buttonText: "Entendido"
           });
@@ -398,6 +407,7 @@ async function initLoginPage() {
         }
       } else {
         window.showToast?.(err.data?.message || err.message || "Error al iniciar sesión.", "danger");
+
       }
     }
   });

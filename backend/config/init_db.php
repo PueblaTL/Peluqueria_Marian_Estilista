@@ -34,20 +34,38 @@ try {
         ]);
     }
 
+    /**
+     * Sanitiza y prepara el SQL para ejecución robusta en PDO:
+     * - Remueve caracteres BOM UTF-8 (\xEF\xBB\xBF) al inicio del archivo
+     * - Adapta sentencias USE / CREATE DATABASE al nombre real configurado ($dbName)
+     */
+    $prepareSql = function(string $filePath) use ($dbName): string {
+        if (!file_exists($filePath)) {
+            throw new Exception("No se encontró el archivo: $filePath");
+        }
+        $sql = file_get_contents($filePath);
+        if ($sql === false) {
+            throw new Exception("No se pudo leer el archivo: $filePath");
+        }
+        // 1. Eliminar BOM UTF-8 (\xEF\xBB\xBF) si existe
+        if (str_starts_with($sql, "\xEF\xBB\xBF")) {
+            $sql = substr($sql, 3);
+        }
+        // 2. Adaptar nombre de base de datos a la configuración activa (local o hosting)
+        $sql = preg_replace('/CREATE\s+DATABASE\s+IF\s+NOT\s+EXISTS\s+`?[a-zA-Z0-9_]+`?/i', "CREATE DATABASE IF NOT EXISTS `$dbName`", $sql);
+        $sql = preg_replace('/USE\s+`?[a-zA-Z0-9_]+`?\s*;/i', "USE `$dbName`;", $sql);
+
+        return trim($sql);
+    };
+
     // 4. Cargar y ejecutar schema.sql
     $schemaPath = __DIR__ . '/../sql/schema.sql';
-    if (!file_exists($schemaPath)) {
-        throw new Exception("No se encontró el archivo $schemaPath");
-    }
-    $schemaSql = file_get_contents($schemaPath);
+    $schemaSql = $prepareSql($schemaPath);
     $pdo->exec($schemaSql);
 
     // 5. Cargar y ejecutar seed.sql
     $seedPath = __DIR__ . '/../sql/seed.sql';
-    if (!file_exists($seedPath)) {
-        throw new Exception("No se encontró el archivo $seedPath");
-    }
-    $seedSql = file_get_contents($seedPath);
+    $seedSql = $prepareSql($seedPath);
     $pdo->exec($seedSql);
 
     echo "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 25px; border-radius: 12px; background: #0c0d12; color: #fff; border: 1px solid #c5a880;'>";
