@@ -146,7 +146,7 @@ INSERT INTO `servicios` (`nombre`, `categoria`, `descripcion`, `precio`, `precio
     30000.00,
     '$30.000',
     60,
-    'assets/images/peinados/peinado_ondas.jpg',
+    'assets/images/peinados/peinado_ondas.webp',
     1,
     1,
     NULL
@@ -158,7 +158,7 @@ INSERT INTO `servicios` (`nombre`, `categoria`, `descripcion`, `precio`, `precio
     40000.00,
     '$40.000',
     60,
-    'assets/images/peinados/peinado_semirrecogido.jpg',
+    'assets/images/peinados/peinado_semirrecogido.webp',
     1,
     1,
     NULL
@@ -170,7 +170,7 @@ INSERT INTO `servicios` (`nombre`, `categoria`, `descripcion`, `precio`, `precio
     50000.00,
     '$50.000',
     60,
-    'assets/images/peinados/peinado_recogido.jpg',
+    'assets/images/peinados/peinado_recogido.webp',
     1,
     1,
     NULL
@@ -182,7 +182,7 @@ INSERT INTO `servicios` (`nombre`, `categoria`, `descripcion`, `precio`, `precio
     55000.00,
     '$55.000',
     60,
-    'assets/images/peinados/peinado_social.jpg',
+    'assets/images/peinados/peinado_social.webp',
     1,
     1,
     NULL
@@ -194,7 +194,7 @@ INSERT INTO `servicios` (`nombre`, `categoria`, `descripcion`, `precio`, `precio
     65000.00,
     '$65.000',
     90,
-    'assets/images/peinados/peinado_15anos.jpg',
+    'assets/images/peinados/peinado_15anios.webp',
     1,
     1,
     NULL
@@ -206,7 +206,7 @@ INSERT INTO `servicios` (`nombre`, `categoria`, `descripcion`, `precio`, `precio
     80000.00,
     'Desde $80.000',
     90,
-    'assets/images/peinados/peinado_novia.jpg',
+    'assets/images/peinados/peinado_novia.webp',
     1,
     1,
     NULL
@@ -218,7 +218,7 @@ INSERT INTO `servicios` (`nombre`, `categoria`, `descripcion`, `precio`, `precio
     35000.00,
     '$35.000',
     60,
-    'assets/images/peinados/peinado_prueba.jpg',
+    'assets/images/peinados/peinado_prueba.webp',
     1,
     1,
     NULL
