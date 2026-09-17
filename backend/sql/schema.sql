@@ -97,3 +97,22 @@ CREATE TABLE IF NOT EXISTS `reservas` (
   INDEX `idx_reservas_usuario_fecha` (`usuario_id`, `fecha`),
   INDEX `idx_reservas_estado` (`estado`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------------------------
+-- 5. TABLA: password_resets
+-- Tokens seguros de recuperación de contraseña con expiración y un solo uso
+-- ------------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `password_resets` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `usuario_id` INT NOT NULL,
+  `token_hash` VARCHAR(64) NOT NULL,
+  `expiracion` DATETIME NOT NULL,
+  `utilizado_en` DATETIME NULL,
+  `ip_address` VARCHAR(45) NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT `fk_password_resets_usuario` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  INDEX `idx_password_resets_token` (`token_hash`),
+  INDEX `idx_password_resets_usuario` (`usuario_id`),
+  INDEX `idx_password_resets_expiracion` (`expiracion`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+

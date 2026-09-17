@@ -69,6 +69,30 @@ $isLocalPath = (
 );
 $isLocalEnvironment = $isLocalHost || (php_sapi_name() === 'cli' && $isLocalPath) || (empty($httpHost) && $isLocalPath);
 
+// ==============================================================================
+// CONFIGURACIÓN CENTRALIZADA DE URLS (PRODUCCIÓN VS DESARROLLO)
+// ==============================================================================
+if (!defined('APP_URL')) {
+    $envAppUrl = getenv('APP_URL') ?: (getenv('BASE_URL') ?: null);
+    if ($envAppUrl) {
+        define('APP_URL', rtrim($envAppUrl, '/'));
+    } elseif ($isLocalHost) {
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || 
+                    (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) ? 'https://' : 'http://';
+        $scriptPath = $_SERVER['SCRIPT_NAME'] ?? '';
+        $baseFolder = '';
+        if (preg_match('#^(.*?/(marian-estilista|peluqueria-portal))#i', $scriptPath, $m)) {
+            $baseFolder = $m[1];
+        }
+        define('APP_URL', rtrim($protocol . $httpHost . $baseFolder, '/'));
+    } else {
+        define('APP_URL', 'https://marianestilista.online');
+    }
+}
+if (!defined('BASE_URL')) {
+    define('BASE_URL', APP_URL);
+}
+
 if ($isLocalEnvironment) {
     // === ENTORNO LOCAL (XAMPP / Laragon) ===
     define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
@@ -106,9 +130,11 @@ define('MARIAN_NOTIFICATION_EMAIL', getenv('MARIAN_NOTIFICATION_EMAIL') ?: 'mari
 
 // Configuración de Sesión Segura en PHP
 if (session_status() === PHP_SESSION_NONE) {
-    // Configurar atributos de la cookie de sesión antes de iniciarla
+    // Detección exhaustiva de HTTPS (conexión directa o reverse proxy DonWeb / Ferozo / Cloudflare)
     $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || 
-               (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);
+               (!empty($_SERVER['SERVER_PORT']) && (int)$_SERVER['SERVER_PORT'] === 443) ||
+               (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') ||
+               (!empty($_SERVER['HTTP_X_FORWARDED_SSL']) && strtolower($_SERVER['HTTP_X_FORWARDED_SSL']) === 'on');
 
     session_set_cookie_params([
         'lifetime' => 60 * 60 * 24 * 7, // 7 días
@@ -126,8 +152,12 @@ if (session_status() === PHP_SESSION_NONE) {
 function setupCors() {
     $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
-    // Orígenes permitidos habituales en desarrollo (Live Server, Apache, localhost)
+    // Orígenes permitidos en desarrollo y producción
     $allowedOrigins = [
+        'https://marianestilista.online',
+        'http://marianestilista.online',
+        'https://www.marianestilista.online',
+        'http://www.marianestilista.online',
         'http://localhost',
         'http://127.0.0.1',
         'http://localhost:5500',
@@ -138,9 +168,9 @@ function setupCors() {
     ];
 
     if (!empty($origin)) {
-        // Si el origen coincide o proviene de localhost con cualquier puerto
         $isLocalhost = preg_match('#^https?://(localhost|127\.0\.0\.1)(:\d+)?$#i', $origin);
-        if (in_array($origin, $allowedOrigins, true) || $isLocalhost) {
+        $isProductionDomain = preg_match('#^https?://(www\.)?marianestilista\.online(:\d+)?$#i', $origin);
+        if (in_array($origin, $allowedOrigins, true) || $isLocalhost || $isProductionDomain) {
             header("Access-Control-Allow-Origin: $origin");
             header('Access-Control-Allow-Credentials: true');
         }
@@ -159,3 +189,4 @@ function setupCors() {
 
 // Inicializar cabeceras CORS
 setupCors();
+

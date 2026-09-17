@@ -57,22 +57,91 @@ class AuthController {
 
     /**
      * Valida el token de verificación recibido vía GET o POST.
+     * Si la petición proviene de un navegador web, redirige directamente al login con el resultado visual.
      */
     public function verify(): void {
+        $token = $_GET['token'] ?? $_POST['token'] ?? '';
+        if (empty($token)) {
+            $data = getRequestData();
+            $token = $data['token'] ?? '';
+        }
+
+        $isHtmlRequest = !empty($_SERVER['HTTP_ACCEPT']) && 
+                         (strpos($_SERVER['HTTP_ACCEPT'], 'text/html') !== false) && 
+                         (strpos($_SERVER['HTTP_ACCEPT'], 'application/json') === false);
+
+        $loginUrl = (defined('APP_URL') ? APP_URL : '') . '/frontend/pages/login.html';
+
+        try {
+            $res = $this->authService->verifyEmail($token);
+            if ($isHtmlRequest) {
+                header("Location: " . $loginUrl . "?verified=1");
+                exit();
+            }
+            jsonResponse(true, "Correo verificado correctamente. Tu cuenta fue activada. Ya podés iniciar sesión.", $res, 200, null, 'success');
+        } catch (Exception $e) {
+            $errCode = $e->getCode();
+            $errParam = ($errCode === 410) ? 'expired' : 'invalid';
+            if ($isHtmlRequest) {
+                header("Location: " . $loginUrl . "?verify_error=" . $errParam);
+                exit();
+            }
+            $code = ($errCode >= 400 && $errCode < 600) ? $errCode : 400;
+            jsonResponse(false, $e->getMessage(), null, $code, 'VERIFY_FAILED', 'validation');
+        }
+    }
+
+    /**
+     * Procesa la solicitud de recuperación de contraseña ("¿Olvidaste tu contraseña?").
+     */
+    public function forgotPassword(): void {
+        try {
+            $data = getRequestData();
+            $email = $data['email'] ?? $_POST['email'] ?? '';
+            $res = $this->authService->forgotPassword($email);
+            jsonResponse(true, $res['message'], $res, 200, null, 'success');
+        } catch (Exception $e) {
+            $code = ($e->getCode() >= 400 && $e->getCode() < 600) ? $e->getCode() : 400;
+            jsonResponse(false, "Si el correo está registrado, recibirás un enlace para recuperar tu contraseña.", null, 200, null, 'success');
+        }
+    }
+
+    /**
+     * Valida la vigencia de un token de recuperación.
+     */
+    public function validateResetToken(): void {
         try {
             $token = $_GET['token'] ?? $_POST['token'] ?? '';
             if (empty($token)) {
                 $data = getRequestData();
                 $token = $data['token'] ?? '';
             }
-
-            $res = $this->authService->verifyEmail($token);
-            jsonResponse(true, "Correo verificado correctamente. Tu cuenta fue activada. Ya podés iniciar sesión.", $res, 200, null, 'success');
+            $res = $this->authService->validateResetToken($token);
+            jsonResponse(true, "Token válido.", $res, 200, null, 'success');
         } catch (Exception $e) {
             $code = ($e->getCode() >= 400 && $e->getCode() < 600) ? $e->getCode() : 400;
-            jsonResponse(false, $e->getMessage(), null, $code, 'VERIFY_FAILED', 'validation');
+            jsonResponse(false, $e->getMessage(), null, $code, 'INVALID_TOKEN', 'validation');
         }
     }
+
+    /**
+     * Establece la nueva contraseña usando el token de recuperación.
+     */
+    public function resetPassword(): void {
+        try {
+            $data = getRequestData();
+            $token = $data['token'] ?? $_POST['token'] ?? '';
+            $password = $data['password'] ?? $_POST['password'] ?? '';
+            $confirmPassword = $data['confirm_password'] ?? $data['confirmPassword'] ?? $_POST['confirm_password'] ?? '';
+
+            $res = $this->authService->resetPassword($token, $password, $confirmPassword);
+            jsonResponse(true, $res['message'], $res, 200, null, 'success');
+        } catch (Exception $e) {
+            $code = ($e->getCode() >= 400 && $e->getCode() < 600) ? $e->getCode() : 400;
+            jsonResponse(false, $e->getMessage(), null, $code, 'RESET_FAILED', 'validation');
+        }
+    }
+
 
     /**
      * Reenvía el correo de verificación.

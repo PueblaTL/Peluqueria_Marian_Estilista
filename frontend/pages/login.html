@@ -24,21 +24,21 @@
   <link rel="stylesheet" href="../css/alerts.css">
 </head>
 
-<body class="auth-page-body">
+<body class="auth-page-body auth-login-theme">
 
   <!-- Header mínimo -->
   <header class="site-header scrolled">
     <div class="container header-container">
-      <a href="../index.html" class="brand-logo">
+      <a href="../index.html" class="brand-logo" id="header-brand-logo">
         <div class="brand-symbol">M</div>
         <div class="brand-text">
           <span class="brand-name">MARIAN ESTILISTA</span>
-          <span class="brand-tag">Peluquería & Colorimetría</span>
+          <span class="brand-tag">Peluquería &amp; Colorimetría</span>
         </div>
       </a>
 
       <div class="header-actions">
-        <a href="../index.html" class="btn btn-secondary btn-sm">
+        <a href="../index.html" class="btn btn-secondary btn-sm" id="btn-back-home">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="19" y1="12" x2="5" y2="12"></line>
             <polyline points="12 19 5 12 12 5"></polyline>
@@ -51,50 +51,95 @@
 
   <!-- Contenido de Autenticación -->
   <main class="auth-main-content">
-    <div class="auth-card">
-      <div class="auth-card-header">
-        <div class="auth-brand-symbol">M</div>
-        <h1 class="auth-title">Bienvenida</h1>
-        <p class="auth-subtitle">Ingresa a tu cuenta para gestionar tus reservas y citas exclusivas en Bariloche.</p>
-      </div>
-
-      <form id="form-login" class="auth-form" novalidate>
-        <div class="form-group-custom">
-          <label for="login-email">Correo Electrónico</label>
-          <div class="form-input-wrapper">
-            <input type="email" id="login-email" class="form-input-custom" placeholder="ejemplo@correo.com" required autocomplete="email" autofocus>
-          </div>
+    <div class="auth-card" id="auth-card-container">
+      
+      <!-- Panel de Login Principal -->
+      <div id="login-view-panel" class="auth-view-panel">
+        <div class="auth-card-header">
+          <div class="auth-brand-symbol">M</div>
+          <h1 class="auth-title">Bienvenida</h1>
+          <p class="auth-subtitle">Ingresa a tu cuenta para gestionar tus reservas y citas exclusivas en Bariloche.</p>
         </div>
 
-        <div class="form-group-custom">
-          <label for="login-password">Contraseña</label>
-          <div class="password-input-wrapper">
-            <input type="password" id="login-password" class="form-input-custom" placeholder="••••••••" required autocomplete="current-password">
-            <button type="button" id="btn-toggle-password" class="btn-toggle-password" aria-label="Mostrar contraseña" title="Mostrar contraseña">
-              <span class="toggle-icon" aria-hidden="true">👁</span>
-            </button>
+        <form id="form-login" class="auth-form" novalidate>
+          <div class="form-group-custom">
+            <label for="login-email">Correo Electrónico</label>
+            <div class="form-input-wrapper">
+              <input type="email" id="login-email" class="form-input-custom" placeholder="ejemplo@correo.com" required autocomplete="email" autofocus>
+            </div>
           </div>
+
+          <div class="form-group-custom">
+            <div class="form-label-row">
+              <label for="login-password">Contraseña</label>
+            </div>
+            <div class="password-input-wrapper">
+              <input type="password" id="login-password" class="form-input-custom" placeholder="••••••••" required autocomplete="current-password">
+              <button type="button" id="btn-toggle-password" class="btn-toggle-password" aria-label="Mostrar contraseña" title="Mostrar contraseña">
+                <span class="toggle-icon" aria-hidden="true">👁</span>
+              </button>
+            </div>
+            <div class="forgot-password-link-wrapper">
+              <button type="button" id="link-forgot-password" class="auth-link-text">¿Olvidaste tu contraseña?</button>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-submit-login" class="btn btn-primary btn-md auth-btn-submit">
+            <span>Iniciar Sesión</span>
+          </button>
+        </form>
+
+        <div class="auth-card-footer">
+          ¿Aún no tienes una cuenta? <a href="registro.html" id="link-go-register">Crear Cuenta</a>
+        </div>
+      </div>
+
+      <!-- Panel de Recuperación de Contraseña (Oculto por defecto) -->
+      <div id="forgot-view-panel" class="auth-view-panel" style="display: none;">
+        <div class="auth-card-header">
+          <div class="auth-brand-symbol">M</div>
+          <h1 class="auth-title">Recuperar Contraseña</h1>
+          <p class="auth-subtitle">Ingresá tu correo electrónico y te enviaremos las instrucciones para restablecer tu contraseña.</p>
         </div>
 
-        <button type="submit" id="btn-submit-login" class="btn btn-primary btn-md" style="width: 100%; margin-top: 10px;">
-          <span>Iniciar Sesión</span>
-        </button>
-      </form>
+        <form id="form-forgot-password" class="auth-form" novalidate>
+          <div class="form-group-custom">
+            <label for="forgot-email">Correo Electrónico</label>
+            <div class="form-input-wrapper">
+              <input type="email" id="forgot-email" class="form-input-custom" placeholder="ejemplo@correo.com" required autocomplete="email">
+            </div>
+          </div>
 
-      <!-- Credenciales de prueba didácticas -->
-      <div class="auth-demo-credentials">
-        <strong>🔑 Cuentas de Demostración:</strong>
-        <ul>
-          <li><strong>Administrador:</strong> <code>admin@marianestilista.com</code> / <code>Admin123!</code></li>
-          <li><strong>Cliente:</strong> <code>camila@gmail.com</code> / <code>Cliente123!</code></li>
-        </ul>
+          <button type="submit" id="btn-submit-forgot" class="btn btn-primary btn-md auth-btn-submit">
+            <span>Enviar enlace de recuperación</span>
+          </button>
+
+          <button type="button" id="btn-back-to-login" class="btn btn-secondary btn-md auth-btn-back">
+            <span>Volver a Iniciar Sesión</span>
+          </button>
+        </form>
+
+        <div id="forgot-feedback-container" class="auth-feedback-box" style="display: none;"></div>
+
+        <div class="auth-card-footer">
+          ¿Recordaste tu contraseña? <a href="#" id="link-return-login">Iniciar Sesión</a>
+        </div>
       </div>
 
-      <div class="auth-card-footer">
-        ¿Aún no tienes una cuenta? <a href="registro.html">Crear Cuenta</a>
-      </div>
     </div>
   </main>
+
+  <!-- Modal de Alerta Global -->
+  <div id="marian-alert-backdrop" class="marian-alert-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="marian-alert-modal">
+      <div id="marian-alert-icon" class="marian-alert-icon info">ℹ</div>
+      <h3 id="marian-alert-title" class="marian-alert-title">Mensaje</h3>
+      <p id="marian-alert-msg" class="marian-alert-msg"></p>
+      <div class="marian-alert-actions">
+        <button type="button" id="marian-alert-btn" class="marian-btn marian-btn-gold">Entendido</button>
+      </div>
+    </div>
+  </div>
 
   <!-- Toast Container -->
   <div id="toast-container" class="toast-container"></div>

@@ -235,4 +235,103 @@ class UsuarioRepository {
         $sql = "SELECT COUNT(*) FROM `usuarios` WHERE `rol` = 'CLIENTE' AND `activo` = 1";
         return (int)$this->db->query($sql)->fetchColumn();
     }
+
+    /**
+     * Actualiza la contraseña hasheada de un usuario.
+     *
+     * @param int $userId
+     * @param string $passwordHash
+     * @return bool
+     */
+    public function actualizarPassword(int $userId, string $passwordHash): bool {
+        $sql = "UPDATE `usuarios` 
+                SET `password` = :password,
+                    `updated_at` = NOW()
+                WHERE `id` = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':id'       => $userId,
+            ':password' => $passwordHash
+        ]);
+    }
+
+    /**
+     * Inserta un nuevo token de recuperación de contraseña.
+     *
+     * @param int $userId
+     * @param string $tokenHash
+     * @param string $expiracion (YYYY-MM-DD HH:MM:SS)
+     * @param string|null $ip
+     * @return bool
+     */
+    public function crearTokenRecuperacion(int $userId, string $tokenHash, string $expiracion, ?string $ip = null): bool {
+        // Invalidar tokens previos pendientes del mismo usuario para evitar tokens duplicados
+        $sqlInvalidate = "UPDATE `password_resets` 
+                          SET `utilizado_en` = NOW() 
+                          WHERE `usuario_id` = :usuario_id AND `utilizado_en` IS NULL";
+        $stmtInv = $this->db->prepare($sqlInvalidate);
+        $stmtInv->execute([':usuario_id' => $userId]);
+
+        $sql = "INSERT INTO `password_resets` (`usuario_id`, `token_hash`, `expiracion`, `ip_address`, `created_at`)
+                VALUES (:usuario_id, :token_hash, :expiracion, :ip_address, NOW())";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':usuario_id' => $userId,
+            ':token_hash' => $tokenHash,
+            ':expiracion' => $expiracion,
+            ':ip_address' => $ip
+        ]);
+    }
+
+    /**
+     * Busca un token de recuperación activo, vigente y no utilizado.
+     *
+     * @param string $tokenHash
+     * @return array|null
+     */
+    public function buscarTokenRecuperacionValido(string $tokenHash): ?array {
+        $sql = "SELECT pr.*, u.email, u.nombre, u.activo
+                FROM `password_resets` pr
+                JOIN `usuarios` u ON u.id = pr.usuario_id
+                WHERE pr.token_hash = :token_hash
+                  AND pr.utilizado_en IS NULL
+                  AND pr.expiracion > NOW()
+                LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':token_hash' => $tokenHash]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $row ?: null;
+    }
+
+    /**
+     * Marca un token de recuperación como utilizado.
+     *
+     * @param int $tokenId
+     * @return bool
+     */
+    public function marcarTokenRecuperacionUtilizado(int $tokenId): bool {
+        $sql = "UPDATE `password_resets` SET `utilizado_en` = NOW() WHERE `id` = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([':id' => $tokenId]);
+    }
+
+    /**
+     * Verifica la cantidad de solicitudes de recuperación en los últimos N minutos para un usuario (control anti-abuso).
+     *
+     * @param int $userId
+     * @param int $minutos
+     * @return int
+     */
+    public function contarSolicitudesRecuperacionRecientes(int $userId, int $minutos = 2): int {
+        $sql = "SELECT COUNT(*) FROM `password_resets`
+                WHERE `usuario_id` = :usuario_id
+                  AND `created_at` > (NOW() - INTERVAL :minutos MINUTE)";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':usuario_id', $userId, PDO::PARAM_INT);
+        $stmt->bindValue(':minutos', $minutos, PDO::PARAM_INT);
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
+    }
 }
+

@@ -52,15 +52,10 @@ try {
 
     echo "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 25px; border-radius: 12px; background: #0c0d12; color: #fff; border: 1px solid #c5a880;'>";
     echo "<h2 style='color: #c5a880; margin-top: 0;'>✨ ¡Base de Datos Inicializada con Éxito!</h2>";
-    echo "<p>Se ha creado y poblado la base de datos <strong>`$dbName`</strong> correctamente con todas las tablas e índices.</p>";
-    echo "<h3 style='color: #e5d3b3;'>Usuarios de Prueba Creados:</h3>";
-    echo "<ul style='line-height: 1.8;'>";
-    echo "<li><strong>ADMIN:</strong> admin@marianestilista.com | Clave: <code>Admin123!</code></li>";
-    echo "<li><strong>CLIENTE 1:</strong> camila@gmail.com | Clave: <code>Cliente123!</code></li>";
-    echo "<li><strong>CLIENTE 2:</strong> luciana@gmail.com | Clave: <code>Cliente123!</code></li>";
-    echo "</ul>";
-    echo "<p><a href='../../frontend/index.html' style='display: inline-block; background: #c5a880; color: #000; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;'>Ir al Frontend</a></p>";
+    echo "<p>Se ha configurado la base de datos <strong>`$dbName`</strong> correctamente con todas las tablas e índices de producción.</p>";
+    echo "<p><a href='../../frontend/pages/login.html' style='display: inline-block; background: #c5a880; color: #000; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold;'>Ir al Login</a></p>";
     echo "</div>";
+
 
 } catch (Exception $e) {
     http_response_code(500);

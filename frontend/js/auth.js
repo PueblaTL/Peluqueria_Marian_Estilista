@@ -135,7 +135,55 @@ async function updateNavbarAuth() {
 // ==============================================================================
 
 async function initLoginPage() {
-  // Si ya está autenticado, redirigir
+  // 1. Detección de parámetros de verificación de correo o errores en URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const verified = urlParams.get("verified");
+  const verifyError = urlParams.get("verify_error");
+
+  if (verified === "1") {
+    if (typeof window.showAlertModal === "function") {
+      window.showAlertModal({
+        title: "✓ ¡Correo verificado correctamente!",
+        message: "¡Correo verificado correctamente!\nTu cuenta ya está activa. Ahora puedes iniciar sesión.",
+        type: "success",
+        buttonText: "Entendido"
+      });
+    } else {
+      window.showToast?.("¡Correo verificado correctamente! Ya puedes iniciar sesión.", "success");
+    }
+    // Limpiar parámetros de la URL sin recargar para que no vuelva a saltar si refresca
+    window.history.replaceState({}, document.title, window.location.pathname);
+  } else if (verifyError) {
+    let title = "⚠ Atención";
+    let message = "Ocurrió un inconveniente con el enlace de activación.";
+    let type = "warning";
+
+    if (verifyError === "expired") {
+      title = "⚠ Enlace vencido";
+      message = "El enlace de verificación ha vencido. Solicita un nuevo correo de verificación a continuación.";
+    } else if (verifyError === "already_verified") {
+      title = "✓ Correo ya verificado";
+      message = "Este correo ya fue verificado previamente. Ya podés iniciar sesión.";
+      type = "success";
+    } else {
+      title = "⚠ Enlace no válido";
+      message = "Este enlace de verificación no es válido o ya fue utilizado.";
+    }
+
+    if (typeof window.showAlertModal === "function") {
+      window.showAlertModal({
+        title,
+        message,
+        type,
+        buttonText: "Entendido"
+      });
+    } else {
+      window.showToast?.(message, type);
+    }
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+
+  // 2. Si ya está autenticado, redirigir
   const user = await window.apiGetCurrentUser();
   if (user) {
     window.location.href = user.rol === "ADMIN" ? "admin.html" : "mis-reservas.html";
@@ -147,10 +195,107 @@ async function initLoginPage() {
   const passwordInput = document.getElementById("login-password");
   const submitBtn = document.getElementById("btn-submit-login");
 
+  // Paneles de vista Login vs Recuperación
+  const loginPanel = document.getElementById("login-view-panel");
+  const forgotPanel = document.getElementById("forgot-view-panel");
+  const linkForgot = document.getElementById("link-forgot-password");
+  const btnBackLogin = document.getElementById("btn-back-to-login");
+  const linkReturnLogin = document.getElementById("link-return-login");
+  const formForgot = document.getElementById("form-forgot-password");
+  const forgotEmailInput = document.getElementById("forgot-email");
+  const btnSubmitForgot = document.getElementById("btn-submit-forgot");
+  const forgotFeedback = document.getElementById("forgot-feedback-container");
+
+  // Toggle para mostrar panel de recuperación de contraseña
+  if (linkForgot && loginPanel && forgotPanel) {
+    linkForgot.addEventListener("click", (e) => {
+      e.preventDefault();
+      loginPanel.style.display = "none";
+      forgotPanel.style.display = "block";
+      if (emailInput && forgotEmailInput && emailInput.value) {
+        forgotEmailInput.value = emailInput.value.trim();
+      }
+      if (forgotFeedback) forgotFeedback.style.display = "none";
+      if (forgotEmailInput) forgotEmailInput.focus();
+    });
+  }
+
+  const showLoginView = (e) => {
+    if (e) e.preventDefault();
+    if (loginPanel && forgotPanel) {
+      forgotPanel.style.display = "none";
+      loginPanel.style.display = "block";
+      if (emailInput) emailInput.focus();
+    }
+  };
+
+  if (btnBackLogin) btnBackLogin.addEventListener("click", showLoginView);
+  if (linkReturnLogin) linkReturnLogin.addEventListener("click", showLoginView);
+
+  // Procesamiento del formulario de recuperación
+  if (formForgot) {
+    formForgot.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = forgotEmailInput ? forgotEmailInput.value.trim() : "";
+      if (!email) {
+        window.showAlertModal?.({
+          title: "⚠ Ingresá tu correo",
+          message: "Ingresá tu correo electrónico para que podamos enviarte las instrucciones.",
+          type: "warning",
+          buttonText: "Entendido"
+        });
+        return;
+      }
+
+      if (btnSubmitForgot) {
+        btnSubmitForgot.disabled = true;
+        btnSubmitForgot.textContent = "Enviando...";
+      }
+
+      try {
+        const res = await window.apiForgotPassword(email);
+        const msg = res?.message || "Si el correo está registrado, recibirás un enlace para recuperar tu contraseña.";
+        if (forgotFeedback) {
+          forgotFeedback.style.display = "block";
+          forgotFeedback.textContent = "✓ " + msg;
+        }
+        if (typeof window.showAlertModal === "function") {
+          window.showAlertModal({
+            title: "✓ Solicitud Recibida",
+            message: msg,
+            type: "success",
+            buttonText: "Entendido",
+            onConfirm: () => {
+              showLoginView();
+            }
+          });
+        } else {
+          window.showToast?.(msg, "info");
+        }
+      } catch (err) {
+        const msg = "Si el correo está registrado, recibirás un enlace para recuperar tu contraseña.";
+        if (typeof window.showAlertModal === "function") {
+          window.showAlertModal({
+            title: "✓ Solicitud Recibida",
+            message: msg,
+            type: "success",
+            buttonText: "Entendido"
+          });
+        }
+      } finally {
+        if (btnSubmitForgot) {
+          btnSubmitForgot.disabled = false;
+          btnSubmitForgot.textContent = "Enviar enlace de recuperación";
+        }
+      }
+    });
+  }
+
   if (!form) return;
 
   // Inicializar toggle de mostrar/ocultar contraseña
   setupPasswordToggle("login-password", "btn-toggle-password");
+
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -611,6 +756,123 @@ async function initMisReservasPage() {
   }
 }
 
+// ==============================================================================
+// 5. LÓGICA DE LA PÁGINA RESTABLECER CONTRASEÑA (reset-password.html)
+// ==============================================================================
+
+async function initResetPasswordPage() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get("token") || "";
+
+  const formPanel = document.getElementById("reset-form-panel");
+  const successPanel = document.getElementById("reset-success-panel");
+  const invalidPanel = document.getElementById("reset-invalid-panel");
+  const invalidMsg = document.getElementById("reset-invalid-message");
+  const form = document.getElementById("form-reset-password");
+  const tokenInput = document.getElementById("reset-token");
+  const newPassInput = document.getElementById("new-password");
+  const confirmPassInput = document.getElementById("confirm-password");
+  const submitBtn = document.getElementById("btn-submit-reset");
+  const subtitle = document.getElementById("reset-subtitle");
+
+  setupPasswordToggle("new-password", "btn-toggle-new-password");
+  setupPasswordToggle("confirm-password", "btn-toggle-confirm-password");
+
+  if (!token) {
+    if (formPanel) formPanel.style.display = "none";
+    if (invalidPanel) {
+      invalidPanel.style.display = "block";
+      if (invalidMsg) invalidMsg.textContent = "No se proporcionó un token de recuperación. Solicitá uno nuevo desde el login.";
+    }
+    return;
+  }
+
+  // Validar token contra backend
+  try {
+    const valRes = await window.apiValidateResetToken(token);
+    if (valRes && valRes.success) {
+      if (tokenInput) tokenInput.value = token;
+      if (subtitle && valRes.data?.nombre) {
+        subtitle.textContent = `Hola ${valRes.data.nombre}, ingresá tu nueva clave para acceder a tu cuenta.`;
+      }
+    } else {
+      throw new Error(valRes?.message || "Token no válido");
+    }
+  } catch (err) {
+    if (formPanel) formPanel.style.display = "none";
+    if (invalidPanel) {
+      invalidPanel.style.display = "block";
+      if (invalidMsg) invalidMsg.textContent = err.data?.message || err.message || "Este enlace de recuperación ha vencido o ya fue utilizado.";
+    }
+    return;
+  }
+
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const newPassword = newPassInput?.value || "";
+      const confirmPassword = confirmPassInput?.value || "";
+
+      if (newPassword.length < 6) {
+        if (typeof window.showAlertModal === "function") {
+          window.showAlertModal({
+            title: "⚠ Contraseña muy corta",
+            message: "La nueva contraseña debe tener al menos 6 caracteres.",
+            type: "warning",
+            buttonText: "Entendido"
+          });
+        } else {
+          window.showToast?.("La nueva contraseña debe tener al menos 6 caracteres.", "warning");
+        }
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        if (typeof window.showAlertModal === "function") {
+          window.showAlertModal({
+            title: "⚠ Contraseñas no coinciden",
+            message: "Las contraseñas ingresadas no coinciden. Verificá que ambas sean iguales.",
+            type: "warning",
+            buttonText: "Entendido"
+          });
+        } else {
+          window.showToast?.("Las contraseñas no coinciden.", "warning");
+        }
+        return;
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Actualizando...";
+      }
+
+      try {
+        await window.apiResetPassword(token, newPassword, confirmPassword);
+        if (formPanel) formPanel.style.display = "none";
+        if (successPanel) successPanel.style.display = "block";
+        window.showToast?.("✓ Tu contraseña fue actualizada correctamente.", "success");
+      } catch (err) {
+        console.error("Error al restablecer contraseña:", err);
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Guardar Nueva Contraseña";
+        }
+        const errMsg = err.data?.message || err.message || "No se pudo actualizar la contraseña. Por favor solicitá un nuevo enlace.";
+        if (typeof window.showAlertModal === "function") {
+          window.showAlertModal({
+            title: "⚠ Error al actualizar",
+            message: errMsg,
+            type: "danger",
+            buttonText: "Entendido"
+          });
+        } else {
+          window.showToast?.(errMsg, "danger");
+        }
+      }
+    });
+  }
+}
+
 // Ejecutar automáticamente la actualización del Navbar en todas las páginas
 document.addEventListener("DOMContentLoaded", () => {
   updateNavbarAuth();
@@ -622,4 +884,6 @@ if (typeof window !== "undefined") {
   window.initLoginPage = initLoginPage;
   window.initRegisterPage = initRegisterPage;
   window.initMisReservasPage = initMisReservasPage;
+  window.initResetPasswordPage = initResetPasswordPage;
 }
+

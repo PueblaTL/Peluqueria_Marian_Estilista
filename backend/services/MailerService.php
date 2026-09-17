@@ -184,27 +184,27 @@ class MailerService {
     }
 
     /**
-     * Construye la URL completa del enlace de verificación.
+     * Construye la URL completa del enlace de verificación utilizando APP_URL centralizado.
      *
      * @param string $token
      * @return string
      */
     public static function generarUrlVerificacion(string $token): string {
-        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)
-            ? 'https://'
-            : 'http://';
-
-        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        $scriptPath = $_SERVER['SCRIPT_NAME'] ?? '';
-        
-        if (preg_match('#^(.*?/(marian-estilista|peluqueria-portal))#i', $scriptPath, $m)) {
-            $basePath = $m[1];
-        } else {
-            $basePath = '';
-        }
-
-        return rtrim($protocol . $host . $basePath, '/') . '/verificar-email.php?token=' . urlencode($token);
+        $baseUrl = defined('APP_URL') ? APP_URL : 'https://marianestilista.online';
+        return rtrim($baseUrl, '/') . '/verificar-email.php?token=' . urlencode($token);
     }
+
+    /**
+     * Construye la URL completa del enlace de restablecimiento de contraseña.
+     *
+     * @param string $token
+     * @return string
+     */
+    public static function generarUrlRecuperacion(string $token): string {
+        $baseUrl = defined('APP_URL') ? APP_URL : 'https://marianestilista.online';
+        return rtrim($baseUrl, '/') . '/frontend/pages/reset-password.html?token=' . urlencode($token);
+    }
+
 
     /**
      * Plantilla HTML de Verificación de Correo (Estética Marian Estilista: Negro, Ocre Dorado, Tipografía Refinada)
@@ -476,4 +476,132 @@ HTML;
 </html>
 HTML;
     }
+
+    /**
+     * Envía el correo de recuperación de contraseña con token y botón de acción seguro.
+     *
+     * @param string $email
+     * @param string $nombre
+     * @param string $token
+     * @return array
+     */
+     public static function enviarCorreoRecuperacion(string $email, string $nombre, string $token): array {
+        $resetUrl = self::generarUrlRecuperacion($token);
+        $asunto = "Restablecer tu contraseña — Marian Estilista";
+        $htmlBody = self::construirPlantillaRecuperacion($nombre, $resetUrl);
+        $textBody = "MARIAN ESTILISTA\nPeluquería & Colorimetría\n\nRecuperación de Contraseña\n\n¡Hola {$nombre}!\nRecibimos una solicitud para restablecer la contraseña de tu cuenta.\nPara crear una nueva contraseña, ingresá al siguiente enlace:\n\n{$resetUrl}\n\nEste enlace es válido durante 1 hora y podrá utilizarse una única vez.\nSi no solicitaste este cambio, podés ignorar este mensaje de forma segura.\n\nMarian Estilista — Galería La Catedral, San Carlos de Bariloche";
+
+        $enviado = false;
+        $errorMsg = null;
+
+        try {
+            $mail = self::createMailer();
+            $mail->addAddress($email, $nombre);
+            $mail->isHTML(true);
+            $mail->Subject = $asunto;
+            $mail->Body    = $htmlBody;
+            $mail->AltBody = $textBody;
+
+            $mail->send();
+            $enviado = true;
+            error_log("[MailerService] Correo de recuperación de contraseña enviado exitosamente a <$email>");
+        } catch (Throwable $e) {
+            $errorMsg = $e->getMessage();
+            error_log("[MailerService ERROR] Fallo al enviar recuperación a <$email>: " . $errorMsg);
+
+            // Fallback a mail() nativo
+            try {
+                $fromAddress = defined('MAIL_FROM_ADDRESS') ? MAIL_FROM_ADDRESS : 'noreply@marianestilista.com.ar';
+                $fromName    = defined('MAIL_FROM_NAME') ? MAIL_FROM_NAME : 'Marian Estilista';
+                $headers = [
+                    'MIME-Version: 1.0',
+                    'Content-Type: text/html; charset=UTF-8',
+                    'From: ' . $fromName . ' <' . $fromAddress . '>',
+                    'Reply-To: ' . $fromName . ' <' . $fromAddress . '>',
+                    'X-Mailer: PHP/' . phpversion()
+                ];
+                $enviado = @mail($email, '=?UTF-8?B?' . base64_encode($asunto) . '?=', $htmlBody, implode("\r\n", $headers));
+            } catch (Throwable $eFallback) {
+                // Registrar silenciosamente
+            }
+        }
+
+        return [
+            'success' => true,
+            'url'     => $resetUrl,
+            'sent'    => $enviado,
+            'error'   => $errorMsg
+        ];
+    }
+
+    /**
+     * Plantilla HTML de Recuperación de Contraseña (Estética Marian Estilista: Negro cálido, Oro, Marfil)
+     *
+     * @param string $nombre
+     * @param string $url
+     * @return string
+     */
+    private static function construirPlantillaRecuperacion(string $nombre, string $url): string {
+        $nombreEscapado = htmlspecialchars($nombre, ENT_QUOTES, 'UTF-8');
+        $urlEscapada = htmlspecialchars($url, ENT_QUOTES, 'UTF-8');
+
+        return <<<HTML
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restablecer Contraseña — Marian Estilista</title>
+  <style>
+    body { margin: 0; padding: 0; background-color: #0A0503; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #F3ECE7; -webkit-font-smoothing: antialiased; }
+    .wrapper { width: 100%; background-color: #0A0503; padding: 40px 15px; box-sizing: border-box; }
+    .container { max-width: 580px; margin: 0 auto; background: #170E0A; border: 1px solid #362218; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
+    .header { background: #120A07; padding: 35px 30px 25px; text-align: center; border-bottom: 1px solid #362218; }
+    .brand-symbol { display: inline-block; width: 44px; height: 44px; line-height: 44px; background: #21140E; border: 1px solid #D98C16; color: #FCF9F5; font-size: 22px; font-weight: 700; border-radius: 50%; margin-bottom: 12px; }
+    .brand-title { color: #D98C16; font-size: 20px; font-weight: 700; letter-spacing: 3px; margin: 0; text-transform: uppercase; }
+    .brand-tag { color: #C5A880; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; margin: 6px 0 0; }
+    .content { padding: 40px 35px; }
+    .greeting { font-size: 18px; color: #FCF9F5; font-weight: 600; margin-top: 0; margin-bottom: 16px; }
+    .message { font-size: 15px; line-height: 1.7; color: #D1C7C0; margin-bottom: 24px; }
+    .btn-container { text-align: center; margin: 35px 0; }
+    .btn-action { display: inline-block; background: #B36B00; background: linear-gradient(135deg, #D98C16 0%, #B36B00 100%); color: #0A0503 !important; font-size: 15px; font-weight: 700; text-decoration: none; padding: 14px 34px; border-radius: 8px; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(179, 107, 0, 0.4); text-transform: uppercase; }
+    .footer { background: #120A07; padding: 25px 30px; text-align: center; font-size: 12px; color: #8A7C73; line-height: 1.6; border-top: 1px solid #362218; }
+    .warning-box { background: rgba(217, 140, 22, 0.08); border-left: 3px solid #D98C16; padding: 12px 16px; margin-top: 25px; font-size: 13px; color: #E5D3B3; line-height: 1.5; border-radius: 0 6px 6px 0; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="container">
+      <div class="header">
+        <div class="brand-symbol">M</div>
+        <h1 class="brand-title">MARIAN ESTILISTA</h1>
+        <p class="brand-tag">Peluquería &amp; Colorimetría</p>
+      </div>
+      <div class="content">
+        <h2 class="greeting">¡Hola {$nombreEscapado}!</h2>
+        <p class="message">Recibimos una solicitud para restablecer la contraseña de tu cuenta en Marian Estilista.</p>
+        <p class="message">Hacé clic en el siguiente botón para crear una nueva contraseña:</p>
+        <div class="btn-container">
+          <a href="{$urlEscapada}" class="btn-action" target="_blank">Restablecer mi Contraseña</a>
+        </div>
+        <div class="warning-box">
+          ⏰ <strong>Este enlace es válido durante 1 hora</strong> y solo puede utilizarse una única vez.<br>
+          Si no solicitaste este cambio, podés ignorar este correo de forma segura. Tu contraseña actual no será modificada.
+        </div>
+        <p class="message" style="margin-top: 25px; font-size: 12px; color: #8A7C73; word-break: break-all;">
+          Si el botón no funciona, copiá y pegá el siguiente enlace en tu navegador:<br>
+          <a href="{$urlEscapada}" style="color: #D98C16;">{$urlEscapada}</a>
+        </p>
+      </div>
+      <div class="footer">
+        Marian Estilista • Galería La Catedral, San Carlos de Bariloche<br>
+        Este es un correo automático de seguridad, por favor no respondas a este mensaje.
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+HTML;
+    }
 }
+

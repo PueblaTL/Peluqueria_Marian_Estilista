@@ -282,4 +282,129 @@ class AuthService {
     public function getCurrentUser(): ?array {
         return $_SESSION['usuario'] ?? null;
     }
+
+    /**
+     * Inicia el proceso de recuperación de contraseña.
+     * Genera un token seguro y envía un correo con el enlace de restablecimiento.
+     * Por seguridad no revela si el email existe o no (mensaje neutro).
+     *
+     * @param string $email
+     * @return array
+     * @throws Exception
+     */
+    public function forgotPassword(string $email): array {
+        $email = strtolower(trim($email));
+        $genericResponse = [
+            'success' => true,
+            'message' => "Si el correo está registrado, recibirás un enlace para recuperar tu contraseña."
+        ];
+
+        if (empty($email) || !validarEmail($email)) {
+            // Aún con email no válido se devuelve respuesta genérica para evitar timing attacks o validación previa
+            return $genericResponse;
+        }
+
+        $usuario = $this->usuarioRepo->findByEmail($email);
+        if (!$usuario || !$usuario->activo) {
+            // Usuario inexistente o inactivo: responder neutralmente sin revelar datos
+            return $genericResponse;
+        }
+
+        // Control anti-abuso / rate limiting: máximo 1 solicitud cada 2 minutos
+        $solicitudesRecientes = $this->usuarioRepo->contarSolicitudesRecuperacionRecientes($usuario->id, 2);
+        if ($solicitudesRecientes > 0) {
+            // Si ya se solicitó recientemente, responder neutralmente sin reenviar spam
+            return $genericResponse;
+        }
+
+        // Generar token criptográficamente seguro (256 bits)
+        $token = bin2hex(random_bytes(32));
+        $tokenHash = hash('sha256', $token);
+        $expiracion = date('Y-m-d H:i:s', strtotime('+1 hour'));
+        $ip = $_SERVER['REMOTE_ADDR'] ?? null;
+
+        // Guardar token en base de datos
+        $this->usuarioRepo->crearTokenRecuperacion($usuario->id, $tokenHash, $expiracion, $ip);
+
+        // Enviar correo de recuperación
+        $mailResult = MailerService::enviarCorreoRecuperacion($email, $usuario->nombre, $token);
+        if (empty($mailResult['success'])) {
+            error_log("[AuthService] Falló el envío del correo de recuperación para el usuario ID {$usuario->id} ($email).");
+        }
+
+        return $genericResponse;
+    }
+
+    /**
+     * Valida si un token de recuperación existe, está vigente y no ha sido utilizado.
+     *
+     * @param string $token
+     * @return array
+     * @throws Exception
+     */
+    public function validateResetToken(string $token): array {
+        $token = trim($token);
+        if (empty($token) || strlen($token) !== 64) {
+            throw new Exception("El enlace de recuperación no es válido.", 400);
+        }
+
+        $tokenHash = hash('sha256', $token);
+        $resetRow = $this->usuarioRepo->buscarTokenRecuperacionValido($tokenHash);
+
+        if (!$resetRow) {
+            throw new Exception("El enlace de recuperación no es válido, ha vencido o ya fue utilizado.", 400);
+        }
+
+        return [
+            'valid'  => true,
+            'nombre' => $resetRow['nombre'] ?? 'Clienta'
+        ];
+    }
+
+    /**
+     * Actualiza la contraseña del usuario utilizando un token de recuperación válido.
+     * Invalida inmediatamente el token tras su uso.
+     *
+     * @param string $token
+     * @param string $newPassword
+     * @param string $confirmPassword
+     * @return array
+     * @throws Exception
+     */
+    public function resetPassword(string $token, string $newPassword, string $confirmPassword): array {
+        $token = trim($token);
+        if (empty($token) || strlen($token) !== 64) {
+            throw new Exception("El enlace de recuperación no es válido.", 400);
+        }
+
+        if (strlen($newPassword) < 6) {
+            throw new Exception("La nueva contraseña debe tener al menos 6 caracteres.", 400);
+        }
+
+        if ($newPassword !== $confirmPassword) {
+            throw new Exception("Las contraseñas no coinciden. Verificá que ambas sean iguales.", 400);
+        }
+
+        $tokenHash = hash('sha256', $token);
+        $resetRow = $this->usuarioRepo->buscarTokenRecuperacionValido($tokenHash);
+
+        if (!$resetRow) {
+            throw new Exception("El enlace de recuperación no es válido, ha vencido o ya fue utilizado.", 400);
+        }
+
+        $userId = (int)$resetRow['usuario_id'];
+        $passwordHash = password_hash($newPassword, PASSWORD_DEFAULT);
+
+        // Actualizar contraseña
+        $this->usuarioRepo->actualizarPassword($userId, $passwordHash);
+
+        // Invalidar inmediatamente el token
+        $this->usuarioRepo->marcarTokenRecuperacionUtilizado((int)$resetRow['id']);
+
+        return [
+            'success' => true,
+            'message' => "Tu contraseña fue actualizada correctamente. Ya podés iniciar sesión."
+        ];
+    }
 }
+

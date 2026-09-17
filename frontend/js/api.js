@@ -111,6 +111,30 @@ async function apiGetCurrentUser() {
   }
 }
 
+async function apiForgotPassword(email) {
+  const res = await requestApi("/auth/forgot-password.php", {
+    method: "POST",
+    body: { email }
+  });
+  return res;
+}
+
+async function apiValidateResetToken(token) {
+  const res = await requestApi(`/auth/reset-password.php?token=${encodeURIComponent(token)}`, {
+    method: "GET"
+  });
+  return res;
+}
+
+async function apiResetPassword(token, password, confirmPassword) {
+  const res = await requestApi("/auth/reset-password.php", {
+    method: "POST",
+    body: { token, password, confirm_password: confirmPassword }
+  });
+  return res;
+}
+
+
 // ==============================================================================
 // 2. SERVICIOS
 // ==============================================================================
@@ -406,6 +430,9 @@ if (typeof window !== "undefined") {
   window.apiLogin = apiLogin;
   window.apiLogout = apiLogout;
   window.apiGetCurrentUser = apiGetCurrentUser;
+  window.apiForgotPassword = apiForgotPassword;
+  window.apiValidateResetToken = apiValidateResetToken;
+  window.apiResetPassword = apiResetPassword;
   window.apiGetServicios = apiGetServicios;
   window.apiGetServicioById = apiGetServicioById;
   window.apiCreateServicio = apiCreateServicio;
