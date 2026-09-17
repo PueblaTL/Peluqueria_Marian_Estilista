@@ -422,6 +422,39 @@ class TurnoService {
   }
 }
 
+// ==============================================================================
+// 5. CURSO & INSCRIPCIONES
+// ==============================================================================
+
+async function apiGetInscripciones() {
+  const res = await requestApi("/inscripciones/list.php", { method: "GET" });
+  return res.data || [];
+}
+
+async function apiCreateInscripcion(datosInscripcion) {
+  const res = await requestApi("/inscripciones/create.php", {
+    method: "POST",
+    body: datosInscripcion
+  });
+  return res.data;
+}
+
+async function apiUpdateInscripcionEstado(id, nuevoEstado) {
+  const res = await requestApi("/inscripciones/update_estado.php", {
+    method: "POST",
+    body: { id: Number(id), estado: nuevoEstado }
+  });
+  return res.data;
+}
+
+async function apiDeleteInscripcion(id) {
+  const res = await requestApi("/inscripciones/delete.php", {
+    method: "POST",
+    body: { id: Number(id) }
+  });
+  return res.data;
+}
+
 // Exportación global en el objeto window del navegador
 if (typeof window !== "undefined") {
   window.API_BASE = API_BASE;
@@ -447,6 +480,10 @@ if (typeof window !== "undefined") {
   window.apiActualizarEstadoReserva = apiActualizarEstadoReserva;
   window.apiGetStats = apiGetStats;
   window.apiGetClientes = apiGetClientes;
+  window.apiGetInscripciones = apiGetInscripciones;
+  window.apiCreateInscripcion = apiCreateInscripcion;
+  window.apiUpdateInscripcionEstado = apiUpdateInscripcionEstado;
+  window.apiDeleteInscripcion = apiDeleteInscripcion;
 
   // Clases adaptadoras
   window.ServicioService = ServicioService;

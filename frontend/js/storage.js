@@ -81,9 +81,10 @@ class StorageService {
     if (!localStorage.getItem(STORAGE_KEYS.CURSO)) {
       localStorage.setItem(STORAGE_KEYS.CURSO, JSON.stringify(window.SEED_DATA.curso));
     }
-    if (!localStorage.getItem(STORAGE_KEYS.INSCRIPCIONES)) {
-      localStorage.setItem(STORAGE_KEYS.INSCRIPCIONES, JSON.stringify(window.SEED_DATA.inscripcionesCurso));
-    }
+    // NOTA: STORAGE_KEYS.INSCRIPCIONES ya no se inicializa en localStorage. Las inscripciones se gestionan exclusivamente en MySQL.
+    try {
+      localStorage.removeItem(STORAGE_KEYS.INSCRIPCIONES);
+    } catch (e) {}
     if (!localStorage.getItem(STORAGE_KEYS.NEGOCIO)) {
       localStorage.setItem(STORAGE_KEYS.NEGOCIO, JSON.stringify(window.SEED_DATA.negocio));
     }
@@ -125,7 +126,7 @@ class StorageService {
     localStorage.setItem(STORAGE_KEYS.PROFESIONAL, JSON.stringify(window.SEED_DATA.profesional));
     localStorage.setItem(STORAGE_KEYS.TURNOS, JSON.stringify(window.SEED_DATA.turnos));
     localStorage.setItem(STORAGE_KEYS.CURSO, JSON.stringify(window.SEED_DATA.curso));
-    localStorage.setItem(STORAGE_KEYS.INSCRIPCIONES, JSON.stringify(window.SEED_DATA.inscripcionesCurso));
+    // Las inscripciones residen en MySQL; no se recrean en localStorage
     localStorage.setItem(STORAGE_KEYS.NEGOCIO, JSON.stringify(window.SEED_DATA.negocio));
     return true;
   }
@@ -423,7 +424,7 @@ class StorageService {
   }
 
   // ==========================================
-  // CURSO & INSCRIPCIONES
+  // CURSO & INSCRIPCIONES (Persistencia en MySQL vía API)
   // ==========================================
 
   static async getCursoInfo() {
@@ -431,43 +432,62 @@ class StorageService {
   }
 
   static async getInscripciones() {
-    const inscripciones = this._getItem(STORAGE_KEYS.INSCRIPCIONES, []);
-    return inscripciones.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    if (typeof window.apiGetInscripciones === "function") {
+      try {
+        const inscripciones = await window.apiGetInscripciones();
+        return (inscripciones || []).sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+      } catch (err) {
+        console.error("[StorageService] Error al obtener inscripciones de la API:", err);
+        throw err;
+      }
+    }
+    if (typeof window.requestApi === "function") {
+      const res = await window.requestApi("/inscripciones/list.php", { method: "GET" });
+      return (res?.data || []).sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    }
+    return [];
   }
 
   static async saveInscripcion(datos) {
-    const inscripciones = this._getItem(STORAGE_KEYS.INSCRIPCIONES, []);
-    const nueva = {
-      id: `ins-${Date.now().toString().slice(-6)}`,
-      cursoId: "cur-1",
-      nombre: datos.nombre,
-      apellido: datos.apellido || "",
-      telefono: datos.telefono,
-      email: datos.email,
-      fecha: new Date().toISOString(),
-      estado: "Pendiente" // Pendiente, Contactado, Inscripto
-    };
-
-    inscripciones.push(nueva);
-    this._setItem(STORAGE_KEYS.INSCRIPCIONES, inscripciones);
-    return nueva;
+    if (typeof window.apiCreateInscripcion === "function") {
+      return await window.apiCreateInscripcion(datos);
+    }
+    if (typeof window.requestApi === "function") {
+      const res = await window.requestApi("/inscripciones/create.php", {
+        method: "POST",
+        body: datos
+      });
+      return res.data;
+    }
+    throw new Error("No hay conexión con la API de inscripciones.");
   }
 
   static async updateInscripcionEstado(id, nuevoEstado) {
-    const inscripciones = this._getItem(STORAGE_KEYS.INSCRIPCIONES, []);
-    const index = inscripciones.findIndex(i => i.id === id);
-    if (index === -1) throw new Error(`Inscripción ${id} no encontrada`);
-
-    inscripciones[index].estado = nuevoEstado;
-    this._setItem(STORAGE_KEYS.INSCRIPCIONES, inscripciones);
-    return inscripciones[index];
+    if (typeof window.apiUpdateInscripcionEstado === "function") {
+      return await window.apiUpdateInscripcionEstado(id, nuevoEstado);
+    }
+    if (typeof window.requestApi === "function") {
+      const res = await window.requestApi("/inscripciones/update_estado.php", {
+        method: "POST",
+        body: { id: Number(id), estado: nuevoEstado }
+      });
+      return res.data;
+    }
+    throw new Error("No hay conexión con la API de inscripciones.");
   }
 
   static async deleteInscripcion(id) {
-    let inscripciones = this._getItem(STORAGE_KEYS.INSCRIPCIONES, []);
-    inscripciones = inscripciones.filter(i => i.id !== id);
-    this._setItem(STORAGE_KEYS.INSCRIPCIONES, inscripciones);
-    return true;
+    if (typeof window.apiDeleteInscripcion === "function") {
+      return await window.apiDeleteInscripcion(id);
+    }
+    if (typeof window.requestApi === "function") {
+      const res = await window.requestApi("/inscripciones/delete.php", {
+        method: "POST",
+        body: { id: Number(id) }
+      });
+      return res.success;
+    }
+    throw new Error("No hay conexión con la API de inscripciones.");
   }
 
   // ==========================================

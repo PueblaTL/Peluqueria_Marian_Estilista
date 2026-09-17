@@ -69,16 +69,25 @@ try {
     $stmtProximos->execute([':hoy' => $hoy]);
     $proximosTurnos = (int)$stmtProximos->fetchColumn();
 
+    // ── Total inscripciones al curso ──────────────────────────────────────────
+    $totalInscripciones = 0;
+    try {
+        $stmtIns = $db->query("SELECT COUNT(*) FROM `inscripciones_curso`");
+        if ($stmtIns) {
+            $totalInscripciones = (int)$stmtIns->fetchColumn();
+        }
+    } catch (Exception $eIns) {}
+
     jsonResponse(true, "Estadísticas del dashboard obtenidas correctamente.", [
-        'turnosHoy'         => $turnosHoy,
-        'turnosPendientes'  => $turnosPendientes,
-        'turnosConfirmados' => $turnosConfirmados,
-        'turnosCompletados' => $turnosCompletados,
-        'totalClientes'     => $totalClientes,
-        'ingresosEstimados' => $ingresosEstimados,
-        'turnosMes'         => $turnosMes,
-        'proximosTurnos'    => $proximosTurnos,
-        'inscripcionesCurso' => 0 // Placeholder hasta implementar módulo de curso
+        'turnosHoy'          => $turnosHoy,
+        'turnosPendientes'   => $turnosPendientes,
+        'turnosConfirmados'  => $turnosConfirmados,
+        'turnosCompletados'  => $turnosCompletados,
+        'totalClientes'      => $totalClientes,
+        'ingresosEstimados'  => $ingresosEstimados,
+        'turnosMes'          => $turnosMes,
+        'proximosTurnos'     => $proximosTurnos,
+        'inscripcionesCurso' => $totalInscripciones
     ], 200);
 
 } catch (Exception $e) {

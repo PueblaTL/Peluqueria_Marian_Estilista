@@ -116,3 +116,25 @@ CREATE TABLE IF NOT EXISTS `password_resets` (
   INDEX `idx_password_resets_expiracion` (`expiracion`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ------------------------------------------------------------------------------
+-- 6. TABLA: inscripciones_curso
+-- Registro oficial de postulaciones e inscripciones al Curso Profesional
+-- Estados: 'Pendiente', 'Contactado', 'Inscripto'
+-- ------------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `inscripciones_curso` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `curso_id` VARCHAR(50) NOT NULL DEFAULT 'cur-1',
+  `nombre` VARCHAR(100) NOT NULL,
+  `apellido` VARCHAR(100) NULL,
+  `telefono` VARCHAR(50) NOT NULL,
+  `email` VARCHAR(150) NOT NULL,
+  `estado` ENUM('Pendiente', 'Contactado', 'Inscripto') NOT NULL DEFAULT 'Pendiente',
+  `fecha` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX `idx_inscripciones_email` (`email`),
+  INDEX `idx_inscripciones_estado` (`estado`),
+  INDEX `idx_inscripciones_fecha` (`fecha`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+

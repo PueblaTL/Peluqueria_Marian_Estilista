@@ -70,6 +70,13 @@ class AdminDashboard {
     this.btnOpenNewService = document.getElementById("btn-nuevo-servicio");
     this.btnCloseServiceModal = document.getElementById("btn-close-service-modal");
     this.btnCancelServiceModal = document.getElementById("btn-cancel-service-modal");
+
+    // Modal Inscripción Curso
+    this.btnOpenNewInscripcion = document.getElementById("btn-nueva-inscripcion");
+    this.inscripcionModal = document.getElementById("modal-inscripcion-manual");
+    this.inscripcionForm = document.getElementById("form-inscripcion-manual");
+    this.btnCloseInscripcionModal = document.getElementById("btn-close-inscripcion-modal");
+    this.btnCancelInscripcionModal = document.getElementById("btn-cancel-inscripcion-modal");
   }
 
   openSidebar() {
@@ -176,6 +183,25 @@ class AdminDashboard {
 
     if (this.serviceForm) {
       this.serviceForm.addEventListener("submit", (e) => this.handleServiceFormSubmit(e));
+    }
+
+    // Modal Inscripción Manual al Curso
+    if (this.btnOpenNewInscripcion) {
+      this.btnOpenNewInscripcion.addEventListener("click", () => this.openInscripcionModal());
+    }
+    if (this.btnCloseInscripcionModal) {
+      this.btnCloseInscripcionModal.addEventListener("click", () => this.closeInscripcionModal());
+    }
+    if (this.btnCancelInscripcionModal) {
+      this.btnCancelInscripcionModal.addEventListener("click", () => this.closeInscripcionModal());
+    }
+    if (this.inscripcionModal) {
+      this.inscripcionModal.addEventListener("click", (e) => {
+        if (e.target === this.inscripcionModal) this.closeInscripcionModal();
+      });
+    }
+    if (this.inscripcionForm) {
+      this.inscripcionForm.addEventListener("submit", (e) => this.handleSaveInscripcion(e));
     }
 
     // Botón de restablecer datos demo
@@ -771,6 +797,61 @@ class AdminDashboard {
     } catch (err) {
       console.error(err);
       this.showToast("Error al eliminar inscripción.", "danger");
+    }
+  }
+
+  openInscripcionModal() {
+    if (!this.inscripcionModal || !this.inscripcionForm) return;
+    this.inscripcionForm.reset();
+    const estadoSelect = document.getElementById("inscripcion-estado");
+    if (estadoSelect) estadoSelect.value = "Inscripto";
+    this.inscripcionModal.classList.add("active");
+    document.body.style.overflow = "hidden";
+    const firstInput = document.getElementById("inscripcion-nombre");
+    if (firstInput) setTimeout(() => firstInput.focus(), 100);
+  }
+
+  closeInscripcionModal() {
+    if (!this.inscripcionModal) return;
+    this.inscripcionModal.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+
+  async handleSaveInscripcion(e) {
+    e.preventDefault();
+    const nombre = (document.getElementById("inscripcion-nombre")?.value || "").trim();
+    const apellido = (document.getElementById("inscripcion-apellido")?.value || "").trim();
+    const telefono = (document.getElementById("inscripcion-telefono")?.value || "").trim();
+    const email = (document.getElementById("inscripcion-email")?.value || "").trim();
+    const estado = document.getElementById("inscripcion-estado")?.value || "Inscripto";
+
+    if (!nombre || !telefono || !email) {
+      this.showToast("Por favor completa los campos obligatorios (Nombre, Teléfono y Email).", "warning");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      this.showToast("Por favor ingresa un correo electrónico válido.", "danger");
+      return;
+    }
+
+    try {
+      await window.StorageService.saveInscripcion({
+        nombre,
+        apellido,
+        telefono,
+        email,
+        estado
+      });
+
+      const nombreMostrar = apellido ? `${nombre} ${apellido}` : nombre;
+      this.showToast(`Inscripción de ${nombreMostrar} registrada con éxito.`, "success");
+      this.closeInscripcionModal();
+      await this.loadAllData();
+    } catch (err) {
+      console.error(err);
+      this.showToast(err.message || "Error al registrar inscripción.", "danger");
     }
   }
 
