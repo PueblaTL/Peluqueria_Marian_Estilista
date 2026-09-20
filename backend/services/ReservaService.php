@@ -17,9 +17,10 @@ class ReservaService {
     private UsuarioRepository $usuarioRepo;
 
     // Horarios oficiales de Marian Estilista en Galería La Catedral
-    private const HORA_APERTURA = "09:00";
+    private const HORA_APERTURA = "11:00";
     private const HORA_CIERRE   = "19:00";
     private const INTERVALO_MINUTOS = 30;
+    private const MAX_TURNOS_SIMULTANEOS = 2;
     // Días de atención: 2=Martes, 3=Miércoles, 4=Jueves, 5=Viernes, 6=Sábado (0=Domingo, 1=Lunes)
     private const DIAS_LABORALES = [2, 3, 4, 5, 6];
 
@@ -150,8 +151,11 @@ class ReservaService {
             throw new Exception("Formato de fecha inválido. Use AAAA-MM-DD.", 400);
         }
 
+        $tz = new DateTimeZone('America/Argentina/Buenos_Aires');
+        $ahora = new DateTime('now', $tz);
+        $hoy = new DateTime('today', $tz);
+
         // Validar que la fecha no esté en el pasado
-        $hoy = new DateTime('today');
         if ($dtFecha < $hoy) {
             throw new Exception("No es posible reservar en una fecha que ya ha pasado.", 400);
         }
@@ -167,9 +171,17 @@ class ReservaService {
             throw new Exception("Formato de hora inválido. Use HH:MM.", 400);
         }
 
+        // Para el día actual, no permitir horarios que ya hayan pasado (solo posteriores a la hora actual)
+        if ($dtFecha->format('Y-m-d') === $ahora->format('Y-m-d')) {
+            $horaActual = $ahora->format('H:i');
+            if ($hora <= $horaActual) {
+                throw new Exception("No es posible reservar en un horario que ya ha pasado.", 400);
+            }
+        }
+
         $duracionMinutos = $servicio->duracionMinutos;
 
-        // Calcular minutos del día para validar franja de atención (09:00 a 19:00)
+        // Calcular minutos del día para validar franja de atención (11:00 a 19:00)
         [$startH, $startM] = explode(':', self::HORA_APERTURA);
         [$endH, $endM]     = explode(':', self::HORA_CIERRE);
         [$reqH, $reqM]     = explode(':', $hora);
@@ -179,11 +191,16 @@ class ReservaService {
         $solicitadoMin = (int)$reqH * 60 + (int)$reqM;
         $finSolicitadoMin = $solicitadoMin + $duracionMinutos;
 
-        if ($solicitadoMin < $aperturaMin || $finSolicitadoMin > $cierreMin) {
-            throw new Exception("El horario seleccionado excede la jornada de atención del salón (09:00 a 19:00 hs).", 400);
+        if ($solicitadoMin < $aperturaMin || $solicitadoMin >= $cierreMin || $finSolicitadoMin > $cierreMin) {
+            throw new Exception("El horario seleccionado excede la jornada de atención del salón (11:00 a 19:00 hs).", 400);
         }
 
-        // 7. Verificación de disponibilidad y colisiones en base de datos
+        // 7. Verificación de capacidad simultánea (máximo 2 reservas simultáneas para la misma fecha y horario)
+        $turnosMismoHorario = $this->reservaRepo->countActivasPorFechaHora($fecha, $hora, $profesionalId);
+        if ($turnosMismoHorario >= self::MAX_TURNOS_SIMULTANEOS) {
+            throw new Exception("El horario seleccionado ya no se encuentra disponible (cupo máximo de 2 reservas simultáneas alcanzado). Por favor elegí otro horario disponible.", 409);
+        }
+
         try {
             $colisiones = $this->reservaRepo->findOverlapping($profesionalId, $fecha, $hora, $duracionMinutos);
         } catch (Throwable $e) {
@@ -191,7 +208,7 @@ class ReservaService {
             throw new Exception("No pudimos consultar la disponibilidad en este momento. Por favor intentá nuevamente.", 500);
         }
 
-        if (!empty($colisiones)) {
+        if (count($colisiones) >= self::MAX_TURNOS_SIMULTANEOS) {
             throw new Exception("El horario seleccionado ya no se encuentra disponible. Por favor elegí otro horario disponible.", 409);
         }
 
@@ -328,19 +345,22 @@ class ReservaService {
      */
     public function getDisponibilidad(int $profesionalId, string $fecha, int $duracionMinutos = 60): array {
         $dtFecha = DateTime::createFromFormat('Y-m-d', $fecha);
-        if (!$dtFecha) {
+        if (!$dtFecha || $dtFecha->format('Y-m-d') !== $fecha) {
+            return [];
+        }
+
+        $tz = new DateTimeZone('America/Argentina/Buenos_Aires');
+        $ahora = new DateTime('now', $tz);
+        $hoy = new DateTime('today', $tz);
+
+        // Si es fecha pasada, no hay disponibilidad
+        if ($dtFecha < $hoy) {
             return [];
         }
 
         // Validar si es día laboral
         $diaSemana = (int)$dtFecha->format('w');
         if (!in_array($diaSemana, self::DIAS_LABORALES, true)) {
-            return [];
-        }
-
-        // Si es fecha pasada, no hay disponibilidad
-        $hoy = new DateTime('today');
-        if ($dtFecha < $hoy) {
             return [];
         }
 
@@ -367,6 +387,9 @@ class ReservaService {
         $startTotal = (int)$startH * 60 + (int)$startM;
         $endTotal   = (int)$endH * 60 + (int)$endM;
 
+        $esHoy = ($dtFecha->format('Y-m-d') === $ahora->format('Y-m-d'));
+        $horaActual = $ahora->format('H:i');
+
         $slots = [];
         for ($current = $startTotal; $current + $duracionMinutos <= $endTotal; $current += self::INTERVALO_MINUTOS) {
             $slotInicio = $current;
@@ -376,18 +399,25 @@ class ReservaService {
             $mm = str_pad((string)($slotInicio % 60), 2, '0', STR_PAD_LEFT);
             $horaStr = "$hh:$mm";
 
-            // Verificar si colisiona con algún turno activo existente
-            $colisiona = false;
+            // Para el día actual, no mostrar horarios que ya hayan pasado (solo posteriores a la hora actual)
+            if ($esHoy && $horaStr <= $horaActual) {
+                continue;
+            }
+
+            // Contar reservas activas superpuestas simultáneas con este slot
+            $colisionesCount = 0;
             foreach ($ocupados as $o) {
                 if ($slotInicio < $o['fin'] && $slotFin > $o['inicio']) {
-                    $colisiona = true;
-                    break;
+                    $colisionesCount++;
                 }
             }
 
+            // Un horario sigue disponible mientras tenga menos de 2 reservas activas simultáneas
+            $disponible = ($colisionesCount < self::MAX_TURNOS_SIMULTANEOS);
+
             $slots[] = [
                 'hora'       => $horaStr,
-                'disponible' => !$colisiona
+                'disponible' => $disponible
             ];
         }
 

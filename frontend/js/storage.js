@@ -297,6 +297,44 @@ class StorageService {
     const dur = Number(reservaDto.duracionMinutos || reservaDto.duracion_minutos || 60);
     const servNom = reservaDto.servicioNombre || reservaDto.servicio_nombre || "Servicio";
 
+    const hoyArgStr = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Argentina/Buenos_Aires" }).format(new Date());
+    const horaArgStr = new Intl.DateTimeFormat("es-AR", {
+      timeZone: "America/Argentina/Buenos_Aires",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    }).format(new Date());
+
+    if (reservaDto.fecha < hoyArgStr) {
+      throw new Error("No es posible reservar en una fecha que ya ha pasado.");
+    }
+    if (reservaDto.fecha === hoyArgStr && reservaDto.hora <= horaArgStr) {
+      throw new Error("No es posible reservar en un horario que ya ha pasado.");
+    }
+
+    if (reservaDto.hora < "11:00" || reservaDto.hora >= "19:00") {
+      throw new Error("El horario seleccionado excede la jornada de atención del salón (11:00 a 19:00 hs).");
+    }
+
+    const [rH, rM] = reservaDto.hora.split(":").map(Number);
+    const rInicio = rH * 60 + rM;
+    const rDur = Number(reservaDto.duracionMinutos || reservaDto.duracion_minutos || 60);
+    const rFin = rInicio + rDur;
+
+    const turnosSimultaneos = turnos.filter(t => {
+      if (t.fecha !== reservaDto.fecha) return false;
+      const est = (t.estado || "").toUpperCase();
+      if (est === "CANCELADO" || est === "CANCELADA") return false;
+      const [tH, tM] = t.hora.split(":").map(Number);
+      const tInicio = tH * 60 + tM;
+      const tFin = tInicio + (Number(t.duracionMinutos || t.duracion_minutos) || 60);
+      return rInicio < tFin && rFin > tInicio;
+    });
+
+    if (turnosSimultaneos.length >= 2) {
+      throw new Error("El horario seleccionado ya no se encuentra disponible (cupo máximo de 2 reservas simultáneas alcanzado). Por favor elegí otro horario disponible.");
+    }
+
     const nuevoTurno = {
       id: `trn-${Date.now().toString().slice(-6)}`,
       servicioId: reservaDto.servicioId || reservaDto.servicio_id,
@@ -349,22 +387,38 @@ class StorageService {
     const negocio = await this.getNegocio();
     const turnosDelDia = await this.getTurnos({ fecha: fechaStr });
 
-    // Rango horario general (ej: 09:00 a 19:00)
-    const [startH, startM] = (negocio.horaApertura || "09:00").split(":").map(Number);
+    // Rango horario general: 11:00 a 19:00 corrido
+    const [startH, startM] = (negocio.horaApertura || "11:00").split(":").map(Number);
     const [endH, endM] = (negocio.horaCierre || "19:00").split(":").map(Number);
     const intervalo = negocio.intervaloTurnosMinutos || 30;
 
-    const startTotal = startH * 60 + startM;
-    const endTotal = endH * 60 + endM;
+    const hoyArgStr = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Argentina/Buenos_Aires" }).format(new Date());
+    const horaArgStr = new Intl.DateTimeFormat("es-AR", {
+      timeZone: "America/Argentina/Buenos_Aires",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    }).format(new Date());
 
-    // Convertir turnos existentes a rangos de minutos ocupados (excluyendo cancelados)
-    const turnosActivos = turnosDelDia.filter(t => t.estado !== "Cancelado");
+    // Fechas pasadas no tienen disponibilidad
+    if (fechaStr < hoyArgStr) {
+      return [];
+    }
+
+    const turnosActivos = turnosDelDia.filter(t => {
+      const est = (t.estado || "").toUpperCase();
+      return est !== "CANCELADO" && est !== "CANCELADA";
+    });
+
     const ocupados = turnosActivos.map(t => {
       const [h, m] = t.hora.split(":").map(Number);
       const inicio = h * 60 + m;
-      const fin = inicio + (t.duracionMinutos || 60);
+      const fin = inicio + (Number(t.duracionMinutos || t.duracion_minutos) || 60);
       return { inicio, fin };
     });
+
+    const startTotal = startH * 60 + startM;
+    const endTotal = endH * 60 + endM;
 
     const slots = [];
 
@@ -376,12 +430,15 @@ class StorageService {
       const mm = String(slotInicio % 60).padStart(2, "0");
       const horaStr = `${hh}:${mm}`;
 
-      // Comprobar colisión con turnos existentes
-      const colisiona = ocupados.some(o => (slotInicio < o.fin && slotFin > o.inicio));
+      if (fechaStr === hoyArgStr && horaStr <= horaArgStr) {
+        continue;
+      }
+
+      const colisionesCount = ocupados.filter(o => slotInicio < o.fin && slotFin > o.inicio).length;
 
       slots.push({
         hora: horaStr,
-        disponible: !colisiona
+        disponible: colisionesCount < 2
       });
     }
 

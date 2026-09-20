@@ -1,0 +1,776 @@
+{
+  ".codex/hooks.json": {
+    "mtime": 1789859679.3814552,
+    "seen": 1789868775.2366002,
+    "ast_hash": "9d80a4f7d48849c7804b047019c8ccf2",
+    "semantic_hash": ""
+  },
+  "backend/api/auth/forgot-password.php": {
+    "mtime": 1789612522.7415938,
+    "seen": 1789868775.236605,
+    "ast_hash": "a06d6afc815d41fb6c8a8ade3f39b57e",
+    "semantic_hash": ""
+  },
+  "backend/api/auth/login.php": {
+    "mtime": 1789426315.5436485,
+    "seen": 1789868775.236607,
+    "ast_hash": "fa8d27b88188a1ff45227cb6ff1ce2e4",
+    "semantic_hash": ""
+  },
+  "backend/api/auth/logout.php": {
+    "mtime": 1789426315.5436485,
+    "seen": 1789868775.2366083,
+    "ast_hash": "8afa6a617cdb5a986f80ae72a268b721",
+    "semantic_hash": ""
+  },
+  "backend/api/auth/me.php": {
+    "mtime": 1789426315.5436485,
+    "seen": 1789868775.2366092,
+    "ast_hash": "00751e04ac8f0f3836bf778537760f2e",
+    "semantic_hash": ""
+  },
+  "backend/api/auth/register.php": {
+    "mtime": 1789426315.5436485,
+    "seen": 1789868775.2366104,
+    "ast_hash": "5bd0b889279bd5b4f8a37b26c816d220",
+    "semantic_hash": ""
+  },
+  "backend/api/auth/resend-verification.php": {
+    "mtime": 1789520286.3068302,
+    "seen": 1789868775.2366116,
+    "ast_hash": "60ec0af68c0bbc0b09812d038dde1c59",
+    "semantic_hash": ""
+  },
+  "backend/api/auth/reset-password.php": {
+    "mtime": 1789612531.0348358,
+    "seen": 1789868775.2366126,
+    "ast_hash": "b65e7b7f85e2181b1963d4e43e1f8fda",
+    "semantic_hash": ""
+  },
+  "backend/api/auth/verify.php": {
+    "mtime": 1789520279.6432567,
+    "seen": 1789868775.2366133,
+    "ast_hash": "d57a5e862a814e971069b157c324933e",
+    "semantic_hash": ""
+  },
+  "backend/api/inscripciones/create.php": {
+    "mtime": 1789621525.48437,
+    "seen": 1789868775.2366145,
+    "ast_hash": "6fa401d3ed4fd35a1c5203f25dec4378",
+    "semantic_hash": ""
+  },
+  "backend/api/inscripciones/delete.php": {
+    "mtime": 1789621539.7589693,
+    "seen": 1789868775.2366154,
+    "ast_hash": "3ac32db2a7b55f020c6a6126b8208f50",
+    "semantic_hash": ""
+  },
+  "backend/api/inscripciones/list.php": {
+    "mtime": 1789621515.9179614,
+    "seen": 1789868775.2366164,
+    "ast_hash": "27d41e5d01c7c77ace32bc4f0204199d",
+    "semantic_hash": ""
+  },
+  "backend/api/inscripciones/update_estado.php": {
+    "mtime": 1789621532.4672153,
+    "seen": 1789868775.2366176,
+    "ast_hash": "16f90f9c5949a61400160c31d866d6ad",
+    "semantic_hash": ""
+  },
+  "backend/api/profesionales/get.php": {
+    "mtime": 1789426315.5436485,
+    "seen": 1789868775.2366183,
+    "ast_hash": "d3e0bea0130acc730e7d120b19b4e447",
+    "semantic_hash": ""
+  },
+  "backend/api/profesionales/list.php": {
+    "mtime": 1789426315.5436485,
+    "seen": 1789868775.236619,
+    "ast_hash": "fb09e76ddeae0e3f95211c9e35ba992f",
+    "semantic_hash": ""
+  },
+  "backend/api/reservas/create.php": {
+    "mtime": 1789426315.5436485,
+    "seen": 1789868775.23662,
+    "ast_hash": "7cc0b3426127db1bf812dddfc7e928db",
+    "semantic_hash": ""
+  },
+  "backend/api/reservas/delete.php": {
+    "mtime": 1789426315.5436485,
+    "seen": 1789868775.236621,
+    "ast_hash": "f678d63bf0fd956ad0e3d718170880c7",
+    "semantic_hash": ""
+  },
+  "backend/api/reservas/disponibilidad.php": {
+    "mtime": 1789426315.549203,
+    "seen": 1789868775.2366219,
+    "ast_hash": "587e0381e3f812134e06062b5cdda61d",
+    "semantic_hash": ""
+  },
+  "backend/api/reservas/list.php": {
+    "mtime": 1789426315.549203,
+    "seen": 1789868775.2366226,
+    "ast_hash": "51befe639cc1b10d61c13256cc385de4",
+    "semantic_hash": ""
+  },
+  "backend/api/reservas/stats.php": {
+    "mtime": 1789621556.6649153,
+    "seen": 1789868775.2366233,
+    "ast_hash": "e76cf5a30997ae0efcc322d4699cd2de",
+    "semantic_hash": ""
+  },
+  "backend/api/reservas/update.php": {
+    "mtime": 1789426315.549203,
+    "seen": 1789868775.2366242,
+    "ast_hash": "ba436ba71fe8acb22ace3ca1f17cec47",
+    "semantic_hash": ""
+  },
+  "backend/api/servicios/create.php": {
+    "mtime": 1789426315.549203,
+    "seen": 1789868775.2366252,
+    "ast_hash": "b4a3a0af52e0a054494457b086adc0d5",
+    "semantic_hash": ""
+  },
+  "backend/api/servicios/delete.php": {
+    "mtime": 1789426315.549203,
+    "seen": 1789868775.2366266,
+    "ast_hash": "8ac6681c8881092059b099bae018862d",
+    "semantic_hash": ""
+  },
+  "backend/api/servicios/get.php": {
+    "mtime": 1789426315.549203,
+    "seen": 1789868775.2366273,
+    "ast_hash": "19c1222105a57175184f84bd4cb5d8a6",
+    "semantic_hash": ""
+  },
+  "backend/api/servicios/list.php": {
+    "mtime": 1789426315.549203,
+    "seen": 1789868775.2366285,
+    "ast_hash": "3e5e89959bfca50ff15035e3f494f3c6",
+    "semantic_hash": ""
+  },
+  "backend/api/servicios/update.php": {
+    "mtime": 1789426315.549203,
+    "seen": 1789868775.2366292,
+    "ast_hash": "93c45ef7db9dc48d1f108b536227d9c6",
+    "semantic_hash": ""
+  },
+  "backend/api/usuarios/list.php": {
+    "mtime": 1789437883.9654105,
+    "seen": 1789868775.23663,
+    "ast_hash": "5ac6d7bdea91da7e6738b177bcd1b948",
+    "semantic_hash": ""
+  },
+  "backend/composer.json": {
+    "mtime": 1789545716.9856825,
+    "seen": 1789868775.2366307,
+    "ast_hash": "cd927affd9ed4d3a4d56b3b7540c7743",
+    "semantic_hash": ""
+  },
+  "backend/config/Database.php": {
+    "mtime": 1789427208.321659,
+    "seen": 1789868775.2366319,
+    "ast_hash": "8f5a208675541f842c01e9cc3ce618de",
+    "semantic_hash": ""
+  },
+  "backend/config/config.php": {
+    "mtime": 1789867275.0649114,
+    "seen": 1789868775.2366326,
+    "ast_hash": "fefccebbafdfe39b12da8d7009fd19f4",
+    "semantic_hash": ""
+  },
+  "backend/config/fix_passwords.php": {
+    "mtime": 1789612590.1584945,
+    "seen": 1789868775.2366333,
+    "ast_hash": "3e5c652e3df2374c063872974fbe84de",
+    "semantic_hash": ""
+  },
+  "backend/config/helpers.php": {
+    "mtime": 1789520375.7760592,
+    "seen": 1789868775.236634,
+    "ast_hash": "16d3c682def555aafbbea8976ff20b4f",
+    "semantic_hash": ""
+  },
+  "backend/config/init_db.php": {
+    "mtime": 1789618019.9645135,
+    "seen": 1789868775.2366352,
+    "ast_hash": "d028df0d3b07dceb4257d8e93144d937",
+    "semantic_hash": ""
+  },
+  "backend/config/setup_production_admin.php": {
+    "mtime": 1789612358.3638093,
+    "seen": 1789868775.236636,
+    "ast_hash": "298ee2aa2e4565e477e5750031ff099e",
+    "semantic_hash": ""
+  },
+  "backend/controllers/AuthController.php": {
+    "mtime": 1789612511.5151696,
+    "seen": 1789868775.2366366,
+    "ast_hash": "0e8248139ee3c8e2a2f155635f1f04bd",
+    "semantic_hash": ""
+  },
+  "backend/controllers/InscripcionController.php": {
+    "mtime": 1789621507.5358064,
+    "seen": 1789868775.2366376,
+    "ast_hash": "3c83555d86fb356b7e69312a43a86979",
+    "semantic_hash": ""
+  },
+  "backend/controllers/ProfesionalController.php": {
+    "mtime": 1789426315.5622387,
+    "seen": 1789868775.2366385,
+    "ast_hash": "ba3509edb1cb87607ad658848aeff87a",
+    "semantic_hash": ""
+  },
+  "backend/controllers/ReservaController.php": {
+    "mtime": 1789520340.5907242,
+    "seen": 1789868775.2366393,
+    "ast_hash": "9eb303cc9a9722a35203cbfb82ca7943",
+    "semantic_hash": ""
+  },
+  "backend/controllers/ServicioController.php": {
+    "mtime": 1789426315.5659213,
+    "seen": 1789868775.23664,
+    "ast_hash": "9f8ad4209a4e4ddef3df78d636de6301",
+    "semantic_hash": ""
+  },
+  "backend/controllers/UsuarioController.php": {
+    "mtime": 1789437863.7954102,
+    "seen": 1789868775.236641,
+    "ast_hash": "1562d9618a5781c06fb2f6cb47cf1dc4",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/font/courier.json": {
+    "mtime": 1789545756.8253708,
+    "seen": 1789868775.236642,
+    "ast_hash": "4fdacac946976830424388cb2f876623",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/font/courierb.json": {
+    "mtime": 1789545757.2829635,
+    "seen": 1789868775.2366428,
+    "ast_hash": "ab2c37e2c21fd51321190fe0eb09765f",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/font/helvetica.json": {
+    "mtime": 1789545755.7105346,
+    "seen": 1789868775.2366436,
+    "ast_hash": "bb6d8375b082505043f9c9098aec6735",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/font/helveticab.json": {
+    "mtime": 1789545755.9893928,
+    "seen": 1789868775.2366452,
+    "ast_hash": "90ef23a1eb2ddda18b62b1d3f24d26d5",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/font/helveticabi.json": {
+    "mtime": 1789545756.5568993,
+    "seen": 1789868775.236646,
+    "ast_hash": "d70298f8bbfa4d1837feb551a3d9b483",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/font/helveticai.json": {
+    "mtime": 1789545756.2696726,
+    "seen": 1789868775.2366467,
+    "ast_hash": "47af42d95c3e8e9c2a451941013d72b1",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/font/times.json": {
+    "mtime": 1789545757.5599465,
+    "seen": 1789868775.2366474,
+    "ast_hash": "ccab3f250363691afdf214ea3145f7c5",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/font/timesb.json": {
+    "mtime": 1789545758.103171,
+    "seen": 1789868775.236648,
+    "ast_hash": "735095ca97ea3b1fb9884a2149858387",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/font/timesbi.json": {
+    "mtime": 1789545759.2503426,
+    "seen": 1789868775.2366493,
+    "ast_hash": "2f82835457a3fd47aabebe01dcb7a324",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/font/timesi.json": {
+    "mtime": 1789545758.678753,
+    "seen": 1789868775.23665,
+    "ast_hash": "c3d0e0ec06a4acc888bb557111d28547",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/fpdf.php": {
+    "mtime": 1789545711.0805905,
+    "seen": 1789868775.2366507,
+    "ast_hash": "9cb96da3acfe8060de6cf07c053763cb",
+    "semantic_hash": ""
+  },
+  "backend/libs/PHPMailer/Exception.php": {
+    "mtime": 1789545710.7237914,
+    "seen": 1789868775.2366514,
+    "ast_hash": "31a957f1d74aaad734db3a781fe3de05",
+    "semantic_hash": ""
+  },
+  "backend/libs/PHPMailer/PHPMailer.php": {
+    "mtime": 1789545710.0443602,
+    "seen": 1789868775.2366524,
+    "ast_hash": "a5f4529497d137602f10d2f72f30c776",
+    "semantic_hash": ""
+  },
+  "backend/libs/PHPMailer/SMTP.php": {
+    "mtime": 1789545710.4148338,
+    "seen": 1789868775.236653,
+    "ast_hash": "8a034e7aab64f2146b10dda4e7678a98",
+    "semantic_hash": ""
+  },
+  "backend/models/Inscripcion.php": {
+    "mtime": 1789620637.5487392,
+    "seen": 1789868775.2366538,
+    "ast_hash": "814eb95f55e5810af6fae573c6b3c9b0",
+    "semantic_hash": ""
+  },
+  "backend/models/Profesional.php": {
+    "mtime": 1789426315.5659213,
+    "seen": 1789868775.2366545,
+    "ast_hash": "3759b48d6d0a548a6551c62d78708018",
+    "semantic_hash": ""
+  },
+  "backend/models/Reserva.php": {
+    "mtime": 1789426315.5659213,
+    "seen": 1789868775.2366555,
+    "ast_hash": "5d603f3b1af8a5b4b44dc094c94035c5",
+    "semantic_hash": ""
+  },
+  "backend/models/Servicio.php": {
+    "mtime": 1789547934.140474,
+    "seen": 1789868775.2366564,
+    "ast_hash": "6dc417d4a687f1f844de0722726a524a",
+    "semantic_hash": ""
+  },
+  "backend/models/Usuario.php": {
+    "mtime": 1789520190.056836,
+    "seen": 1789868775.2366579,
+    "ast_hash": "8151eaa785925546927c82814056cd2c",
+    "semantic_hash": ""
+  },
+  "backend/repositories/InscripcionRepository.php": {
+    "mtime": 1789620647.5910022,
+    "seen": 1789868775.2366586,
+    "ast_hash": "28f13460bc31f3fca4017f0804b4ad95",
+    "semantic_hash": ""
+  },
+  "backend/repositories/ProfesionalRepository.php": {
+    "mtime": 1789426315.5659213,
+    "seen": 1789868775.2366595,
+    "ast_hash": "deab73ec2a985036f3d1403779faf4d8",
+    "semantic_hash": ""
+  },
+  "backend/repositories/ReservaRepository.php": {
+    "mtime": 1789868427.1104524,
+    "seen": 1789868775.2366602,
+    "ast_hash": "e13f83e55497bdef1fc492297970fadf",
+    "semantic_hash": ""
+  },
+  "backend/repositories/ServicioRepository.php": {
+    "mtime": 1789547997.8592415,
+    "seen": 1789868775.236661,
+    "ast_hash": "da5e60336f9ae0b11f0b81b4b6028535",
+    "semantic_hash": ""
+  },
+  "backend/repositories/UsuarioRepository.php": {
+    "mtime": 1789612422.4063325,
+    "seen": 1789868775.236662,
+    "ast_hash": "4d75c096cef656e0197e270951d6f150",
+    "semantic_hash": ""
+  },
+  "backend/services/AuthService.php": {
+    "mtime": 1789612488.5351121,
+    "seen": 1789868775.2366629,
+    "ast_hash": "f7cc861dd19a583cb22c3a0f9366a72e",
+    "semantic_hash": ""
+  },
+  "backend/services/InscripcionService.php": {
+    "mtime": 1789620659.4587834,
+    "seen": 1789868775.2366636,
+    "ast_hash": "ba19cc975c675fc0942725662748ecc4",
+    "semantic_hash": ""
+  },
+  "backend/services/MailerService.php": {
+    "mtime": 1789612830.8190129,
+    "seen": 1789868775.2366645,
+    "ast_hash": "81474d804e025cf14c300a577e0ff0e8",
+    "semantic_hash": ""
+  },
+  "backend/services/PdfTicketService.php": {
+    "mtime": 1789545732.380344,
+    "seen": 1789868775.2366652,
+    "ast_hash": "bd744d7887e3a3dcc8e1bb71a1256b0d",
+    "semantic_hash": ""
+  },
+  "backend/services/ProfesionalService.php": {
+    "mtime": 1789426315.5714073,
+    "seen": 1789868775.2366662,
+    "ast_hash": "17ea0bcb849f1f0a1da58ba9edbaa729",
+    "semantic_hash": ""
+  },
+  "backend/services/ReservaService.php": {
+    "mtime": 1789868477.5853705,
+    "seen": 1789868775.236667,
+    "ast_hash": "5bafb29b457e2d1a1180e8edd8ee0f42",
+    "semantic_hash": ""
+  },
+  "backend/services/ServicioService.php": {
+    "mtime": 1789545681.804311,
+    "seen": 1789868775.2366679,
+    "ast_hash": "da115b98dd6e33a453dcffdfa97948b7",
+    "semantic_hash": ""
+  },
+  "frontend/js/admin.js": {
+    "mtime": 1789621694.5656612,
+    "seen": 1789868775.2366683,
+    "ast_hash": "4c9cd08fb659adecb6bb87c91700d1c9",
+    "semantic_hash": ""
+  },
+  "frontend/js/alerts.js": {
+    "mtime": 1789614269.5044487,
+    "seen": 1789868775.2366693,
+    "ast_hash": "9bf362bdb0a96a03e971bdaf8816d878",
+    "semantic_hash": ""
+  },
+  "frontend/js/api.js": {
+    "mtime": 1789621908.1698782,
+    "seen": 1789868775.2366705,
+    "ast_hash": "8f9c22d7775126b8cc2b144bcf03eb43",
+    "semantic_hash": ""
+  },
+  "frontend/js/auth.js": {
+    "mtime": 1789615287.0056756,
+    "seen": 1789868775.2366712,
+    "ast_hash": "5749978a3f5d1f2dd66f93e4b15be213",
+    "semantic_hash": ""
+  },
+  "frontend/js/data.js": {
+    "mtime": 1789868525.8423295,
+    "seen": 1789868775.236672,
+    "ast_hash": "1624ca5dabf6b17be75468329a4a58db",
+    "semantic_hash": ""
+  },
+  "frontend/js/main.js": {
+    "mtime": 1789868595.6268053,
+    "seen": 1789868775.236673,
+    "ast_hash": "7a44818411971dbd14fb71dd10167374",
+    "semantic_hash": ""
+  },
+  "frontend/js/reservas.js": {
+    "mtime": 1789868583.3530538,
+    "seen": 1789868775.2366738,
+    "ast_hash": "75c59d199da0196a77fd0d7791cc7d6c",
+    "semantic_hash": ""
+  },
+  "frontend/js/storage.js": {
+    "mtime": 1789868559.6115978,
+    "seen": 1789868775.2366748,
+    "ast_hash": "f029b2b0df2348da4c0a325ea6310285",
+    "semantic_hash": ""
+  },
+  "index.php": {
+    "mtime": 1789426315.6165357,
+    "seen": 1789868775.2366755,
+    "ast_hash": "2ce2686196db18e2bf02ae44e497316d",
+    "semantic_hash": ""
+  },
+  "verificar-email.php": {
+    "mtime": 1789612541.0975156,
+    "seen": 1789868775.2366767,
+    "ast_hash": "b719efc8c96462533c0b29123cc9e759",
+    "semantic_hash": ""
+  },
+  "AGENTS.md": {
+    "mtime": 1789859679.3783612,
+    "seen": 1789868775.2366774,
+    "ast_hash": "21ceb6533048be51308e69e7b74a35cf",
+    "semantic_hash": ""
+  },
+  "backend/README.md": {
+    "mtime": 1789868500.9917228,
+    "seen": 1789868775.2366781,
+    "ast_hash": "570a4926f5106d9c13a7dd32cf9f005e",
+    "semantic_hash": ""
+  },
+  "frontend/index.html": {
+    "mtime": 1789868634.6177964,
+    "seen": 1789868775.2366788,
+    "ast_hash": "2c191562441e96edbb704297fb89a7c6",
+    "semantic_hash": ""
+  },
+  "frontend/pages/admin.html": {
+    "mtime": 1789868607.859561,
+    "seen": 1789868775.2366798,
+    "ast_hash": "a68cb0754f5659698f7db2073b08bd3d",
+    "semantic_hash": ""
+  },
+  "frontend/pages/login.html": {
+    "mtime": 1789615232.9414122,
+    "seen": 1789868775.2366805,
+    "ast_hash": "cf43a96da2e7e063362b503a15844917",
+    "semantic_hash": ""
+  },
+  "frontend/pages/mis-reservas.html": {
+    "mtime": 1789426315.6158738,
+    "seen": 1789868775.2366824,
+    "ast_hash": "607ec75776c276f542237c997cb398e5",
+    "semantic_hash": ""
+  },
+  "frontend/pages/registro.html": {
+    "mtime": 1789525603.02748,
+    "seen": 1789868775.2366836,
+    "ast_hash": "420f7428a249f208075250b7e60e191f",
+    "semantic_hash": ""
+  },
+  "frontend/pages/reservas.html": {
+    "mtime": 1789525736.0421154,
+    "seen": 1789868775.2366843,
+    "ast_hash": "1a2d63b3ed72f97a0a44ab6b446e5584",
+    "semantic_hash": ""
+  },
+  "gemini.md": {
+    "mtime": 1789426315.6165357,
+    "seen": 1789868775.236685,
+    "ast_hash": "fce42c901d8f06cc5a5c0b6cff8da7d1",
+    "semantic_hash": ""
+  },
+  "index.html": {
+    "mtime": 1789426315.6165357,
+    "seen": 1789868775.2366858,
+    "ast_hash": "62b69db75e8b89c4e88fa2b27dc54350",
+    "semantic_hash": ""
+  },
+  "assets/fondo_login.webp": {
+    "mtime": 1789611006.0219038,
+    "seen": 1789868775.2366867,
+    "ast_hash": "c28036bebe36189fad85c1f8da61c2a6",
+    "semantic_hash": ""
+  },
+  "frontend/assets/fondo_login.webp": {
+    "mtime": 1789611006.0219038,
+    "seen": 1789868775.2366877,
+    "ast_hash": "c28036bebe36189fad85c1f8da61c2a6",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/alisado_6d.webp": {
+    "mtime": 1789426315.577023,
+    "seen": 1789868775.2366884,
+    "ast_hash": "a718ba86636679cb98795c0916990775",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/alisado_6d_3.webp": {
+    "mtime": 1789426315.577023,
+    "seen": 1789868775.236689,
+    "ast_hash": "a07966bfb36a879192faa53b1e902a45",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/alisado_6d_4.webp": {
+    "mtime": 1789426315.577023,
+    "seen": 1789868775.2366898,
+    "ast_hash": "7b4311f7f888834a7fa90975217ff800",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/alisado_6d_5.webp": {
+    "mtime": 1789426315.577023,
+    "seen": 1789868775.2366908,
+    "ast_hash": "44a966c0a9ef72b3522d6c52521e8932",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/alisado_6d_6.webp": {
+    "mtime": 1789426315.577023,
+    "seen": 1789868775.2366915,
+    "ast_hash": "4b7539c1eda76cec36714e421290521c",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/alisado_6d_7.webp": {
+    "mtime": 1789426315.5826194,
+    "seen": 1789868775.2366922,
+    "ast_hash": "cdf7e8fe1aa6e1553f582ba08b6187f6",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/cortes_1.webp": {
+    "mtime": 1789426315.5826194,
+    "seen": 1789868775.236693,
+    "ast_hash": "c28aadcd16848aa9cad371af1c5c348c",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/curso_1.webp": {
+    "mtime": 1789426315.5826194,
+    "seen": 1789868775.236694,
+    "ast_hash": "2ed947cf1f81cb707649256b552c3b6c",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/curso_2.webp": {
+    "mtime": 1789426315.5826194,
+    "seen": 1789868775.2366948,
+    "ast_hash": "c32348c302848b7edae1fbea97337988",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/ejemplo_imagen.webp": {
+    "mtime": 1789426315.5826194,
+    "seen": 1789868775.2366955,
+    "ast_hash": "789a2482a189cba95a7e708cff18af85",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/fondo_login.webp": {
+    "mtime": 1789611006.0219038,
+    "seen": 1789868775.2366962,
+    "ast_hash": "c28036bebe36189fad85c1f8da61c2a6",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/foto_curso.webp": {
+    "mtime": 1789426315.5880983,
+    "seen": 1789868775.2366972,
+    "ast_hash": "2168e61b96f4490b24309232b92ce10e",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/foto_perfil.webp": {
+    "mtime": 1789692116.7077928,
+    "seen": 1789868775.2366982,
+    "ast_hash": "92e0efe14a36e3363bcba18a0c0466bc",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/mechas_babylight_2.webp": {
+    "mtime": 1789426315.5880983,
+    "seen": 1789868775.2366989,
+    "ast_hash": "16d039dca0e085713feb88cc7bb01445",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/mechas_babylight_4.webp": {
+    "mtime": 1789426315.5880983,
+    "seen": 1789868775.2366996,
+    "ast_hash": "a6e6ee92bcf674414090d1387d61cf1c",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/mechas_balayage.webp": {
+    "mtime": 1789426315.5880983,
+    "seen": 1789868775.2367005,
+    "ast_hash": "aa752123fe1c9a53cc753d618ee9039b",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/mechas_balayage_2.webp": {
+    "mtime": 1789426315.5931401,
+    "seen": 1789868775.2367013,
+    "ast_hash": "2768abf5c1ce0dbec462fc28b31f753b",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/mechas_balayage_3.webp": {
+    "mtime": 1789426315.5937765,
+    "seen": 1789868775.236702,
+    "ast_hash": "4e5e6f99842c32337641350774a9ba25",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/mechas_localizadas.webp": {
+    "mtime": 1789426315.5937765,
+    "seen": 1789868775.2367027,
+    "ast_hash": "b713d06bb64a8c410de23e18fd4eb557",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/mechas_localizadas_2.webp": {
+    "mtime": 1789426315.5937765,
+    "seen": 1789868775.2367036,
+    "ast_hash": "c98c8f8c328639168273f683cc90eb68",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/mechas_localizadas_3.webp": {
+    "mtime": 1789426315.5937765,
+    "seen": 1789868775.2367046,
+    "ast_hash": "d74f9f4c83042fbf14bfe53f55c0c437",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/peinados/peinado_15anios.webp": {
+    "mtime": 1789608238.0711806,
+    "seen": 1789868775.2367053,
+    "ast_hash": "6175f7870be2f240ecf8c4a22cc03a38",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/peinados/peinado_novia.webp": {
+    "mtime": 1789608258.8914292,
+    "seen": 1789868775.236706,
+    "ast_hash": "94bc95d3930fd4576274dd6efd5c63b4",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/peinados/peinado_ondas.webp": {
+    "mtime": 1789608251.7313063,
+    "seen": 1789868775.2367067,
+    "ast_hash": "e8f5e97bc00b89b427b62737236b8991",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/peinados/peinado_prueba.webp": {
+    "mtime": 1789608265.6204214,
+    "seen": 1789868775.2367077,
+    "ast_hash": "4b48d5b1743ca4e7e9223e53c397b857",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/peinados/peinado_recogido.webp": {
+    "mtime": 1789608269.087277,
+    "seen": 1789868775.2367086,
+    "ast_hash": "ce8bad2e1b839bd81deb92a3f074f708",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/peinados/peinado_semirrecogido.webp": {
+    "mtime": 1789608274.9357622,
+    "seen": 1789868775.2367094,
+    "ast_hash": "432ac5a48371b1f911e41514e5387b10",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/peinados/peinado_social.webp": {
+    "mtime": 1789608280.394571,
+    "seen": 1789868775.23671,
+    "ast_hash": "427b44a9b952aeaffd5bd99c5b97c82f",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/peinados_1.webp": {
+    "mtime": 1789426315.5937765,
+    "seen": 1789868775.2367113,
+    "ast_hash": "b79fe0af11437ed764e594f3b81be548",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/peinados_2.webp": {
+    "mtime": 1789426315.5986998,
+    "seen": 1789868775.236712,
+    "ast_hash": "aab7c6155a28770d54cfe45f269c6a14",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/peinados_3.webp": {
+    "mtime": 1789426315.5992534,
+    "seen": 1789868775.2367127,
+    "ast_hash": "5d96aa0e43b3644fed190ae6dd58a829",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/productos_1.webp": {
+    "mtime": 1789426315.5992534,
+    "seen": 1789868775.2367134,
+    "ast_hash": "31f75132f3eb8bcb4ef021d5d77fedd2",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/salon_1.webp": {
+    "mtime": 1789426315.5992534,
+    "seen": 1789868775.2367141,
+    "ast_hash": "0fc74bd0b70e2cb9b9214555f8b9959a",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/salon_2.webp": {
+    "mtime": 1789426315.5992534,
+    "seen": 1789868775.236715,
+    "ast_hash": "da7a0c2c226f4980e4fe0b2ac65d7262",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/salon_3.webp": {
+    "mtime": 1789426315.5992534,
+    "seen": 1789868775.2367158,
+    "ast_hash": "47840dcc150e2863f8e9006996b6d199",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/salon_4.webp": {
+    "mtime": 1789426315.6047864,
+    "seen": 1789868775.2367167,
+    "ast_hash": "c4b9dae965cc0d677d2572cf27e4d61c",
+    "semantic_hash": ""
+  }
+}

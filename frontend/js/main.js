@@ -25,7 +25,7 @@ const SALON_LOCATION = {
   stylist: "Mariano Echavarría",
   address: "Calle General Nicolás Palacios 156 (Galería Paseo de la Catedral)",
   city: "San Carlos de Bariloche, Río Negro",
-  schedule: "Martes a Sábados: 09:00 - 19:00 hs",
+  schedule: "Martes a Sábados: 11:00 - 19:00 hs",
   scheduleClosed: "Domingos y Lunes: Cerrado",
   directionsUrl: "https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=%3B-41.133965%2C-71.303469"
 };

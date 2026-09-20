@@ -9,6 +9,9 @@ ini_set('display_errors', '0');
 ini_set('display_startup_errors', '0');
 error_reporting(E_ALL);
 
+// Configuración de zona horaria oficial (Argentina / UTC-3)
+date_default_timezone_set('America/Argentina/Buenos_Aires');
+
 // Manejador global de excepciones para responder siempre en JSON válido y seguro ante cualquier fallo
 set_exception_handler(function (Throwable $e) {
     // Registrar error técnico completo en los logs del servidor para el desarrollador
