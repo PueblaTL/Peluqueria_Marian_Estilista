@@ -21,9 +21,9 @@ const SEED_DATA = {
     instagramLink: "https://www.instagram.com/marian.estilista.bariloche/",
     email: "Jesusechavarria057@gmail.com",
     experiencia: "+15 Años de Experiencia",
-    horariosTexto: "Martes a Sábados de 09:00 a 19:00 hs",
+    horariosTexto: "Martes a Sábados de 11:00 a 19:00 hs",
     diasApertura: [2, 3, 4, 5, 6], // Martes (2) a Sábado (6)
-    horaApertura: "09:00",
+    horaApertura: "11:00",
     horaCierre: "19:00",
     intervaloTurnosMinutos: 30
   },
@@ -38,7 +38,7 @@ const SEED_DATA = {
     descripcion: "Especialista en colorimetría avanzada, diseño de iluminación personalizada, alisados de alto brillo y tratamientos restauradores. Con más de 15 años de trayectoria dedicados a brindar una atención personalizada a cada clienta en Bariloche.",
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80",
     diasLaborales: [2, 3, 4, 5, 6],
-    horarioInicio: "09:00",
+    horarioInicio: "11:00",
     horarioFin: "19:00",
     activo: true
   },
@@ -339,7 +339,7 @@ const SEED_DATA = {
       profesionalId: "prof-1",
       profesionalNombre: "Mariano",
       fecha: new Date().toISOString().split("T")[0],
-      hora: "10:00",
+      hora: "11:00",
       duracionMinutos: 180,
       precio: 150000,
       estado: "Confirmado",

@@ -109,7 +109,7 @@ class MailerService {
      * @return array
      */
     public static function enviarNotificacionTurnoMarian(array $reserva, string $pdfContent = ''): array {
-        $marianEmail = defined('MARIAN_NOTIFICATION_EMAIL') ? MARIAN_NOTIFICATION_EMAIL : 'marianestilista@gmail.com';
+        $marianEmail = defined('MARIAN_NOTIFICATION_EMAIL') ? MARIAN_NOTIFICATION_EMAIL : 'jesusechavarria@marianestilista.online';
         $asunto = "📅 Nuevo turno reservado: " . ($reserva['servicio']['nombre'] ?? 'Servicio') . " — #" . ($reserva['id'] ?? '');
 
         $clienteNom = trim(($reserva['cliente']['nombre'] ?? '') . ' ' . ($reserva['cliente']['apellido'] ?? ''));

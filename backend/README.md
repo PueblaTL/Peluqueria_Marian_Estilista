@@ -85,7 +85,7 @@ marian-estilista/
 | **Config** (`backend/config/`) | Gestiona las variables de entorno, la inicialización de la conexión PDO (`Database.php`), las cookies de sesión seguras (`HttpOnly`, `SameSite`), las cabeceras CORS y las respuestas JSON estándar. |
 | **Models** (`backend/models/`) | Representan las entidades del dominio (`Usuario`, `Servicio`, `Profesional`, `Reserva`). Incluyen métodos como `toSafeArray()` para garantizar que nunca se expongan contraseñas. |
 | **Repositories** (`backend/repositories/`) | Se encargan **exclusivamente** de ejecutar sentencias SQL preparadas (`prepared statements` de PDO), evitando la inyección de SQL. No contienen lógica de negocio ni manipulación HTTP. |
-| **Services** (`backend/services/`) | Contienen la **lógica de negocio**: validación de fechas (días de atención martes a sábado de 09:00 a 19:00 hs), cálculo de colisiones horarias para evitar dobles reservas, encriptación con `password_hash()` y autorización de acceso. |
+| **Services** (`backend/services/`) | Contienen la **lógica de negocio**: validación de fechas (días de atención martes a sábado de 11:00 a 19:00 hs), cálculo de colisiones horarias para evitar dobles reservas, encriptación con `password_hash()` y autorización de acceso. |
 | **Controllers** (`backend/controllers/`) | Reciben las peticiones, leen los datos de entrada (`getRequestData()`), invocan al servicio correspondiente y emiten la respuesta JSON con códigos HTTP adecuados. |
 | **API** (`backend/api/`) | Puntos de entrada HTTP livianos que instancian al controlador respectivo. |
 
@@ -213,7 +213,7 @@ Selecciona fecha en calendario (Paso 2)
         ↓
 Frontend consulta GET /api/reservas/disponibilidad.php?fecha=...
         ↓
-Backend calcula franjas libres según horarios de apertura (09:00 a 19:00) y reservas en MySQL
+Backend calcula franjas libres según horarios de apertura (11:00 a 19:00) y reservas en MySQL
         ↓
 Clienta selecciona horario disponible (Paso 3)
         ↓

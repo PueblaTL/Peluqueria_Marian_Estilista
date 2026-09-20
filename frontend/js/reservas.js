@@ -380,9 +380,10 @@ class BookingWizard {
 
     this.calendarMonthTitle.textContent = `${monthNames[month]} ${year}`;
 
-    // Validar botón de mes anterior (evitar navegar al pasado)
-    const today = new Date();
-    const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+    // Validar botón de mes anterior (evitar navegar al pasado) usando hora de Argentina
+    const hoyArgStr = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Argentina/Buenos_Aires" }).format(new Date());
+    const [todayY, todayM] = hoyArgStr.split("-").map(Number);
+    const isCurrentMonth = todayY === year && (todayM - 1) === month;
     if (this.calPrevBtn) {
       this.calPrevBtn.disabled = isCurrentMonth;
     }
@@ -411,7 +412,7 @@ class BookingWizard {
       const dateString = `${yyyy}-${mm}-${dd}`;
 
       // Reglas: Atención Martes(2) a Sábado(6)
-      const isPast = dateObj < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const isPast = dateString < hoyArgStr;
       const isWorkingDay = dayOfWeek >= 2 && dayOfWeek <= 6;
 
       cell.className = "calendar-day-cell";
@@ -441,6 +442,9 @@ class BookingWizard {
 
   selectDate(dateString) {
     if (!this.state) this.state = {};
+    if (this.state.fecha !== dateString) {
+      this.state.hora = null;
+    }
     this.state.fecha = dateString;
 
     // Actualizar visualmente sin recargar todo el calendario
@@ -478,12 +482,29 @@ class BookingWizard {
 
       this.slotsGrid.innerHTML = "";
 
-      if (!slots || slots.length === 0) {
+      const hoyArgStr = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Argentina/Buenos_Aires" }).format(new Date());
+      const horaArgStr = new Intl.DateTimeFormat("es-AR", {
+        timeZone: "America/Argentina/Buenos_Aires",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      }).format(new Date());
+
+      // Filtrar asegurando rango 11:00 a 19:00 y excluyendo horas pasadas del día actual
+      const slotsValidos = (slots || []).filter(slot => {
+        if (slot.hora < "11:00" || slot.hora >= "19:00") return false;
+        if (this.state.fecha === hoyArgStr && slot.hora <= horaArgStr) return false;
+        return true;
+      });
+
+      if (!slotsValidos || slotsValidos.length === 0) {
         this.slotsGrid.innerHTML = `<div class="no-slots-msg">No hay turnos disponibles para esta fecha. Por favor selecciona otro día.</div>`;
+        this.state.hora = null;
+        if (this.btnNext) this.btnNext.disabled = true;
         return;
       }
 
-      slots.forEach(slot => {
+      slotsValidos.forEach(slot => {
         const pill = document.createElement("button");
         pill.type = "button";
         pill.className = `time-slot-pill ${slot.disponible ? 'available' : 'occupied'} ${this.state.hora === slot.hora ? 'selected' : ''}`;
@@ -501,6 +522,12 @@ class BookingWizard {
 
         this.slotsGrid.appendChild(pill);
       });
+
+      // Si el horario seleccionado previamente no está disponible en la lista válida, invalidarlo
+      if (this.state.hora && !slotsValidos.some(s => s.hora === this.state.hora && s.disponible)) {
+        this.state.hora = null;
+        if (this.btnNext) this.btnNext.disabled = true;
+      }
     } catch (err) {
       console.error("Error al obtener disponibilidad:", err);
       this.slotsGrid.innerHTML = `<div class="error-msg">Error al cargar horarios.</div>`;

@@ -237,4 +237,40 @@ class ReservaRepository {
         ]);
         return $stmt->fetchAll();
     }
+
+    /**
+     * Cuenta la cantidad de reservas activas (no canceladas) para una misma fecha y hora.
+     *
+     * @param string $fecha (YYYY-MM-DD)
+     * @param string $hora (HH:MM o HH:MM:SS)
+     * @param int|null $profesionalId
+     * @param int|null $ignoreReservaId
+     * @return int
+     */
+    public function countActivasPorFechaHora(string $fecha, string $hora, ?int $profesionalId = null, ?int $ignoreReservaId = null): int {
+        $horaFormatted = strlen($hora) === 5 ? $hora . ':00' : $hora;
+        $sql = "SELECT COUNT(*) FROM `reservas`
+                WHERE `fecha` = :fecha
+                  AND `hora` = :hora
+                  AND `estado` != 'CANCELADA'";
+
+        $params = [
+            ':fecha' => $fecha,
+            ':hora'  => $horaFormatted
+        ];
+
+        if ($profesionalId !== null && $profesionalId > 0) {
+            $sql .= " AND `profesional_id` = :profesional_id";
+            $params[':profesional_id'] = $profesionalId;
+        }
+
+        if ($ignoreReservaId !== null) {
+            $sql .= " AND `id` != :ignore_id";
+            $params[':ignore_id'] = $ignoreReservaId;
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return (int)$stmt->fetchColumn();
+    }
 }
