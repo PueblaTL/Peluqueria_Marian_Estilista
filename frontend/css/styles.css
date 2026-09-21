@@ -4176,3 +4176,10 @@ textarea.form-control {
     height: 280px;
   }
 }
+/* Academia: inscripción principal y consulta secundaria. */
+.course-cta-box { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.course-enroll-cta { width: 100%; min-height: 56px; padding: 16px 22px; background: #d6ac86; color: #302116; border: 1px solid #c49870; border-radius: 8px; font-weight: 700; font-size: 1rem; white-space: normal; text-align: center; transition: background .25s ease, transform .25s ease; }
+.course-enroll-cta:hover { background: #c99b71; color: #24180f; transform: translateY(-2px); }
+.course-enroll-cta:focus-visible, .course-whatsapp-cta:focus-visible { outline: 3px solid #60442d; outline-offset: 4px; }
+.course-enroll-cta:disabled { opacity: .7; cursor: default; transform: none; }
+.course-whatsapp-cta { width: 92%; min-height: 44px; padding: 10px 14px; font-size: .85rem; white-space: normal; }

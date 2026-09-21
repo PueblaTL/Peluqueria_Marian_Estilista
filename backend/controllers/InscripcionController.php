@@ -32,17 +32,21 @@ class InscripcionController {
     }
 
     /**
-     * Registra una nueva inscripción al curso (público desde landing o manual desde admin).
+     * Registra una inscripción autenticada o una inscripción manual desde admin.
      * Endpoint: POST /backend/api/inscripciones/create.php
      */
     public function create(): void {
+        $user = requireAuth();
         try {
             $data = getRequestData();
             
-            // Si no está autenticado como ADMIN, forzar estado 'Pendiente' para registros públicos de la landing
-            $user = getAuthUser();
-            if (!$user || ($user['rol'] ?? '') !== 'ADMIN') {
+            // La identidad y el estado de una postulación provienen de la sesión.
+            if (($user['rol'] ?? '') !== 'ADMIN') {
                 $data['estado'] = 'Pendiente';
+                $data['nombre'] = $user['nombre'];
+                $data['apellido'] = $user['apellido'] ?? '';
+                $data['email'] = $user['email'];
+                $data['curso_id'] = 'cur-1';
             }
 
             $inscripcion = $this->service->create($data);

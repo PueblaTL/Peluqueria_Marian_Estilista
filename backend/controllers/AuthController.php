@@ -20,6 +20,12 @@ class AuthController {
     public function register(): void {
         try {
             $data = getRequestData();
+            // Conserva el curso al abrir la verificación de correo en otra pestaña.
+            if (($data['return_to'] ?? '') === 'curso') {
+                $_SESSION['auth_return_course'] = true;
+            } else {
+                unset($_SESSION['auth_return_course']);
+            }
             $resultado = $this->authService->register($data);
             jsonResponse(
                 true,
@@ -71,11 +77,12 @@ class AuthController {
                          (strpos($_SERVER['HTTP_ACCEPT'], 'application/json') === false);
 
         $loginUrl = (defined('APP_URL') ? APP_URL : '') . '/frontend/pages/login.html';
+        $returnQuery = !empty($_SESSION['auth_return_course']) ? '&redirect=curso.html&action=inscripcion' : '';
 
         try {
             $res = $this->authService->verifyEmail($token);
             if ($isHtmlRequest) {
-                header("Location: " . $loginUrl . "?verified=1");
+                header("Location: " . $loginUrl . "?verified=1" . $returnQuery);
                 exit();
             }
             jsonResponse(true, "Correo verificado correctamente. Tu cuenta fue activada. Ya podés iniciar sesión.", $res, 200, null, 'success');
@@ -83,7 +90,7 @@ class AuthController {
             $errCode = $e->getCode();
             $errParam = ($errCode === 410) ? 'expired' : 'invalid';
             if ($isHtmlRequest) {
-                header("Location: " . $loginUrl . "?verify_error=" . $errParam);
+                header("Location: " . $loginUrl . "?verify_error=" . $errParam . $returnQuery);
                 exit();
             }
             $code = ($errCode >= 400 && $errCode < 600) ? $errCode : 400;

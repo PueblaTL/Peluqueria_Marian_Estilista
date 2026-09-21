@@ -14,7 +14,7 @@ async function updateNavbarAuth() {
   // Determinar ruta relativa a páginas según la ubicación actual
   const isInsidePages = window.location.pathname.includes("/pages/");
   const pathPrefix = isInsidePages ? "" : "pages/";
-  const loginUrl = `${pathPrefix}login.html`;
+  const loginUrl = `${pathPrefix}login.html${getAuthReturnTarget() === "curso.html?action=inscripcion" ? "?redirect=curso.html&action=inscripcion" : ""}`;
   const misReservasUrl = `${pathPrefix}mis-reservas.html`;
   const adminUrl = `${pathPrefix}admin.html`;
 
@@ -134,7 +134,27 @@ async function updateNavbarAuth() {
 // 2. LÓGICA DE LA PÁGINA LOGIN (login.html)
 // ==============================================================================
 
+// Solo destinos internos conocidos; nunca redirigir a una URL arbitraria.
+function getAuthReturnTarget() {
+  const params = new URLSearchParams(window.location.search);
+  const target = params.get("redirect");
+  if (target === "curso.html") return "curso.html?action=inscripcion";
+  return ["reservas.html", "mis-reservas.html", "admin.html"].includes(target) ? target : null;
+}
+
+function prepareCourseAuthFlow() {
+  const target = getAuthReturnTarget();
+  if (target !== "curso.html?action=inscripcion") return;
+  document.querySelectorAll('a[href="registro.html"], a[href="login.html"]').forEach(link => {
+    link.href += "?redirect=curso.html&action=inscripcion";
+  });
+  const subtitle = document.querySelector(".auth-subtitle");
+  if (subtitle) subtitle.textContent = "Para inscribirte al curso necesitás iniciar sesión o crear una cuenta.";
+}
+
 async function initLoginPage() {
+  prepareCourseAuthFlow();
+  const returnTarget = getAuthReturnTarget();
   // 1. Detección de parámetros de verificación de correo o errores en URL
   const urlParams = new URLSearchParams(window.location.search);
   const verified = urlParams.get("verified");
@@ -152,7 +172,8 @@ async function initLoginPage() {
       window.showToast?.("¡Correo verificado correctamente! Ya puedes iniciar sesión.", "success");
     }
     // Limpiar parámetros de la URL sin recargar para que no vuelva a saltar si refresca
-    window.history.replaceState({}, document.title, window.location.pathname);
+    urlParams.delete("verified");
+    window.history.replaceState({}, document.title, window.location.pathname + (urlParams.size ? "?" + urlParams : ""));
   } else if (verifyError) {
     let title = "⚠ Atención";
     let message = "Ocurrió un inconveniente con el enlace de activación.";
@@ -180,13 +201,14 @@ async function initLoginPage() {
     } else {
       window.showToast?.(message, type);
     }
-    window.history.replaceState({}, document.title, window.location.pathname);
+    urlParams.delete("verify_error");
+    window.history.replaceState({}, document.title, window.location.pathname + (urlParams.size ? "?" + urlParams : ""));
   }
 
   // 2. Si ya está autenticado, redirigir
   const user = await window.apiGetCurrentUser();
   if (user) {
-    window.location.href = user.rol === "ADMIN" ? "admin.html" : "mis-reservas.html";
+    window.location.href = returnTarget || (user.rol === "ADMIN" ? "admin.html" : "mis-reservas.html");
     return;
   }
 
@@ -326,8 +348,7 @@ async function initLoginPage() {
 
       // Redirigir según rol o parámetro de retorno
       setTimeout(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const redirect = urlParams.get("redirect");
+        const redirect = returnTarget;
         if (redirect) {
           window.location.href = redirect;
         } else if (usuario.rol === "ADMIN") {
@@ -495,9 +516,13 @@ async function _reenviarVerificacionDesdeLogin(email) {
 // ==============================================================================
 
 async function initRegisterPage() {
+  prepareCourseAuthFlow();
+  const returnTarget = getAuthReturnTarget();
+  const loginTarget = returnTarget === "curso.html?action=inscripcion"
+    ? "login.html?redirect=curso.html&action=inscripcion" : "login.html";
   const user = await window.apiGetCurrentUser();
   if (user) {
-    window.location.href = "reservas.html";
+    window.location.href = returnTarget || "reservas.html";
     return;
   }
 
@@ -602,7 +627,8 @@ async function initRegisterPage() {
         email,
         telefono,
         password,
-        confirm_password: confirmPassword
+        confirm_password: confirmPassword,
+        return_to: returnTarget === "curso.html?action=inscripcion" ? "curso" : null
       });
 
       submitBtn.disabled = false;
@@ -615,12 +641,12 @@ async function initRegisterPage() {
           type: "success",
           buttonText: "Ir a Iniciar Sesión",
           onConfirm: () => {
-            window.location.href = "login.html";
+            window.location.href = loginTarget;
           }
         });
       } else {
         window.showToast?.("Cuenta creada correctamente. Te enviamos un correo para verificar tu dirección.", "success");
-        setTimeout(() => { window.location.href = "login.html"; }, 1500);
+        setTimeout(() => { window.location.href = loginTarget; }, 1500);
       }
     } catch (err) {
       console.error("Error en registro:", err);

@@ -1,0 +1,32 @@
+.course-page .site-header { position: relative; height: auto; background: #fff; }
+.course-page .header-container { height: auto; min-height: 72px; flex-wrap: wrap; gap: 16px; padding-top: 16px; padding-bottom: 16px; }
+.course-page .header-actions { flex-wrap: wrap; gap: 12px; }
+.course-page .course-section { padding-top: 48px; }
+.course-page .course-content { display: flex; flex-direction: column; min-width: 0; }
+.course-page .course-offer { order: 1; margin-top: 24px; }
+.course-page .course-learning { order: 2; margin-top: 40px; }
+.course-page .course-location { order: 3; margin-top: 32px; padding: 24px; border: 1px solid #e5d6c5; border-radius: 12px; }
+.course-page .course-location p { margin-top: 12px; }
+.course-page .course-inscription { order: 4; margin-top: 32px; padding: 24px; background: #fffaf5; border: 1px solid #e5d6c5; border-radius: 12px; scroll-margin-top: 24px; }
+.course-inscription[hidden] { display: none; }
+.course-inscription h2 { font-family: var(--font-serif); margin-bottom: 12px; }
+.course-inscription label { display: block; margin: 18px 0 6px; }
+.course-inscription input { width: 100%; min-width: 0; padding: 12px; font: inherit; border: 1px solid #c7bbae; border-radius: 6px; background: #fff; }
+.course-inscription input[readonly] { background: #f1ece6; }
+.course-inscription button { margin-top: 24px; }
+.course-page #course-status { grid-column: 1 / -1; color: #60442d; overflow-wrap: anywhere; }
+.course-page #course-status:empty { display: none; }
+.course-page footer { padding: 32px 20px; text-align: center; background: #f6f1eb; }
+.course-page .user-nav-menu { max-width: calc(100vw - 32px); overflow-wrap: anywhere; }
+@media (max-width: 767px) {
+  .course-page .header-container { justify-content: center; }
+  .course-page .header-actions { width: 100%; justify-content: center; }
+  .course-page .course-section { padding-top: 28px; }
+  .course-page .course-layout { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .course-page .course-image-column { position: static; }
+  .course-page .course-image { max-height: 420px; object-position: center; }
+  .course-page .course-inscription { padding: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .course-page * { scroll-behavior: auto !important; transition: none !important; }
+}
