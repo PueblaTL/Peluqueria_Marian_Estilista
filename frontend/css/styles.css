@@ -1064,14 +1064,23 @@ h6 {
   align-items: center;
   gap: 8px;
   padding: 8px 18px;
-  background-color: var(--white);
-  border: 1px solid var(--border-color);
+  background-color: #fff9ed;
+  border: 1px solid #e8d6b8;
   border-radius: var(--radius-full);
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--text-main);
   box-shadow: var(--shadow-sm);
   margin-bottom: 24px;
+  max-width: 100%;
+}
+
+.hero-stars {
+  color: #b8791e;
+  font-size: 1.05rem;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .hero-title {
@@ -3638,8 +3647,13 @@ textarea.form-control {
   letter-spacing: 0.04em;
 }
 
-.gallery-overlay h4 {
-  color: var(--white);
+.gallery-item .gallery-overlay .gallery-tag {
+  background: #bde9f5;
+  color: #173b4b;
+}
+
+.gallery-item .gallery-overlay .gallery-title {
+  color: #e7bc73;
   font-size: 1.15rem;
   margin-bottom: 4px;
 }
@@ -4372,6 +4386,104 @@ textarea.form-control {
     height: 280px;
   }
 
+}
+
+/* Hero compacto para celulares. */
+@media (max-width: 480px) {
+  .hero-section {
+    padding-top: 88px;
+    padding-bottom: 52px;
+  }
+
+  .hero-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    min-width: 0;
+  }
+
+  .hero-content {
+    display: contents;
+  }
+
+  .hero-rating-pill {
+    order: 1;
+    align-self: flex-start;
+    flex-wrap: nowrap;
+    gap: 5px;
+    padding: 6px 9px;
+    margin-bottom: 14px;
+    font-size: clamp(0.64rem, 2.9vw, 0.75rem);
+    white-space: nowrap;
+  }
+
+  .hero-rating-pill .hero-rating-score {
+    display: none;
+  }
+
+  .hero-rating-pill > span::before {
+    content: "– ";
+  }
+
+  .hero-rating-pill .hero-stars {
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+  }
+
+  .hero-title {
+    order: 2;
+    max-width: 20ch;
+    margin: 0 0 20px;
+    font-size: clamp(1.8rem, 7.8vw, 2.25rem);
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+  }
+
+  .hero-description,
+  .hero-features {
+    display: none;
+  }
+
+  .hero-visual {
+    order: 3;
+    min-width: 0;
+    margin-bottom: 22px;
+  }
+
+  .hero-carousel {
+    height: clamp(300px, 88vw, 380px);
+    max-height: none;
+    border-radius: 16px;
+  }
+
+  .hero-carousel .carousel-caption {
+    bottom: 58px;
+    left: 16px;
+    right: 16px;
+  }
+
+  .hero-carousel .carousel-dots {
+    bottom: 12px;
+  }
+
+  .hero-cta-group {
+    order: 4;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    margin: 0;
+  }
+
+  .hero-cta-group .btn {
+    width: 100%;
+    min-height: 48px;
+    padding: 11px 16px;
+    justify-content: center;
+    text-align: center;
+    font-size: 0.95rem;
+    line-height: 1.3;
+  }
 }
 
 /* Academia: inscripción principal y consulta secundaria. */
