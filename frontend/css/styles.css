@@ -3605,21 +3605,18 @@ textarea.form-control {
 
 .gallery-overlay {
   position: absolute;
-  inset: auto 0 0;
-  background: linear-gradient(to top, rgba(18, 10, 7, 0.94) 0%, rgba(18, 10, 7, 0.76) 68%, transparent 100%);
+  inset: 0;
+  background: linear-gradient(to top, rgba(22, 21, 25, 0.92) 0%, rgba(22, 21, 25, 0.4) 60%, transparent 100%);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 32px 20px 18px;
+  padding: 24px;
   color: var(--white);
   opacity: 0;
-  pointer-events: none;
   transition: opacity var(--transition-normal);
 }
 
-.gallery-item:hover .gallery-overlay,
-.gallery-item:active .gallery-overlay,
-.gallery-item:focus-within .gallery-overlay {
+.gallery-item:hover .gallery-overlay {
   opacity: 1;
 }
 
@@ -3641,23 +3638,15 @@ textarea.form-control {
   letter-spacing: 0.04em;
 }
 
-.gallery-overlay .gallery-tag {
-  background-color: #a8dcf0;
-  color: #15384a;
-}
-
 .gallery-overlay h4 {
-  color: #e7bc73;
-  font-family: var(--font-serif, "Playfair Display", serif);
-  font-size: clamp(1.2rem, 2vw, 1.45rem);
-  line-height: 1.2;
+  color: var(--white);
+  font-size: 1.15rem;
   margin-bottom: 4px;
 }
 
 .gallery-overlay p {
-  font-size: 0.95rem;
-  line-height: 1.45;
-  color: #fff;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
   margin-bottom: 0;
 }
 
@@ -4383,9 +4372,6 @@ textarea.form-control {
     height: 280px;
   }
 
-  .signup-page .site-header {
-    display: none;
-  }
 }
 
 /* Academia: inscripción principal y consulta secundaria. */
