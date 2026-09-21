@@ -1,7 +1,7 @@
 {
   ".codex/hooks.json": {
-    "mtime": 1789859679.3814552,
-    "seen": 1789868775.2366002,
+    "mtime": 1789945090.4100997,
+    "seen": 1789955469.3830483,
     "ast_hash": "9d80a4f7d48849c7804b047019c8ccf2",
     "semantic_hash": ""
   },
@@ -174,9 +174,9 @@
     "semantic_hash": ""
   },
   "backend/config/config.php": {
-    "mtime": 1789867275.0649114,
-    "seen": 1789868775.2366326,
-    "ast_hash": "fefccebbafdfe39b12da8d7009fd19f4",
+    "mtime": 1789955175.474573,
+    "seen": 1789955469.3881595,
+    "ast_hash": "514a96cc047ec13d77144c34ab71cfa8",
     "semantic_hash": ""
   },
   "backend/config/fix_passwords.php": {
@@ -366,8 +366,8 @@
     "semantic_hash": ""
   },
   "backend/repositories/ReservaRepository.php": {
-    "mtime": 1789876882.2751298,
-    "seen": 1789877767.0316248,
+    "mtime": 1789945090.4131565,
+    "seen": 1789955469.394907,
     "ast_hash": "cb72388755650b689036bdbb98a91f24",
     "semantic_hash": ""
   },
@@ -396,9 +396,9 @@
     "semantic_hash": ""
   },
   "backend/services/MailerService.php": {
-    "mtime": 1789612830.8190129,
-    "seen": 1789868775.2366645,
-    "ast_hash": "81474d804e025cf14c300a577e0ff0e8",
+    "mtime": 1789955175.4755974,
+    "seen": 1789955469.3955493,
+    "ast_hash": "1b55e8ac84b66d79d2bc49d06dc2da7d",
     "semantic_hash": ""
   },
   "backend/services/PdfTicketService.php": {
@@ -414,8 +414,8 @@
     "semantic_hash": ""
   },
   "backend/services/ReservaService.php": {
-    "mtime": 1789876949.7724,
-    "seen": 1789877767.033424,
+    "mtime": 1789945090.4146771,
+    "seen": 1789955469.3958662,
     "ast_hash": "cda645135549186501906bcafdb3977a",
     "semantic_hash": ""
   },
@@ -450,26 +450,26 @@
     "semantic_hash": ""
   },
   "frontend/js/data.js": {
-    "mtime": 1789868525.8423295,
-    "seen": 1789868775.236672,
+    "mtime": 1789945090.4217987,
+    "seen": 1789955469.3966713,
     "ast_hash": "1624ca5dabf6b17be75468329a4a58db",
     "semantic_hash": ""
   },
   "frontend/js/main.js": {
-    "mtime": 1789868595.6268053,
-    "seen": 1789868775.236673,
+    "mtime": 1789945090.4228644,
+    "seen": 1789955469.3966732,
     "ast_hash": "7a44818411971dbd14fb71dd10167374",
     "semantic_hash": ""
   },
   "frontend/js/reservas.js": {
-    "mtime": 1789868583.3530538,
-    "seen": 1789868775.2366738,
+    "mtime": 1789945090.4238863,
+    "seen": 1789955469.3966749,
     "ast_hash": "75c59d199da0196a77fd0d7791cc7d6c",
     "semantic_hash": ""
   },
   "frontend/js/storage.js": {
-    "mtime": 1789877722.4067862,
-    "seen": 1789877767.0360396,
+    "mtime": 1789945090.4243922,
+    "seen": 1789955469.396676,
     "ast_hash": "be7e13fb5e2cb1c2332b1910ccd5ca40",
     "semantic_hash": ""
   },
@@ -486,33 +486,33 @@
     "semantic_hash": ""
   },
   "AGENTS.md": {
-    "mtime": 1789859679.3783612,
-    "seen": 1789868775.2366774,
+    "mtime": 1789945090.4106083,
+    "seen": 1789955469.396996,
     "ast_hash": "21ceb6533048be51308e69e7b74a35cf",
     "semantic_hash": ""
   },
   "backend/README.md": {
-    "mtime": 1789868500.9917228,
-    "seen": 1789868775.2366781,
+    "mtime": 1789945090.4116263,
+    "seen": 1789955469.396998,
     "ast_hash": "570a4926f5106d9c13a7dd32cf9f005e",
     "semantic_hash": ""
   },
   "frontend/index.html": {
-    "mtime": 1789868634.6177964,
-    "seen": 1789868775.2366788,
+    "mtime": 1789945090.4207833,
+    "seen": 1789955469.3970008,
     "ast_hash": "2c191562441e96edbb704297fb89a7c6",
     "semantic_hash": ""
   },
   "frontend/pages/admin.html": {
-    "mtime": 1789868607.859561,
-    "seen": 1789868775.2366798,
+    "mtime": 1789945090.425414,
+    "seen": 1789955469.397003,
     "ast_hash": "a68cb0754f5659698f7db2073b08bd3d",
     "semantic_hash": ""
   },
   "frontend/pages/login.html": {
-    "mtime": 1789615232.9414122,
-    "seen": 1789868775.2366805,
-    "ast_hash": "cf43a96da2e7e063362b503a15844917",
+    "mtime": 1789954369.8787587,
+    "seen": 1789955469.3970065,
+    "ast_hash": "00a2c5a871b77900a0df8c94d68f9673",
     "semantic_hash": ""
   },
   "frontend/pages/mis-reservas.html": {
@@ -630,8 +630,8 @@
     "semantic_hash": ""
   },
   "frontend/assets/images/foto_perfil.webp": {
-    "mtime": 1789692116.7077928,
-    "seen": 1789868775.2366982,
+    "mtime": 1789945090.4192626,
+    "seen": 1789955469.400425,
     "ast_hash": "92e0efe14a36e3363bcba18a0c0466bc",
     "semantic_hash": ""
   },
