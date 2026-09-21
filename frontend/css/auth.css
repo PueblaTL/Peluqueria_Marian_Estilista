@@ -217,6 +217,57 @@
   gap: 18px;
 }
 
+.signup-page .auth-card {
+  max-width: 560px;
+}
+
+.signup-page .form-row-dual {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.signup-page .form-group-custom,
+.signup-page .password-input-wrapper {
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  .signup-page {
+    min-height: 100svh;
+    background-attachment: scroll;
+  }
+
+  .signup-page .auth-main-content {
+    padding: 24px 16px;
+    min-width: 0;
+  }
+
+  .signup-page .auth-card {
+    padding: 28px clamp(16px, 5vw, 28px);
+    border-radius: 16px;
+  }
+
+  .signup-page .form-row-dual {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .signup-page .form-input-custom {
+    min-width: 0;
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  .signup-page .auth-title {
+    font-size: clamp(1.6rem, 6vw, 1.95rem);
+  }
+
+  .signup-page .auth-card-footer {
+    line-height: 1.6;
+  }
+}
+
 .form-group-custom {
   display: flex;
   flex-direction: column;

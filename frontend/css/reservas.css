@@ -384,9 +384,9 @@ body {
 /* Leyenda */
 .calendar-legend {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
   margin-top: 24px;
   padding-top: 16px;
   border-top: 1px solid #e2e8f0;
@@ -395,14 +395,16 @@ body {
 }
 
 .legend-item {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 6px;
+  line-height: 1.4;
 }
 
 .legend-dot {
   width: 12px;
   height: 12px;
+  flex: 0 0 12px;
   border-radius: 50%;
 }
 
@@ -721,6 +723,21 @@ body {
 
 /* --- RESPONSIVE RESERVAS --- */
 @media (max-width: 768px) {
+  .calendar-widget {
+    width: 100%;
+    padding: 18px 14px;
+  }
+
+  .calendar-days-grid,
+  .calendar-weekdays {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+
+  .calendar-legend {
+    margin-top: 20px;
+    padding-top: 14px;
+  }
+
   .booking-wizard-card {
     background-color: aliceblue;
     padding: 24px 18px;
@@ -924,5 +941,52 @@ body {
   .voucher-actions-group .btn {
     width: 100%;
     justify-content: center;
+  }
+}
+
+.booking-back-short {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .booking-body .header-container {
+    min-width: 0;
+    gap: 8px;
+    padding-inline: 12px;
+  }
+
+  .booking-body .brand-logo {
+    min-width: 0;
+    gap: 6px;
+  }
+
+  .booking-body .brand-text {
+    display: none;
+  }
+
+  .booking-body .header-actions {
+    flex-shrink: 0;
+    gap: 0;
+  }
+
+  .booking-body .header-actions .btn {
+    min-height: 36px;
+    padding: 7px 9px;
+    gap: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+
+  .booking-body .header-actions svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .booking-back-full {
+    display: none;
+  }
+
+  .booking-back-short {
+    display: inline;
   }
 }
