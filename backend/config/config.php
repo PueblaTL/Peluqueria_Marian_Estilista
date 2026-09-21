@@ -128,7 +128,7 @@ define('SMTP_PASSWORD', getenv('SMTP_PASSWORD') !== false ? getenv('SMTP_PASSWOR
 define('SMTP_ENCRYPTION', getenv('SMTP_ENCRYPTION') ?: 'ssl'); // 'ssl' (SMTPS, puerto 465) o 'tls' (puerto 587)
 
 // Correo de Marian para notificaciones de nuevos turnos:
-define('MARIAN_NOTIFICATION_EMAIL', getenv('MARIAN_NOTIFICATION_EMAIL') ?: 'marianestilista@gmail.com');
+define('MARIAN_NOTIFICATION_EMAIL', getenv('MARIAN_NOTIFICATION_EMAIL') ?: 'agupuebla17@gmail.com');
 
 
 // Configuración de Sesión Segura en PHP
