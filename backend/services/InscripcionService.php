@@ -74,7 +74,8 @@ class InscripcionService {
             throw new Exception("El correo electrónico no es válido.", 400);
         }
 
-        $estadosValidos = ['Pendiente', 'Contactado', 'Inscripto'];
+        $estado = $estado === 'Completado' ? 'completado' : $estado;
+        $estadosValidos = Inscripcion::ESTADOS;
         if (!in_array($estado, $estadosValidos, true)) {
             $estado = 'Pendiente';
         }
@@ -97,9 +98,7 @@ class InscripcionService {
         ]);
 
         $id = $this->repository->create($inscripcion);
-        $inscripcion->id = $id;
-
-        return $inscripcion->toArray();
+        return $this->getById($id);
     }
 
     /**
@@ -116,15 +115,14 @@ class InscripcionService {
             throw new Exception("Inscripción no encontrada.", 404);
         }
 
-        $estadosValidos = ['Pendiente', 'Contactado', 'Inscripto'];
+        $nuevoEstado = $nuevoEstado === 'Completado' ? 'completado' : $nuevoEstado;
+        $estadosValidos = Inscripcion::ESTADOS;
         if (!in_array($nuevoEstado, $estadosValidos, true)) {
             throw new Exception("Estado de inscripción no válido.", 400);
         }
 
         $this->repository->updateEstado($id, $nuevoEstado);
-        $ins->estado = $nuevoEstado;
-
-        return $ins->toArray();
+        return $this->getById($id);
     }
 
     /**

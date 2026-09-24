@@ -119,7 +119,7 @@ CREATE TABLE IF NOT EXISTS `password_resets` (
 -- ------------------------------------------------------------------------------
 -- 6. TABLA: inscripciones_curso
 -- Registro oficial de postulaciones e inscripciones al Curso Profesional
--- Estados: 'Pendiente', 'Contactado', 'Inscripto'
+-- Estados: 'Pendiente', 'Contactado', 'Inscripto', 'completado'
 -- ------------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `inscripciones_curso` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -128,13 +128,36 @@ CREATE TABLE IF NOT EXISTS `inscripciones_curso` (
   `apellido` VARCHAR(100) NULL,
   `telefono` VARCHAR(50) NOT NULL,
   `email` VARCHAR(150) NOT NULL,
-  `estado` ENUM('Pendiente', 'Contactado', 'Inscripto') NOT NULL DEFAULT 'Pendiente',
+  `estado` ENUM('Pendiente', 'Contactado', 'Inscripto', 'completado') NOT NULL DEFAULT 'Pendiente',
   `fecha` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `fecha_finalizacion` DATETIME NULL,
   INDEX `idx_inscripciones_email` (`email`),
   INDEX `idx_inscripciones_estado` (`estado`),
   INDEX `idx_inscripciones_fecha` (`fecha`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
+
+CREATE TABLE IF NOT EXISTS certificados (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  inscripcion_id INT NULL,
+  curso_id VARCHAR(50) NOT NULL,
+  codigo_certificado VARCHAR(50) NOT NULL,
+  token_validacion CHAR(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  nombre_alumno VARCHAR(201) NOT NULL,
+  nombre_curso VARCHAR(255) NOT NULL,
+  instructor VARCHAR(150) NOT NULL,
+  fecha_finalizacion DATETIME NOT NULL,
+  fecha_emision DATETIME NOT NULL,
+  estado ENUM('valido', 'revocado') NOT NULL DEFAULT 'valido',
+  pdf LONGBLOB NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_certificado_inscripcion (inscripcion_id),
+  UNIQUE KEY uq_certificado_codigo (codigo_certificado),
+  UNIQUE KEY uq_certificado_token (token_validacion),
+  CONSTRAINT fk_certificado_inscripcion FOREIGN KEY (inscripcion_id)
+    REFERENCES inscripciones_curso(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -709,6 +709,9 @@
   flex-wrap: nowrap;
 }
 
+#admin-curso-inscriptos-tbody .action-buttons-group { flex-wrap: wrap; }
+#admin-curso-inscriptos-tbody button:disabled { opacity: 0.5; cursor: not-allowed; }
+
 /* Botones icon (tabla rápida del dashboard) */
 .btn-action {
   width: 34px;

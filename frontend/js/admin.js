@@ -747,6 +747,12 @@ class AdminDashboard {
     }
 
     this.cursoInscriptosTable.innerHTML = inscripciones.map(ins => {
+      const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[char]));
+      const id = Number(ins.id);
+      const estadoLabel = ins.estado === 'completado' ? 'Completado' : ins.estado;
+      const certificadoAccion = ins.certificadoCodigo
+        ? `<a class="btn btn-sm btn-action-pill" href="${escape(window.API_BASE)}/certificados/obtener.php?inscripcion_id=${id}" target="_blank" rel="noopener">Ver certificado</a>`
+        : `<button class="btn btn-sm btn-action-pill" ${ins.estado === 'completado' ? '' : 'disabled title="El certificado solo puede generarse cuando el curso haya sido completado."'} onclick="window.adminDashboard.generarCertificado(${id}, this)">Generar certificado</button>`;
       const dateStr = new Date(ins.fecha).toLocaleDateString("es-AR", {
         day: "numeric", month: "short", year: "numeric"
       });
@@ -754,20 +760,22 @@ class AdminDashboard {
       return `
         <tr>
           <td><strong>${dateStr}</strong></td>
-          <td><strong>${ins.nombre} ${ins.apellido || ''}</strong></td>
-          <td><a href="tel:${ins.telefono}">📱 ${ins.telefono}</a></td>
-          <td>✉️ ${ins.email}</td>
+          <td><strong>${escape(ins.nombre)} ${escape(ins.apellido)}</strong></td>
+          <td><a href="tel:${escape(ins.telefono)}">📱 ${escape(ins.telefono)}</a></td>
+          <td>✉️ ${escape(ins.email)}</td>
           <td>
-            <span class="status-badge status-${ins.estado.toLowerCase()}">${ins.estado}</span>
+            <span class="status-badge status-${escape(ins.estado.toLowerCase())}">${escape(estadoLabel)}</span>
           </td>
           <td>
             <div class="action-buttons-group">
-              <select class="form-control form-control-sm" style="width: auto; display: inline-block;" onchange="window.adminDashboard.cambiarEstadoInscripcion('${ins.id}', this.value)">
+              <select aria-label="Estado actual" data-estado="${escape(ins.estado)}" class="form-control form-control-sm" style="width: auto; display: inline-block;" onchange="window.adminDashboard.cambiarEstadoInscripcion(${id}, this.value, this)">
                 <option value="Pendiente" ${ins.estado === 'Pendiente' ? 'selected' : ''}>Pendiente</option>
                 <option value="Contactado" ${ins.estado === 'Contactado' ? 'selected' : ''}>Contactado</option>
                 <option value="Inscripto" ${ins.estado === 'Inscripto' ? 'selected' : ''}>Inscripto</option>
+                <option value="completado" ${ins.estado === 'completado' ? 'selected' : ''}>Completado</option>
               </select>
-              <button class="btn btn-sm btn-action-pill btn-pill-delete" onclick="window.adminDashboard.eliminarInscripcion('${ins.id}')">
+              ${certificadoAccion}
+              <button class="btn btn-sm btn-action-pill btn-pill-delete" onclick="window.adminDashboard.eliminarInscripcion(${id})">
                 Eliminar
               </button>
             </div>
@@ -777,14 +785,37 @@ class AdminDashboard {
     }).join("");
   }
 
-  async cambiarEstadoInscripcion(id, nuevoEstado) {
+  async cambiarEstadoInscripcion(id, nuevoEstado, control) {
+    if (control) control.disabled = true;
     try {
       await window.StorageService.updateInscripcionEstado(id, nuevoEstado);
-      this.showToast(`Inscripción actualizada a "${nuevoEstado}".`, "success");
-      await this.loadAllData();
+      if (control) control.dataset.estado = nuevoEstado;
+      await this.loadCursoInscriptosTable();
+      this.showToast(nuevoEstado === 'completado'
+        ? 'El alumno completó el curso. Ya podés generar su certificado.'
+        : `Inscripción actualizada a "${nuevoEstado}".`, "success");
     } catch (err) {
       console.error(err);
-      this.showToast("Error al actualizar inscripción.", "danger");
+      if (control) control.value = control.dataset.estado;
+      this.showToast(err.message || "Error al actualizar inscripción.", "danger");
+    } finally {
+      if (control) control.disabled = false;
+    }
+  }
+
+  async generarCertificado(id, button) {
+    button.disabled = true;
+    button.textContent = 'Generando…';
+    try {
+      await window.requestApi('/certificados/generar.php', {
+        method: 'POST', body: { inscripcion_id: Number(id) }
+      });
+      await this.loadCursoInscriptosTable();
+      this.showToast('Certificado generado. Ya podés verlo y descargar el PDF.', 'success');
+    } catch (err) {
+      this.showToast(err.message || 'No se pudo generar el certificado.', 'danger');
+      button.disabled = false;
+      button.textContent = 'Generar certificado';
     }
   }
 

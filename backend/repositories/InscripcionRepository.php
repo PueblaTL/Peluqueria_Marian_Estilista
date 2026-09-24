@@ -20,7 +20,7 @@ class InscripcionRepository {
      * @return Inscripcion[]
      */
     public function getAll(): array {
-        $sql = "SELECT * FROM `inscripciones_curso` ORDER BY `fecha` DESC, `id` DESC";
+        $sql = "SELECT i.*, c.codigo_certificado AS certificado_codigo FROM inscripciones_curso i LEFT JOIN certificados c ON c.inscripcion_id = i.id ORDER BY i.fecha DESC, i.id DESC";
         $stmt = $this->db->query($sql);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -38,7 +38,7 @@ class InscripcionRepository {
      * @return Inscripcion|null
      */
     public function getById(int $id): ?Inscripcion {
-        $sql = "SELECT * FROM `inscripciones_curso` WHERE `id` = :id LIMIT 1";
+        $sql = "SELECT i.*, c.codigo_certificado AS certificado_codigo FROM inscripciones_curso i LEFT JOIN certificados c ON c.inscripcion_id = i.id WHERE i.id = :id LIMIT 1";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([':id' => $id]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -73,9 +73,9 @@ class InscripcionRepository {
      */
     public function create(Inscripcion $inscripcion): int {
         $sql = "INSERT INTO `inscripciones_curso` (
-            `curso_id`, `nombre`, `apellido`, `telefono`, `email`, `estado`, `fecha`
+            `curso_id`, `nombre`, `apellido`, `telefono`, `email`, `estado`, `fecha`, `fecha_finalizacion`
         ) VALUES (
-            :curso_id, :nombre, :apellido, :telefono, :email, :estado, :fecha
+            :curso_id, :nombre, :apellido, :telefono, :email, :estado, :fecha, :fecha_finalizacion
         )";
 
         $stmt = $this->db->prepare($sql);
@@ -86,7 +86,8 @@ class InscripcionRepository {
             ':telefono' => $inscripcion->telefono,
             ':email'    => $inscripcion->email,
             ':estado'   => $inscripcion->estado,
-            ':fecha'    => $inscripcion->fecha
+            ':fecha'    => $inscripcion->fecha,
+            ':fecha_finalizacion' => $inscripcion->estado === 'completado' ? date('Y-m-d H:i:s') : null
         ]);
 
         return (int)$this->db->lastInsertId();
@@ -100,10 +101,14 @@ class InscripcionRepository {
      * @return bool
      */
     public function updateEstado(int $id, string $nuevoEstado): bool {
-        $sql = "UPDATE `inscripciones_curso` SET `estado` = :estado WHERE `id` = :id";
+        if (!in_array($nuevoEstado, Inscripcion::ESTADOS, true)) {
+            throw new InvalidArgumentException('Estado de inscripción no válido.', 400);
+        }
+        $sql = "UPDATE inscripciones_curso SET fecha_finalizacion = CASE WHEN :completado = 1 THEN COALESCE(fecha_finalizacion, NOW()) ELSE NULL END, estado = :estado WHERE id = :id";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             ':estado' => $nuevoEstado,
+            ':completado' => $nuevoEstado === 'completado' ? 1 : 0,
             ':id'     => $id
         ]);
     }
