@@ -31,11 +31,15 @@ for (const estado of ['Pendiente', 'Contactado', 'Inscripto']) {
 }
 assert.equal((await api('inscripciones/update_estado.php', { body: { id, estado: 'inventado' } })).status, 400);
 assert.equal((await api('inscripciones/update_estado.php', { body: { id, estado: [] } })).status, 400);
-const completed = await api('inscripciones/update_estado.php', { body: { id, estado: 'completado' } });
+for (const fecha_finalizacion of [null, '', '2026-02-30', '9999-12-31', []]) {
+  assert.equal((await api('inscripciones/update_estado.php', { body: { id, estado: 'completado', fecha_finalizacion } })).status, 400);
+}
+const completed = await api('inscripciones/update_estado.php', { body: { id, estado: 'completado', fecha_finalizacion: '2026-09-15' } });
 assert.equal(completed.data.data.estado, 'completado');
 const generated = await api('certificados/generar.php', { body: { inscripcion_id: id, nombre_alumno: 'Falso' } });
 assert.equal(generated.status, 200);
 assert.equal(generated.data.data.nombre_alumno, 'HTTP Test');
+assert.equal(generated.data.data.fecha_finalizacion.slice(0, 10), '2026-09-15');
 const repeated = await api('certificados/generar.php', { body: { inscripcion_id: id } });
 assert.equal(repeated.data.data.codigo_certificado, generated.data.data.codigo_certificado);
 const pdf = await api(`certificados/obtener.php?inscripcion_id=${id}`);

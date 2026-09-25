@@ -1681,3 +1681,14 @@
     margin-top: var(--sp-3);
   }
 }
+.fecha-finalizacion-resumen {
+  display: block;
+  margin-top: 8px;
+}
+
+.fecha-finalizacion-form:not([hidden]) {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  max-width: 320px;
+}

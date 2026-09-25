@@ -752,7 +752,7 @@ class AdminDashboard {
       const estadoLabel = ins.estado === 'completado' ? 'Completado' : ins.estado;
       const certificadoAccion = ins.certificadoCodigo
         ? `<a class="btn btn-sm btn-action-pill" href="${escape(window.API_BASE)}/certificados/obtener.php?inscripcion_id=${id}" target="_blank" rel="noopener">Ver certificado</a>`
-        : `<button class="btn btn-sm btn-action-pill" ${ins.estado === 'completado' ? '' : 'disabled title="El certificado solo puede generarse cuando el curso haya sido completado."'} onclick="window.adminDashboard.generarCertificado(${id}, this)">Generar certificado</button>`;
+        : `<button class="btn btn-sm btn-action-pill" ${ins.estado === 'completado' && ins.fechaFinalizacion ? '' : 'disabled title="Completá el curso y guardá su fecha de finalización para generar el certificado."'} onclick="window.adminDashboard.generarCertificado(${id}, this)">Generar certificado</button>`;
       const dateStr = new Date(ins.fecha).toLocaleDateString("es-AR", {
         day: "numeric", month: "short", year: "numeric"
       });
@@ -765,6 +765,7 @@ class AdminDashboard {
           <td>✉️ ${escape(ins.email)}</td>
           <td>
             <span class="status-badge status-${escape(ins.estado.toLowerCase())}">${escape(estadoLabel)}</span>
+            ${ins.fechaFinalizacion ? `<small class="fecha-finalizacion-resumen">Finalización: ${escape(ins.fechaFinalizacion.slice(0, 10).split('-').reverse().join('/'))}</small>` : ''}
           </td>
           <td>
             <div class="action-buttons-group">
@@ -779,20 +780,51 @@ class AdminDashboard {
                 Eliminar
               </button>
             </div>
+            <form class="fecha-finalizacion-form" id="finalizacion-${id}" ${ins.estado === 'completado' ? '' : 'hidden'} onsubmit="event.preventDefault(); window.adminDashboard.guardarFechaFinalizacion(${id}, this)">
+              <label for="fecha-finalizacion-${id}">Fecha de finalización *</label>
+              <input id="fecha-finalizacion-${id}" name="fecha_finalizacion" type="date" class="form-control form-control-sm" required min="1000-01-01" max="${this.hoyInscripciones()}" value="${escape((ins.fechaFinalizacion || '').slice(0, 10))}">
+              ${ins.certificadoCodigo ? '<small>El certificado ya emitido conserva su fecha original.</small>' : ''}
+              <div class="action-buttons-group">
+                <button type="submit" class="btn btn-sm btn-primary">Guardar fecha y estado</button>
+                <button type="button" class="btn btn-sm btn-secondary" onclick="window.adminDashboard.loadCursoInscriptosTable()">Cancelar</button>
+              </div>
+            </form>
           </td>
         </tr>
       `;
     }).join("");
   }
 
-  async cambiarEstadoInscripcion(id, nuevoEstado, control) {
+  hoyInscripciones() {
+    return new Date().toLocaleDateString('sv-SE', { timeZone: 'America/Argentina/Buenos_Aires' });
+  }
+
+  async guardarFechaFinalizacion(id, form) {
+    if (!form.reportValidity()) return;
+    const control = form.closest('tr').querySelector('select[data-estado]');
+    const button = form.querySelector('button[type="submit"]');
+    button.disabled = true;
+    try {
+      await this.cambiarEstadoInscripcion(id, 'completado', control, form.elements.fecha_finalizacion.value);
+    } finally {
+      button.disabled = false;
+    }
+  }
+
+  async cambiarEstadoInscripcion(id, nuevoEstado, control, fechaFinalizacion = null) {
+    if (nuevoEstado === 'completado' && fechaFinalizacion === null) {
+      const form = document.getElementById(`finalizacion-${id}`);
+      form.hidden = false;
+      form.elements.fecha_finalizacion.focus();
+      return;
+    }
     if (control) control.disabled = true;
     try {
-      await window.StorageService.updateInscripcionEstado(id, nuevoEstado);
+      await window.StorageService.updateInscripcionEstado(id, nuevoEstado, fechaFinalizacion);
       if (control) control.dataset.estado = nuevoEstado;
       await this.loadCursoInscriptosTable();
       this.showToast(nuevoEstado === 'completado'
-        ? 'El alumno completó el curso. Ya podés generar su certificado.'
+        ? 'Fecha de finalización guardada. El alumno completó el curso.'
         : `Inscripción actualizada a "${nuevoEstado}".`, "success");
     } catch (err) {
       console.error(err);
@@ -836,6 +868,7 @@ class AdminDashboard {
     this.inscripcionForm.reset();
     const estadoSelect = document.getElementById("inscripcion-estado");
     if (estadoSelect) estadoSelect.value = "Inscripto";
+    this.toggleFechaInscripcion();
     this.inscripcionModal.classList.add("active");
     document.body.style.overflow = "hidden";
     const firstInput = document.getElementById("inscripcion-nombre");
@@ -848,6 +881,15 @@ class AdminDashboard {
     document.body.style.overflow = "";
   }
 
+  toggleFechaInscripcion() {
+    const completed = document.getElementById('inscripcion-estado').value === 'completado';
+    document.getElementById('inscripcion-fecha-grupo').hidden = !completed;
+    const input = document.getElementById('inscripcion-fecha-finalizacion');
+    input.required = completed;
+    input.disabled = !completed;
+    input.max = this.hoyInscripciones();
+  }
+
   async handleSaveInscripcion(e) {
     e.preventDefault();
     const nombre = (document.getElementById("inscripcion-nombre")?.value || "").trim();
@@ -855,6 +897,11 @@ class AdminDashboard {
     const telefono = (document.getElementById("inscripcion-telefono")?.value || "").trim();
     const email = (document.getElementById("inscripcion-email")?.value || "").trim();
     const estado = document.getElementById("inscripcion-estado")?.value || "Inscripto";
+    const fechaFinalizacion = document.getElementById('inscripcion-fecha-finalizacion');
+    if (estado === 'completado' && (!fechaFinalizacion.value || !fechaFinalizacion.reportValidity())) {
+      this.showToast('Seleccioná la fecha de finalización del curso.', 'warning');
+      return;
+    }
 
     if (!nombre || !telefono || !email) {
       this.showToast("Por favor completa los campos obligatorios (Nombre, Teléfono y Email).", "warning");
@@ -873,7 +920,8 @@ class AdminDashboard {
         apellido,
         telefono,
         email,
-        estado
+        estado,
+        fecha_finalizacion: estado === 'completado' ? fechaFinalizacion.value : null
       });
 
       const nombreMostrar = apellido ? `${nombre} ${apellido}` : nombre;

@@ -630,12 +630,17 @@
 
           <div class="form-group">
             <label for="inscripcion-estado">Estado de Inscripción *</label>
-            <select id="inscripcion-estado" class="form-control" required>
+            <select id="inscripcion-estado" class="form-control" required onchange="window.adminDashboard.toggleFechaInscripcion()">
               <option value="Inscripto" selected>Inscripto</option>
               <option value="completado">Completado</option>
               <option value="Contactado">Contactado</option>
               <option value="Pendiente">Pendiente</option>
             </select>
+          </div>
+
+          <div class="form-group" id="inscripcion-fecha-grupo" hidden>
+            <label for="inscripcion-fecha-finalizacion">Fecha de finalización *</label>
+            <input type="date" id="inscripcion-fecha-finalizacion" class="form-control" min="1000-01-01" />
           </div>
 
           <div class="modal-actions">
