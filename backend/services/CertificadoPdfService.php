@@ -96,13 +96,19 @@ class CertificadoPdfService {
         $pdf->SetXY(132, 164);
         $pdf->MultiCell(80, 4.5, $text('Impartida por Marian Estilista. Este certificado acredita la realización y finalización del curso.'), 0, 'C');
         $pdf->SetDrawColor(181, 151, 111);
+        // PNG original con transparencia, centrado sobre la línea sin deformarlo.
+        $firma = __DIR__ . '/../../frontend/assets/images/FirmaDigitalMariano.png';
+        [$firmaAncho, $firmaAlto] = getimagesize($firma);
+        $firmaAltura = 22;
+        $firmaAnchura = $firmaAltura * $firmaAncho / $firmaAlto;
+        $pdf->Image($firma, 73 - $firmaAnchura / 2, 150, $firmaAnchura, $firmaAltura, 'PNG');
         $pdf->Line(38, 173, 108, 173);
         $pdf->SetFont('Helvetica', 'B', 10);
         $pdf->SetXY(30, 175);
-        $pdf->Cell(86, 5, $text($data['instructor']), 0, 1, 'C');
+        $pdf->Cell(86, 5, $text('Jesús Echavarria'), 0, 1, 'C');
         $pdf->SetFont('Helvetica', '', 8);
         $pdf->SetX(30);
-        $pdf->Cell(86, 5, $text('Profesional / instructor - Firma y sello'), 0, 1, 'C');
+        $pdf->Cell(86, 5, $text('Instructor'), 0, 1, 'C');
 
         // QR vectorial con cuatro módulos blancos de margen; no requiere servicios externos.
         $size = $matrix->getWidth();
