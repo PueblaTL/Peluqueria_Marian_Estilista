@@ -5,6 +5,9 @@
  */
 
 class Inscripcion {
+    public const ESTADOS = ['Pendiente', 'Contactado', 'Inscripto', 'completado'];
+    public ?string $fechaFinalizacion;
+    public ?string $certificadoCodigo;
     public ?int $id;
     public string $cursoId;
     public string $nombre;
@@ -25,8 +28,11 @@ class Inscripcion {
         $this->email = strtolower(trim($data['email'] ?? ''));
         
         $estado = trim($data['estado'] ?? 'Pendiente');
-        $estadosValidos = ['Pendiente', 'Contactado', 'Inscripto'];
+        $estado = $estado === 'Completado' ? 'completado' : $estado;
+        $estadosValidos = self::ESTADOS;
         $this->estado = in_array($estado, $estadosValidos, true) ? $estado : 'Pendiente';
+        $this->fechaFinalizacion = $data['fecha_finalizacion'] ?? null;
+        $this->certificadoCodigo = $data['certificado_codigo'] ?? null;
 
         $this->fecha = $data['fecha'] ?? date('Y-m-d H:i:s');
         $this->createdAt = $data['created_at'] ?? $data['createdAt'] ?? null;
@@ -42,6 +48,8 @@ class Inscripcion {
             'telefono'  => $this->telefono,
             'email'     => $this->email,
             'estado'    => $this->estado,
+            'fechaFinalizacion' => $this->fechaFinalizacion,
+            'certificadoCodigo' => $this->certificadoCodigo,
             'fecha'     => $this->fecha,
             'createdAt' => $this->createdAt,
             'updatedAt' => $this->updatedAt

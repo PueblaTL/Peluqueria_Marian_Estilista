@@ -64,11 +64,15 @@ class InscripcionController {
      */
     public function updateEstado(): void {
         requireAdmin();
+        if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+            header('Allow: POST');
+            jsonResponse(false, 'Método no permitido.', null, 405);
+        }
 
         try {
             $data = getRequestData();
             $id = (int)($data['id'] ?? $_GET['id'] ?? 0);
-            $nuevoEstado = trim($data['estado'] ?? '');
+            $nuevoEstado = is_string($data['estado'] ?? null) ? trim($data['estado']) : '';
 
             if ($id <= 0) {
                 jsonResponse(false, "ID de inscripción no válido.", null, 400, 'INVALID_ID');
@@ -78,7 +82,10 @@ class InscripcionController {
             }
 
             $actualizada = $this->service->updateEstado($id, $nuevoEstado);
-            jsonResponse(true, "Estado de inscripción actualizado correctamente.", $actualizada, 200);
+            $mensaje = $actualizada['estado'] === 'completado'
+                ? 'El alumno completó el curso. Ya podés generar su certificado.'
+                : 'Estado de inscripción actualizado correctamente.';
+            jsonResponse(true, $mensaje, $actualizada, 200);
         } catch (Exception $e) {
             $code = ($e->getCode() >= 400 && $e->getCode() < 600) ? $e->getCode() : 400;
             jsonResponse(false, $e->getMessage(), null, $code, 'UPDATE_INSCRIPCION_ERROR');

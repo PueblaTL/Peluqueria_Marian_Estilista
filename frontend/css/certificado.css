@@ -1,0 +1,16 @@
+:root { color-scheme: light; font-family: Arial, sans-serif; color: #30261e; background: #f6f2eb; }
+* { box-sizing: border-box; }
+body { margin: 0; padding: 40px 18px; }
+.certificate-card { max-width: 760px; margin: auto; padding: 38px; background: #fffdf8; border: 1px solid #bc9a67; border-radius: 12px; box-shadow: 0 12px 40px #49372212; }
+.brand { display: block; height: auto; margin: 0 auto 20px; }
+.eyebrow { text-align: center; font-size: 11px; letter-spacing: 2px; color: #796044; }
+h1 { font-family: Georgia, serif; font-size: clamp(28px, 5vw, 40px); text-align: center; }
+p { line-height: 1.7; }
+.valid h1 { color: #296345; }
+.invalid h1 { color: #993e36; }
+dl { display: grid; grid-template-columns: 180px 1fr; gap: 14px 20px; padding-top: 24px; border-top: 1px solid #dfd3c1; }
+dl[hidden] { display: none; }
+dt { color: #756759; font-size: 14px; }
+dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+.footer { margin-top: 32px; font-size: 12px; color: #756759; }
+@media (max-width: 540px) { body { padding: 16px 12px; } .certificate-card { padding: 24px 20px; } dl { grid-template-columns: 1fr; gap: 6px; } dd { margin-bottom: 14px; } }
