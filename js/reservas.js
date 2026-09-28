@@ -115,6 +115,7 @@ class BookingWizard {
   async loadInitialData() {
     try {
       this.profesional = await window.StorageService.getProfesional();
+      this.negocio = await window.StorageService.getNegocio();
       this.state.profesional = this.profesional;
       await this.renderServices();
     } catch (err) {
@@ -245,6 +246,7 @@ class BookingWizard {
   // SELECCIONAR SERVICIO
   // ==========================================
   selectService(servicio) {
+    if (String(this.state.servicio?.id) !== String(servicio.id)) this.state.hora = null;
     this.state.servicio = servicio;
 
     // ==========================================
@@ -309,9 +311,8 @@ class BookingWizard {
 
     // Validar botón de mes anterior (no ir al pasado)
     const today = new Date();
-    const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
     if (this.calPrevBtn) {
-      this.calPrevBtn.disabled = isCurrentMonth;
+      this.calPrevBtn.disabled = this.calCurrentDate <= new Date(today.getFullYear(), today.getMonth(), 1);
     }
 
     this.calendarDaysGrid.innerHTML = "";
@@ -330,7 +331,8 @@ class BookingWizard {
 
     // Días del mes
     for (let day = 1; day <= lastDayDate; day++) {
-      const cell = document.createElement("div");
+      const cell = document.createElement("button");
+      cell.type = "button";
       const dateObj = new Date(year, month, day);
       const dayOfWeek = dateObj.getDay(); // 0 Dom, 1 Lun, 2 Mar, ..., 6 Sáb
 
@@ -342,12 +344,15 @@ class BookingWizard {
       // Reglas de disponibilidad:
       // Atención: Martes (2) a Sábado (6). Domingo (0) y Lunes (1) cerrado.
       const isPast = dateObj < new Date(today.getFullYear(), today.getMonth(), today.getDate());
-      const isWorkingDay = dayOfWeek >= 2 && dayOfWeek <= 6;
+      const isWorkingDay = (this.negocio?.diasApertura || [2, 3, 4, 5, 6]).includes(dayOfWeek);
       const isAvailable = !isPast && isWorkingDay;
 
       cell.className = "calendar-day-cell";
       cell.textContent = day;
       cell.setAttribute("data-date", dateString);
+      cell.disabled = !isAvailable;
+      cell.setAttribute("aria-label", dateObj.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long", year: "numeric" }));
+      cell.setAttribute("aria-pressed", String(this.state.fecha === dateString));
 
       if (isPast) {
         cell.classList.add("past");
@@ -371,9 +376,11 @@ class BookingWizard {
   }
 
   selectDate(dateString) {
+    if (this.state.fecha !== dateString) this.state.hora = null;
     this.state.fecha = dateString;
 
     document.querySelectorAll(".calendar-day-cell.available").forEach(c => {
+      c.setAttribute("aria-pressed", String(c.getAttribute("data-date") === dateString));
       if (c.getAttribute("data-date") === dateString) {
         c.classList.add("selected");
       } else {
@@ -389,6 +396,9 @@ class BookingWizard {
   // ==========================================
   async renderSlots() {
     if (!this.slotsGrid) return;
+    const requestId = this.slotsRequestId = (this.slotsRequestId || 0) + 1;
+    this.state.hora = null;
+    this.btnNext.disabled = true;
     this.slotsGrid.innerHTML = `<div class="loading-spinner-msg">Consultando horarios disponibles...</div>`;
 
     if (this.slotsDateLabel && this.state.fecha) {
@@ -402,10 +412,11 @@ class BookingWizard {
     try {
       const duracion = this.state.servicio?.duracionMinutos || 60;
       const slots = await window.StorageService.getDisponibilidad(this.state.fecha, duracion);
+      if (requestId !== this.slotsRequestId) return;
 
       this.slotsGrid.innerHTML = "";
 
-      if (!slots || slots.length === 0) {
+      if (!slots || !slots.some(slot => slot.disponible)) {
         this.slotsGrid.innerHTML = `<div class="no-slots-msg">No hay turnos disponibles para esta fecha. Por favor selecciona otro día.</div>`;
         return;
       }
@@ -430,6 +441,7 @@ class BookingWizard {
       });
     } catch (err) {
       console.error("Error al obtener disponibilidad:", err);
+      if (requestId !== this.slotsRequestId) return;
       this.slotsGrid.innerHTML = `<div class="error-msg">Error al cargar horarios.</div>`;
     }
   }
@@ -567,7 +579,7 @@ class BookingWizard {
       this.showToast("✨ ¡Turno reservado exitosamente!", "success");
     } catch (err) {
       console.error("Error al confirmar turno:", err);
-      this.showToast("Ocurrió un error al registrar el turno. Inténtalo nuevamente.", "danger");
+      this.showToast(err.message || "Ocurrió un error al registrar el turno. Inténtalo nuevamente.", "danger");
       this.btnNext.disabled = false;
       this.btnNext.textContent = "Confirmar Turno";
     }
@@ -667,8 +679,7 @@ class BookingWizard {
 
   goToPrevStep() {
     if (this.currentStep > 1 && this.currentStep < 6) {
-      this.currentStep -= 1;
-      this.updateStepUI();
+      this.goToStep(this.currentStep - 1);
     }
   }
 
@@ -676,6 +687,8 @@ class BookingWizard {
     if (stepNum >= 1 && stepNum <= this.totalSteps) {
       this.currentStep = stepNum;
       this.updateStepUI();
+      if (stepNum === 2) this.renderCalendar();
+      if (stepNum === 3) this.renderSlots();
     }
   }
 

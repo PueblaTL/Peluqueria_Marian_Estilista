@@ -170,6 +170,10 @@ class StorageService {
   }
 
   static async saveTurno(reservaDto) {
+    const slots = await this.getDisponibilidad(reservaDto.fecha, Number(reservaDto.duracionMinutos) || 60);
+    if (!slots.some(slot => slot.hora === reservaDto.hora && slot.disponible)) {
+      throw new Error("El horario ya no está disponible. Seleccioná otra fecha u horario.");
+    }
     const turnos = this._getItem(STORAGE_KEYS.TURNOS, []);
     const profesional = await this.getProfesional();
 
@@ -195,7 +199,9 @@ class StorageService {
     };
 
     turnos.push(nuevoTurno);
-    this._setItem(STORAGE_KEYS.TURNOS, turnos);
+    if (!this._setItem(STORAGE_KEYS.TURNOS, turnos)) {
+      throw new Error("No se pudo guardar el turno. Revisá el almacenamiento del navegador.");
+    }
     return nuevoTurno;
   }
 
@@ -218,11 +224,21 @@ class StorageService {
 
   static async getDisponibilidad(fechaStr, duracionMinutos = 60) {
     const negocio = await this.getNegocio();
+    if (typeof fechaStr !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(fechaStr)) return [];
+    const [year, month, day] = fechaStr.split("-").map(Number);
+    const fecha = new Date(year, month - 1, day);
+    const now = new Date();
+    if (fecha.getFullYear() !== year || fecha.getMonth() !== month - 1 || fecha.getDate() !== day ||
+        fecha < new Date(now.getFullYear(), now.getMonth(), now.getDate()) ||
+        !(negocio.diasApertura || [2, 3, 4, 5, 6]).includes(fecha.getDay())) return [];
+    duracionMinutos = Number(duracionMinutos);
+    if (!Number.isFinite(duracionMinutos) || duracionMinutos <= 0) return [];
     const turnosDelDia = await this.getTurnos({ fecha: fechaStr });
 
     const [startH, startM] = (negocio.horaApertura || "09:00").split(":").map(Number);
     const [endH, endM] = (negocio.horaCierre || "19:00").split(":").map(Number);
-    const intervalo = negocio.intervaloTurnosMinutos || 30;
+    const intervalo = Number(negocio.intervaloTurnosMinutos || 30);
+    if (!Number.isFinite(intervalo) || intervalo <= 0) return [];
 
     const startTotal = startH * 60 + startM;
     const endTotal = endH * 60 + endM;
@@ -231,7 +247,7 @@ class StorageService {
     const ocupados = turnosActivos.map(t => {
       const [h, m] = t.hora.split(":").map(Number);
       const inicio = h * 60 + m;
-      const fin = inicio + (t.duracionMinutos || 60);
+      const fin = inicio + (Number(t.duracionMinutos) || 60);
       return { inicio, fin };
     });
 
@@ -249,7 +265,7 @@ class StorageService {
 
       slots.push({
         hora: horaStr,
-        disponible: !colisiona
+        disponible: !colisiona && new Date(year, month - 1, day, Math.floor(current / 60), current % 60) > now
       });
     }
 

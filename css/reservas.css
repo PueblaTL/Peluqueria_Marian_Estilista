@@ -312,9 +312,10 @@ body {
   cursor: not-allowed;
 }
 
-.calendar-weekdays {
+.calendar-weekdays-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
   text-align: center;
   font-size: 0.82rem;
   font-weight: 700;
@@ -359,6 +360,9 @@ body {
   color: var(--text-main);
   cursor: pointer;
 }
+
+button.calendar-day-cell { font: inherit; border: 1px solid transparent; }
+button.calendar-day-cell:focus-visible { outline: 3px solid var(--primary-dark); outline-offset: 2px; }
 
 .calendar-day-cell.available:hover {
   background-color: var(--primary-light);
