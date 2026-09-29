@@ -1,6 +1,7 @@
 /**
  * storage.js - Módulo Centralizado de Persistencia y Acceso a Datos
  * Aura Studio - Portal Web Profesional
+ * Conectado con MySQL a través de la API PHP (api/reservas.php) con soporte offline.
  */
 
 const STORAGE_KEYS = {
@@ -8,47 +9,53 @@ const STORAGE_KEYS = {
   PROFESIONAL: "aura_profesional_v1",
   EQUIPO: "aura_equipo_v1",
   TURNOS: "aura_turnos_v1",
-  CURSO: "aura_curso_v1",
-  INSCRIPCIONES: "aura_inscripciones_v1",
   NEGOCIO: "aura_negocio_v1"
 };
 
 class StorageService {
   /**
-   * Inicializa localStorage con datos semilla si es la primera vez
+   * Determina la URL de la API PHP según el contexto de ejecución
    */
-  static init() {
-    if (!window.SEED_DATA) {
-      console.warn("SEED_DATA no está disponible aún.");
-      return;
-    }
-
-    if (!localStorage.getItem(STORAGE_KEYS.SERVICIOS)) {
-      localStorage.setItem(STORAGE_KEYS.SERVICIOS, JSON.stringify(window.SEED_DATA.servicios));
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.PROFESIONAL)) {
-      localStorage.setItem(STORAGE_KEYS.PROFESIONAL, JSON.stringify(window.SEED_DATA.profesional));
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.EQUIPO)) {
-      localStorage.setItem(STORAGE_KEYS.EQUIPO, JSON.stringify(window.SEED_DATA.equipo));
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.TURNOS)) {
-      localStorage.setItem(STORAGE_KEYS.TURNOS, JSON.stringify(window.SEED_DATA.turnos));
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.CURSO)) {
-      localStorage.setItem(STORAGE_KEYS.CURSO, JSON.stringify(window.SEED_DATA.curso));
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.INSCRIPCIONES)) {
-      localStorage.setItem(STORAGE_KEYS.INSCRIPCIONES, JSON.stringify(window.SEED_DATA.inscripcionesCurso));
-    }
-    if (!localStorage.getItem(STORAGE_KEYS.NEGOCIO)) {
-      localStorage.setItem(STORAGE_KEYS.NEGOCIO, JSON.stringify(window.SEED_DATA.negocio));
+  static getApiUrl(action, params = {}) {
+    const isPages = typeof window !== 'undefined' && window.location.pathname.includes('/pages/');
+    const basePath = isPages ? '../api/reservas.php' : 'api/reservas.php';
+    try {
+      const url = new URL(basePath, window.location.href);
+      url.searchParams.set('action', action);
+      for (const [k, v] of Object.entries(params)) {
+        if (v !== undefined && v !== null && v !== '') {
+          url.searchParams.set(k, String(v));
+        }
+      }
+      return url.toString();
+    } catch {
+      return basePath + '?action=' + encodeURIComponent(action);
     }
   }
 
   /**
-   * Helper genérico de lectura
+   * Inicializa localStorage con datos semilla si es la primera vez
    */
+  static init() {
+    if (typeof window === "undefined" || !window.SEED_DATA) return;
+
+    if (!localStorage.getItem(STORAGE_KEYS.SERVICIOS)) {
+      localStorage.setItem(STORAGE_KEYS.SERVICIOS, JSON.stringify(window.SEED_DATA.servicios || []));
+    }
+    if (!localStorage.getItem(STORAGE_KEYS.PROFESIONAL)) {
+      localStorage.setItem(STORAGE_KEYS.PROFESIONAL, JSON.stringify(window.SEED_DATA.profesional || {}));
+    }
+    if (!localStorage.getItem(STORAGE_KEYS.EQUIPO)) {
+      localStorage.setItem(STORAGE_KEYS.EQUIPO, JSON.stringify(window.SEED_DATA.equipo || []));
+    }
+    if (!localStorage.getItem(STORAGE_KEYS.TURNOS)) {
+      localStorage.setItem(STORAGE_KEYS.TURNOS, JSON.stringify(window.SEED_DATA.turnos || []));
+    }
+    if (!localStorage.getItem(STORAGE_KEYS.NEGOCIO)) {
+      localStorage.setItem(STORAGE_KEYS.NEGOCIO, JSON.stringify(window.SEED_DATA.negocio || {}));
+    }
+  }
+
   static _getItem(key, fallback = []) {
     this.init();
     try {
@@ -60,9 +67,6 @@ class StorageService {
     }
   }
 
-  /**
-   * Helper genérico de escritura
-   */
   static _setItem(key, value) {
     try {
       localStorage.setItem(key, JSON.stringify(value));
@@ -73,199 +77,165 @@ class StorageService {
     }
   }
 
-  /**
-   * Restablece todos los datos a los valores iniciales de data.js
-   */
   static resetToSeed() {
-    if (!window.SEED_DATA) return false;
-    localStorage.setItem(STORAGE_KEYS.SERVICIOS, JSON.stringify(window.SEED_DATA.servicios));
-    localStorage.setItem(STORAGE_KEYS.PROFESIONAL, JSON.stringify(window.SEED_DATA.profesional));
-    localStorage.setItem(STORAGE_KEYS.EQUIPO, JSON.stringify(window.SEED_DATA.equipo));
-    localStorage.setItem(STORAGE_KEYS.TURNOS, JSON.stringify(window.SEED_DATA.turnos));
-    localStorage.setItem(STORAGE_KEYS.CURSO, JSON.stringify(window.SEED_DATA.curso));
-    localStorage.setItem(STORAGE_KEYS.INSCRIPCIONES, JSON.stringify(window.SEED_DATA.inscripcionesCurso));
-    localStorage.setItem(STORAGE_KEYS.NEGOCIO, JSON.stringify(window.SEED_DATA.negocio));
+    if (typeof window === "undefined" || !window.SEED_DATA) return false;
+    localStorage.setItem(STORAGE_KEYS.SERVICIOS, JSON.stringify(window.SEED_DATA.servicios || []));
+    localStorage.setItem(STORAGE_KEYS.PROFESIONAL, JSON.stringify(window.SEED_DATA.profesional || {}));
+    localStorage.setItem(STORAGE_KEYS.EQUIPO, JSON.stringify(window.SEED_DATA.equipo || []));
+    localStorage.setItem(STORAGE_KEYS.TURNOS, JSON.stringify(window.SEED_DATA.turnos || []));
+    localStorage.setItem(STORAGE_KEYS.NEGOCIO, JSON.stringify(window.SEED_DATA.negocio || {}));
     return true;
   }
 
   // ==========================================
-  // SERVICIOS
+  // SERVICIOS (MySQL con fallback a caché)
   // ==========================================
-
   static async getServicios(soloActivos = false) {
-    const servicios = this._getItem(STORAGE_KEYS.SERVICIOS, []);
+    try {
+      const res = await fetch(this.getApiUrl('servicios'), { signal: AbortSignal.timeout(2500) });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+          this._setItem(STORAGE_KEYS.SERVICIOS, json.data);
+          return soloActivos ? json.data.filter(s => s.activo) : json.data;
+        }
+      }
+    } catch (e) {
+      // Servidor no disponible o ejecución offline: usa caché
+    }
+
+    const servicios = this._getItem(STORAGE_KEYS.SERVICIOS, window.SEED_DATA?.servicios || []);
     return soloActivos ? servicios.filter(s => s.activo) : servicios;
   }
 
   static async getServicioById(id) {
     const servicios = await this.getServicios();
-    return servicios.find(s => s.id === id) || null;
+    return servicios.find(s => String(s.id) === String(id) || s.clave === id || s.id === `srv-${id}`) || null;
   }
 
   // ==========================================
-  // EQUIPO PROFESIONAL
+  // EQUIPO PROFESIONAL (MySQL con fallback)
   // ==========================================
-
   static async getEquipo() {
+    try {
+      const res = await fetch(this.getApiUrl('profesionales'), { signal: AbortSignal.timeout(2500) });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+          this._setItem(STORAGE_KEYS.EQUIPO, json.data);
+          return json.data;
+        }
+      }
+    } catch (e) {
+      // Fallback a caché
+    }
+
     return this._getItem(STORAGE_KEYS.EQUIPO, window.SEED_DATA?.equipo || []);
   }
 
   static async getProfesional() {
-    return this._getItem(STORAGE_KEYS.PROFESIONAL, window.SEED_DATA?.profesional || {
-      id: "prof-1",
+    const equipo = await this.getEquipo();
+    return equipo[0] || {
+      id: 1,
+      clave: "prof-1",
       nombre: "Valeria Benítez",
       titulo: "Directora Creativa & Master Colorist",
-      experiencia: "12 Años de Trayectoria"
-    });
+      especialidad: "Balayage, Colorimetría de Vanguardia y Visagismo"
+    };
   }
 
   // ==========================================
   // NEGOCIO
   // ==========================================
-
   static async getNegocio() {
-    return this._getItem(STORAGE_KEYS.NEGOCIO, window.SEED_DATA?.negocio || {});
-  }
-
-  static async updateNegocio(data) {
-    const negocio = await this.getNegocio();
-    const actualizado = { ...negocio, ...data };
-    this._setItem(STORAGE_KEYS.NEGOCIO, actualizado);
-    return actualizado;
-  }
-
-  // ==========================================
-  // TURNOS / RESERVAS
-  // ==========================================
-
-  static async getTurnos(filtros = {}) {
-    let turnos = this._getItem(STORAGE_KEYS.TURNOS, []);
-
-    if (filtros.fecha) {
-      turnos = turnos.filter(t => t.fecha === filtros.fecha);
-    }
-    if (filtros.estado && filtros.estado !== "todos") {
-      turnos = turnos.filter(t => t.estado.toLowerCase() === filtros.estado.toLowerCase());
-    }
-    if (filtros.search) {
-      const q = filtros.search.toLowerCase();
-      turnos = turnos.filter(t =>
-        (t.cliente?.nombre && t.cliente.nombre.toLowerCase().includes(q)) ||
-        (t.cliente?.apellido && t.cliente.apellido.toLowerCase().includes(q)) ||
-        (t.cliente?.telefono && t.cliente.telefono.includes(q)) ||
-        (t.servicioNombre && t.servicioNombre.toLowerCase().includes(q))
-      );
-    }
-
-    return turnos.sort((a, b) => {
-      const dateA = new Date(`${a.fecha}T${a.hora}`);
-      const dateB = new Date(`${b.fecha}T${b.hora}`);
-      return dateB - dateA;
+    return this._getItem(STORAGE_KEYS.NEGOCIO, window.SEED_DATA?.negocio || {
+      nombre: "Aura Studio",
+      horariosTexto: "Martes a Sábados de 09:00 a 19:00 hs",
+      diasApertura: [2, 3, 4, 5, 6],
+      horaApertura: "09:00",
+      horaCierre: "19:00",
+      intervaloTurnosMinutos: 30
     });
   }
 
-  static async getTurnoById(id) {
-    const turnos = await this.getTurnos();
-    return turnos.find(t => t.id === id) || null;
-  }
+  // ==========================================
+  // DISPONIBILIDAD (MySQL con fallback)
+  // ==========================================
+  static async getDisponibilidad(fechaStr, duracionMinutos = 60, profesionalId = 1) {
+    const profIdNum = typeof profesionalId === 'string' ? parseInt(profesionalId.replace(/\D/g, ''), 10) || 1 : Number(profesionalId) || 1;
 
-  static async saveTurno(reservaDto) {
-    const slots = await this.getDisponibilidad(reservaDto.fecha, Number(reservaDto.duracionMinutos) || 60);
-    if (!slots.some(slot => slot.hora === reservaDto.hora && slot.disponible)) {
-      throw new Error("El horario ya no está disponible. Seleccioná otra fecha u horario.");
+    try {
+      const res = await fetch(this.getApiUrl('disponibilidad', {
+        fecha: fechaStr,
+        duracion: duracionMinutos,
+        profesional_id: profIdNum
+      }), { signal: AbortSignal.timeout(3000) });
+
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && Array.isArray(json.data)) {
+          return json.data;
+        }
+      }
+    } catch (e) {
+      // Fallback a cálculo local
     }
-    const turnos = this._getItem(STORAGE_KEYS.TURNOS, []);
-    const profesional = await this.getProfesional();
 
-    const nuevoTurno = {
-      id: `trn-${Date.now().toString().slice(-6)}`,
-      servicioId: reservaDto.servicioId,
-      servicioNombre: reservaDto.servicioNombre,
-      profesionalId: profesional.id,
-      profesionalNombre: profesional.nombre,
-      fecha: reservaDto.fecha,
-      hora: reservaDto.hora,
-      duracionMinutos: Number(reservaDto.duracionMinutos) || 60,
-      precio: Number(reservaDto.precio) || 0,
-      estado: "Pendiente",
-      cliente: {
-        nombre: reservaDto.cliente.nombre,
-        apellido: reservaDto.cliente.apellido,
-        telefono: reservaDto.cliente.telefono,
-        email: reservaDto.cliente.email,
-        notas: reservaDto.cliente.notas || ""
-      },
-      creadoEn: new Date().toISOString()
-    };
+    // Cálculo local si MySQL no está disponible
+    return this._calcularDisponibilidadLocal(fechaStr, duracionMinutos, profesionalId);
+  }
 
-    turnos.push(nuevoTurno);
-    if (!this._setItem(STORAGE_KEYS.TURNOS, turnos)) {
-      throw new Error("No se pudo guardar el turno. Revisá el almacenamiento del navegador.");
+  static _calcularDisponibilidadLocal(fechaStr, duracionMinutos = 60, profesionalId) {
+    if (!fechaStr) return [];
+    const [y, m, d] = fechaStr.split("-").map(Number);
+    const date = new Date(y, m - 1, d);
+    const dayOfWeek = date.getDay(); // 0 Dom, 1 Lun, 2 Mar ... 6 Sab
+
+    // Martes a Sábado
+    if (![2, 3, 4, 5, 6].includes(dayOfWeek)) {
+      return [];
     }
-    return nuevoTurno;
-  }
 
-  static async updateTurnoEstado(id, nuevoEstado) {
-    const turnos = this._getItem(STORAGE_KEYS.TURNOS, []);
-    const index = turnos.findIndex(t => t.id === id);
-    if (index === -1) throw new Error(`Turno ${id} no encontrado`);
-
-    turnos[index].estado = nuevoEstado;
-    this._setItem(STORAGE_KEYS.TURNOS, turnos);
-    return turnos[index];
-  }
-
-  static async deleteTurno(id) {
-    let turnos = this._getItem(STORAGE_KEYS.TURNOS, []);
-    turnos = turnos.filter(t => t.id !== id);
-    this._setItem(STORAGE_KEYS.TURNOS, turnos);
-    return true;
-  }
-
-  static async getDisponibilidad(fechaStr, duracionMinutos = 60) {
-    const negocio = await this.getNegocio();
-    if (typeof fechaStr !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(fechaStr)) return [];
-    const [year, month, day] = fechaStr.split("-").map(Number);
-    const fecha = new Date(year, month - 1, day);
-    const now = new Date();
-    if (fecha.getFullYear() !== year || fecha.getMonth() !== month - 1 || fecha.getDate() !== day ||
-        fecha < new Date(now.getFullYear(), now.getMonth(), now.getDate()) ||
-        !(negocio.diasApertura || [2, 3, 4, 5, 6]).includes(fecha.getDay())) return [];
-    duracionMinutos = Number(duracionMinutos);
-    if (!Number.isFinite(duracionMinutos) || duracionMinutos <= 0) return [];
-    const turnosDelDia = await this.getTurnos({ fecha: fechaStr });
-
-    const [startH, startM] = (negocio.horaApertura || "09:00").split(":").map(Number);
-    const [endH, endM] = (negocio.horaCierre || "19:00").split(":").map(Number);
-    const intervalo = Number(negocio.intervaloTurnosMinutos || 30);
-    if (!Number.isFinite(intervalo) || intervalo <= 0) return [];
-
-    const startTotal = startH * 60 + startM;
-    const endTotal = endH * 60 + endM;
-
-    const turnosActivos = turnosDelDia.filter(t => t.estado !== "Cancelado");
-    const ocupados = turnosActivos.map(t => {
-      const [h, m] = t.hora.split(":").map(Number);
-      const inicio = h * 60 + m;
-      const fin = inicio + (Number(t.duracionMinutos) || 60);
-      return { inicio, fin };
+    const turnosDelDia = this._getItem(STORAGE_KEYS.TURNOS, []).filter(t => {
+      if (t.fecha !== fechaStr) return false;
+      if (t.estado === "Cancelado") return false;
+      if (profesionalId) {
+        return String(t.profesionalId) === String(profesionalId) || String(t.profesionalId) === `prof-${profesionalId}`;
+      }
+      return true;
     });
+
+    const horaInicioMin = 9 * 60;
+    const horaFinMin = 19 * 60;
+    const step = 30;
+
+    const hoy = new Date();
+    const esHoy = fechaStr === hoy.toISOString().split("T")[0];
+    const minutosActuales = hoy.getHours() * 60 + hoy.getMinutes();
 
     const slots = [];
-
-    for (let current = startTotal; current + duracionMinutos <= endTotal; current += intervalo) {
-      const slotInicio = current;
-      const slotFin = current + duracionMinutos;
-
-      const hh = String(Math.floor(slotInicio / 60)).padStart(2, "0");
-      const mm = String(slotInicio % 60).padStart(2, "0");
+    for (let cur = horaInicioMin; cur + duracionMinutos <= horaFinMin; cur += step) {
+      const hh = String(Math.floor(cur / 60)).padStart(2, "0");
+      const mm = String(cur % 60).padStart(2, "0");
       const horaStr = `${hh}:${mm}`;
 
-      const colisiona = ocupados.some(o => (slotInicio < o.fin && slotFin > o.inicio));
+      if (esHoy && cur <= minutosActuales + 30) {
+        slots.push({ hora: horaStr, disponible: false, motivo: "Horario pasado" });
+        continue;
+      }
+
+      const slotFin = cur + duracionMinutos;
+      const solapado = turnosDelDia.some(t => {
+        const [th, tm] = t.hora.split(":").map(Number);
+        const tIni = th * 60 + tm;
+        const tFin = tIni + (t.duracionMinutos || 60);
+        return cur < tFin && slotFin > tIni;
+      });
 
       slots.push({
         hora: horaStr,
-        disponible: !colisiona && new Date(year, month - 1, day, Math.floor(current / 60), current % 60) > now
+        disponible: !solapado,
+        motivo: solapado ? "Horario ocupado" : "Disponible"
       });
     }
 
@@ -273,73 +243,108 @@ class StorageService {
   }
 
   // ==========================================
-  // CLIENTES
+  // REGISTRAR / GUARDAR TURNO (Persiste en MySQL)
   // ==========================================
+  static async saveTurno(reservaDto) {
+    const profIdNum = typeof reservaDto.profesionalId === 'string' 
+      ? parseInt(reservaDto.profesionalId.replace(/\D/g, ''), 10) || 1 
+      : Number(reservaDto.profesionalId) || 1;
 
-  static async getClientes() {
-    const turnos = await this.getTurnos();
-    const clientesMap = new Map();
+    const srvIdNum = typeof reservaDto.servicioId === 'string'
+      ? parseInt(reservaDto.servicioId.replace(/\D/g, ''), 10) || 1
+      : Number(reservaDto.servicioId) || 1;
 
-    turnos.forEach(t => {
-      if (!t.cliente || !t.cliente.email) return;
-      const key = (t.cliente.email || "").toLowerCase().trim();
-
-      if (!clientesMap.has(key)) {
-        clientesMap.set(key, {
-          nombre: t.cliente.nombre,
-          apellido: t.cliente.apellido,
-          telefono: t.cliente.telefono,
-          email: t.cliente.email,
-          cantidadTurnos: 1,
-          ultimoTurno: t.fecha,
-          turnos: [t]
-        });
-      } else {
-        const cliente = clientesMap.get(key);
-        cliente.cantidadTurnos += 1;
-        if (new Date(t.fecha) > new Date(cliente.ultimoTurno)) {
-          cliente.ultimoTurno = t.fecha;
-        }
-        cliente.turnos.push(t);
-      }
-    });
-
-    return Array.from(clientesMap.values()).sort((a, b) => b.cantidadTurnos - a.cantidadTurnos);
-  }
-
-  // ==========================================
-  // CURSO & INSCRIPCIONES
-  // ==========================================
-
-  static async getCursoInfo() {
-    return this._getItem(STORAGE_KEYS.CURSO, window.SEED_DATA?.curso || {});
-  }
-
-  static async getInscripciones() {
-    const inscripciones = this._getItem(STORAGE_KEYS.INSCRIPCIONES, []);
-    return inscripciones.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-  }
-
-  static async saveInscripcion(datos) {
-    const inscripciones = this._getItem(STORAGE_KEYS.INSCRIPCIONES, []);
-    const nueva = {
-      id: `ins-${Date.now().toString().slice(-6)}`,
-      cursoId: "cur-1",
-      nombre: datos.nombre,
-      apellido: datos.apellido || "",
-      telefono: datos.telefono,
-      email: datos.email,
-      fecha: new Date().toISOString(),
-      estado: "Pendiente"
+    const payload = {
+      profesional_id: profIdNum,
+      servicio_id: srvIdNum,
+      fecha: reservaDto.fecha,
+      hora: reservaDto.hora,
+      duracion_minutos: Number(reservaDto.duracionMinutos) || 60,
+      precio_estimado: Number(reservaDto.precio) || 0,
+      cliente_nombre: reservaDto.cliente?.nombre || "",
+      cliente_apellido: reservaDto.cliente?.apellido || "",
+      cliente_email: reservaDto.cliente?.email || "",
+      cliente_telefono: reservaDto.cliente?.telefono || "",
+      observaciones: reservaDto.cliente?.notas || ""
     };
 
-    inscripciones.push(nueva);
-    this._setItem(STORAGE_KEYS.INSCRIPCIONES, inscripciones);
-    return nueva;
+    let nuevoTurno = null;
+    let guardadoEnMySQL = false;
+
+    try {
+      const res = await fetch(this.getApiUrl('crear'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        const mensajeError = json.errors ? Object.values(json.errors).join(' ') : (json.error || 'No se pudo registrar la reserva.');
+        throw new Error(mensajeError);
+      }
+
+      guardadoEnMySQL = true;
+      nuevoTurno = {
+        id: json.codigo || `TRN-${json.id}`,
+        idNumero: json.id,
+        servicioId: `srv-${srvIdNum}`,
+        servicioNombre: json.reserva?.servicio_nombre || reservaDto.servicioNombre,
+        profesionalId: `prof-${profIdNum}`,
+        profesionalNombre: json.reserva?.profesional_nombre || reservaDto.profesionalNombre,
+        fecha: reservaDto.fecha,
+        hora: reservaDto.hora,
+        duracionMinutos: payload.duracion_minutos,
+        precio: payload.precio_estimado,
+        estado: "Pendiente",
+        origen: "MySQL",
+        cliente: reservaDto.cliente,
+        creadoEn: new Date().toISOString()
+      };
+    } catch (e) {
+      if (e.message && !e.message.includes('fetch') && !e.message.includes('NetworkError') && !e.message.includes('Failed to fetch')) {
+        // Es un error de validación o conflicto de horario del backend: propagar al usuario
+        throw e;
+      }
+      console.warn("API de MySQL no disponible. Guardando localmente:", e.message);
+    }
+
+    // Si falló la conexión HTTP, guardar en localStorage como respaldo local
+    if (!nuevoTurno) {
+      nuevoTurno = {
+        id: `trn-${Date.now().toString().slice(-6)}`,
+        servicioId: reservaDto.servicioId,
+        servicioNombre: reservaDto.servicioNombre,
+        profesionalId: reservaDto.profesionalId,
+        profesionalNombre: reservaDto.profesionalNombre,
+        fecha: reservaDto.fecha,
+        hora: reservaDto.hora,
+        duracionMinutos: Number(reservaDto.duracionMinutos) || 60,
+        precio: Number(reservaDto.precio) || 0,
+        estado: "Pendiente",
+        origen: "LocalStorage",
+        cliente: reservaDto.cliente,
+        creadoEn: new Date().toISOString()
+      };
+    }
+
+    const turnos = this._getItem(STORAGE_KEYS.TURNOS, []);
+    turnos.push(nuevoTurno);
+    this._setItem(STORAGE_KEYS.TURNOS, turnos);
+
+    return nuevoTurno;
+  }
+
+  static async getTurnos(filtros = {}) {
+    let turnos = this._getItem(STORAGE_KEYS.TURNOS, []);
+    if (filtros.fecha) turnos = turnos.filter(t => t.fecha === filtros.fecha);
+    if (filtros.estado && filtros.estado !== "todos") {
+      turnos = turnos.filter(t => t.estado.toLowerCase() === filtros.estado.toLowerCase());
+    }
+    return turnos;
   }
 }
 
-// Inicialización automática
 if (typeof window !== "undefined") {
   window.StorageService = StorageService;
   document.addEventListener("DOMContentLoaded", () => {

@@ -45,7 +45,7 @@ const SEED_DATA = {
     },
     {
       id: "prof-2",
-      nombre: "Lucas Morales",
+      nombre: "Mariano Echavarria",
       titulo: "Estilista Senior & Diseñador de Cortes",
       especialidad: "Cortes de Autor, Visagismo y Texturizado",
       experiencia: "9 Años de Trayectoria",
@@ -172,35 +172,7 @@ const SEED_DATA = {
     }
   ],
 
-  // Información de la Academia & Cursos
-  curso: {
-    id: "cur-1",
-    nombre: "CURSO COMPLETO DE PELUQUERÍA PROFESIONAL",
-    tag: "✨ ¡INSCRIPCIONES ABIERTAS!",
-    inicio: "10 de julio",
-    lugar: "Aura Studio • Av. San Martín 450",
-    modalidad: "Presencial. Curso completo y 100% práctico.",
-    duracion: "5 meses",
-    clases: "1 vez por semana",
-    formacion: "Teoría y práctica profesional con equipo docente",
-    inversion: 350000,
-    inversionTexto: "$350.000 por mes",
-    certificacion: "Al finalizar el curso se entregará un certificado profesional.",
-    descripcion: "Capacitación intensiva impartida por el equipo docente de Aura Studio. Desarrolla las técnicas de color, iluminación, alisados y diagnóstico capilar con mayor demanda en el mercado profesional.",
-    contenidos: [
-      {
-        titulo: "Color y colorimetría",
-        icono: "palette",
-        temas: [
-          "Colorimetría completa",
-          "Tinturas y formulación del color",
-          "Retoque de raíces",
-          "Cubrimiento de canas",
-          "Corrección de color",
-          "Decoloración profesional",
-          "Matización: Beige, Manteca, Ceniza, Perlado, y más"
-        ]
-      },
+
       {
         titulo: "Técnicas de iluminación",
         icono: "sparkles",
@@ -369,7 +341,7 @@ const SEED_DATA = {
       servicioId: "srv-3",
       servicioNombre: "Mechas Localizadas",
       profesionalId: "prof-2",
-      profesionalNombre: "Lucas Morales",
+      profesionalNombre: "Mariano Echavarria",
       fecha: new Date(Date.now() - 86400000).toISOString().split("T")[0],
       hora: "16:00",
       duracionMinutos: 120,
@@ -383,40 +355,6 @@ const SEED_DATA = {
         notas: "Clienta habitual"
       },
       creadoEn: new Date(Date.now() - 86400000 * 3).toISOString()
-    }
-  ],
-
-  // Inscripciones Iniciales al Curso
-  inscripcionesCurso: [
-    {
-      id: "ins-2001",
-      cursoId: "cur-1",
-      nombre: "Florencia",
-      apellido: "Méndez",
-      telefono: "+54 9 11 4233-4455",
-      email: "flor.mendez@gmail.com",
-      fecha: new Date(Date.now() - 86400000 * 4).toISOString(),
-      estado: "Inscripto"
-    },
-    {
-      id: "ins-2002",
-      cursoId: "cur-1",
-      nombre: "Agustina",
-      apellido: "Pérez",
-      telefono: "+54 9 11 4899-0011",
-      email: "agus.perez@hotmail.com",
-      fecha: new Date(Date.now() - 86400000 * 2).toISOString(),
-      estado: "Contactado"
-    },
-    {
-      id: "ins-2003",
-      cursoId: "cur-1",
-      nombre: "Micaela",
-      apellido: "Romero",
-      telefono: "+54 9 11 4788-9900",
-      email: "mica.romero@gmail.com",
-      fecha: new Date().toISOString(),
-      estado: "Pendiente"
     }
   ]
 };

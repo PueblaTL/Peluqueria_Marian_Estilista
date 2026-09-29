@@ -99,3 +99,8 @@ final class Usuarios
         return $stmt->rowCount() === 1;
     }
 }
+
+require_once __DIR__ . '/Servicios.php';
+require_once __DIR__ . '/Profesionales.php';
+require_once __DIR__ . '/Reservas.php';
+

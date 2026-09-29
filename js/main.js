@@ -12,9 +12,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   initNavbar();
   initHeroCarousel();
   initGalleryFiltersAndLightbox();
-  initCourseSection();
   initInteractiveMap();
-  initContactForm();
+
   initSmoothScroll();
 });
 
@@ -320,99 +319,6 @@ function initGalleryFiltersAndLightbox() {
   });
 }
 
-/* --- SECCIÓN DE CURSO & MODAL DE INSCRIPCIÓN --- */
-function initCourseSection() {
-  const enrollBtn = document.getElementById("btn-inscribirme-curso");
-  const modal = document.getElementById("modal-inscripcion-curso");
-  const closeBtn = document.getElementById("btn-close-curso-modal");
-  const form = document.getElementById("form-inscripcion-curso");
-
-  const openModal = () => {
-    if (modal) {
-      modal.classList.add("active");
-      modal.setAttribute("aria-hidden", "false");
-      document.body.style.overflow = "hidden";
-    }
-  };
-
-  const closeModal = () => {
-    if (modal) {
-      modal.classList.remove("active");
-      modal.setAttribute("aria-hidden", "true");
-      document.body.style.overflow = "";
-    }
-  };
-
-  if (enrollBtn) {
-    enrollBtn.addEventListener("click", openModal);
-  }
-
-  if (closeBtn) closeBtn.addEventListener("click", closeModal);
-
-  if (modal) {
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) closeModal();
-    });
-  }
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && modal && modal.classList.contains("active")) {
-      closeModal();
-    }
-  });
-
-  if (form) {
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const nombre = document.getElementById("ins-nombre")?.value.trim() || "";
-      const telefono = document.getElementById("ins-telefono")?.value.trim() || "";
-      const email = document.getElementById("ins-email")?.value.trim() || "";
-
-      if (!nombre || !telefono || !email) {
-        showToast("Por favor completa todos los campos requeridos.", "warning");
-        return;
-      }
-
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        showToast("Por favor ingresa un correo electrónico válido.", "danger");
-        return;
-      }
-
-      const submitBtn = form.querySelector("button[type='submit']");
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Registrando inscripción...";
-      }
-
-      try {
-        if (window.StorageService) {
-          await window.StorageService.saveInscripcion({
-            nombre,
-            telefono,
-            email
-          });
-        }
-
-        showToast(
-          "✨ ¡Inscripción registrada con éxito! Te contactaremos a la brevedad.",
-          "success"
-        );
-        form.reset();
-        closeModal();
-      } catch (err) {
-        console.error("Error al registrar inscripción:", err);
-        showToast("Ocurrió un error. Inténtalo nuevamente.", "danger");
-      } finally {
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = "Confirmar Inscripción";
-        }
-      }
-    });
-  }
-}
 
 /* --- MAPA INTERACTIVO (LEAFLET EN CONTACTO) --- */
 function initInteractiveMap() {
@@ -473,39 +379,6 @@ function initInteractiveMap() {
   setTimeout(() => {
     marker.openPopup();
   }, 1000);
-}
-
-/* --- FORMULARIO DE CONTACTO RÁPIDO --- */
-function initContactForm() {
-  const form = document.getElementById("fast-contact-form");
-  if (!form) return;
-
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const nombre = document.getElementById("ct-nombre")?.value.trim() || "";
-    const email = document.getElementById("ct-email")?.value.trim() || "";
-    const mensaje = document.getElementById("ct-mensaje")?.value.trim() || "";
-
-    if (!nombre || !email || !mensaje) {
-      showToast("Por favor completa todos los campos del mensaje.", "warning");
-      return;
-    }
-
-    const btn = form.querySelector("button[type='submit']");
-    if (btn) {
-      btn.disabled = true;
-      btn.textContent = "Enviando mensaje...";
-    }
-
-    setTimeout(() => {
-      showToast("✨ ¡Mensaje enviado! Te responderemos muy pronto.", "success");
-      form.reset();
-      if (btn) {
-        btn.disabled = false;
-        btn.textContent = "Enviar mensaje";
-      }
-    }, 600);
-  });
 }
 
 /* --- SCROLL SUAVE --- */

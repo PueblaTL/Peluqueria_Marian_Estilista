@@ -11,11 +11,7 @@ class BookingWizard {
     // Estado de la reserva
     this.state = {
       servicio: null,
-      profesional: {
-        id: "prof-1",
-        nombre: "Mariano",
-        titulo: "Estilista Profesional & Colorista"
-      },
+      profesional: null,
       fecha: null,       // 'YYYY-MM-DD'
       hora: null,        // 'HH:MM'
       cliente: {
@@ -44,7 +40,7 @@ class BookingWizard {
     this.cacheDom();
     this.bindEvents();
     await this.loadInitialData();
-    this.checkUrlParams();
+    await this.checkUrlParams();
     this.updateStepUI();
   }
 
@@ -59,6 +55,7 @@ class BookingWizard {
 
     // Contenedores dinámicos
     this.servicesContainer = document.getElementById("booking-services-list");
+    this.professionalSelect = document.getElementById("booking-professional");
     this.calendarDaysGrid = document.getElementById("calendar-days-grid");
     this.calendarMonthTitle = document.getElementById("calendar-month-title");
     this.calPrevBtn = document.getElementById("cal-prev-btn");
@@ -77,6 +74,9 @@ class BookingWizard {
   }
 
   bindEvents() {
+    this.professionalSelect?.addEventListener("change", () => {
+      this.selectProfessional(this.professionalSelect.value);
+    });
     // Botones de navegación
     if (this.btnBack) {
       this.btnBack.addEventListener("click", () => this.goToPrevStep());
@@ -114,9 +114,20 @@ class BookingWizard {
 
   async loadInitialData() {
     try {
-      this.profesional = await window.StorageService.getProfesional();
+      this.equipo = (await window.StorageService.getEquipo()).filter(p => p.activo);
       this.negocio = await window.StorageService.getNegocio();
-      this.state.profesional = this.profesional;
+      if (this.professionalSelect) {
+        this.equipo.forEach(profesional => {
+          const option = document.createElement("option");
+          option.value = profesional.id;
+          option.textContent = `${profesional.nombre} — ${profesional.titulo}`;
+          this.professionalSelect.appendChild(option);
+        });
+        if (!this.equipo.length) {
+          this.professionalSelect.disabled = true;
+          document.getElementById("professional-help").textContent = "No hay profesionales disponibles para reservar.";
+        }
+      }
       await this.renderServices();
     } catch (err) {
       console.error("Error al cargar datos iniciales:", err);
@@ -124,11 +135,15 @@ class BookingWizard {
   }
 
   /**
-   * Lee si vino un servicio preseleccionado por URL (?servicio=srv-1)
+   * Preselecciona servicio y profesional enviados desde la landing.
    */
   async checkUrlParams() {
     const urlParams = new URLSearchParams(window.location.search);
     const serviceParam = urlParams.get("servicio");
+    const professionalParam = urlParams.get("profesional");
+    if (professionalParam && this.equipo?.some(p => p.id === professionalParam && p.activo)) {
+      this.selectProfessional(professionalParam);
+    }
 
     if (serviceParam) {
       const servicios = await window.StorageService.getServicios(true);
@@ -296,6 +311,19 @@ class BookingWizard {
   // ==========================================
   // RENDERIZADO DEL PASO 2: CALENDARIO
   // ==========================================
+  selectProfessional(id) {
+    const profesional = this.equipo.find(p => p.id === id && p.activo) || null;
+    if (this.state.profesional?.id !== profesional?.id) {
+      this.state.fecha = null;
+      this.state.hora = null;
+      this.slotsRequestId = (this.slotsRequestId || 0) + 1;
+    }
+    this.state.profesional = profesional;
+    if (this.professionalSelect) this.professionalSelect.value = profesional?.id || '';
+    this.renderCalendar();
+    this.btnNext.disabled = !profesional || !this.state.fecha;
+  }
+
   renderCalendar() {
     if (!this.calendarDaysGrid || !this.calendarMonthTitle) return;
 
@@ -344,7 +372,9 @@ class BookingWizard {
       // Reglas de disponibilidad:
       // Atención: Martes (2) a Sábado (6). Domingo (0) y Lunes (1) cerrado.
       const isPast = dateObj < new Date(today.getFullYear(), today.getMonth(), today.getDate());
-      const isWorkingDay = (this.negocio?.diasApertura || [2, 3, 4, 5, 6]).includes(dayOfWeek);
+      const isWorkingDay = !!this.state.profesional &&
+        (this.negocio?.diasApertura || [2, 3, 4, 5, 6]).includes(dayOfWeek) &&
+        (this.state.profesional.diasLaborales || [2, 3, 4, 5, 6]).includes(dayOfWeek);
       const isAvailable = !isPast && isWorkingDay;
 
       cell.className = "calendar-day-cell";
@@ -358,7 +388,7 @@ class BookingWizard {
         cell.classList.add("past");
       } else if (!isWorkingDay) {
         cell.classList.add("closed");
-        cell.title = "Cerrado (Atención Martes a Sábados)";
+        cell.title = this.state.profesional ? "El profesional no atiende este día" : "Seleccioná primero un profesional";
       } else {
         cell.classList.add("available");
 
@@ -406,12 +436,12 @@ class BookingWizard {
       const dateFormatted = new Date(y, m - 1, d).toLocaleDateString("es-AR", {
         weekday: "long", day: "numeric", month: "long"
       });
-      this.slotsDateLabel.innerHTML = `Horarios disponibles para el <strong>${dateFormatted}</strong> en <strong>Aura Studio</strong>:`;
+      this.slotsDateLabel.textContent = `Horarios de ${this.state.profesional?.nombre || ''} para el ${dateFormatted}:`;
     }
 
     try {
       const duracion = this.state.servicio?.duracionMinutos || 60;
-      const slots = await window.StorageService.getDisponibilidad(this.state.fecha, duracion);
+      const slots = await window.StorageService.getDisponibilidad(this.state.fecha, duracion, this.state.profesional?.id);
       if (requestId !== this.slotsRequestId) return;
 
       this.slotsGrid.innerHTML = "";
@@ -517,7 +547,7 @@ class BookingWizard {
       <div class="ticket-grid-meta">
         <div class="ticket-meta-block">
           <span class="ticket-meta-label">💇‍♂️ Profesional</span>
-          <span class="ticket-meta-val">Mariano (Estilista)</span>
+          <span class="ticket-meta-val" data-professional-name></span>
         </div>
         <div class="ticket-meta-block">
           <span class="ticket-meta-label">📅 Fecha de Cita</span>
@@ -544,10 +574,13 @@ class BookingWizard {
       ${this.state.cliente.notas ? `
         <div class="ticket-notes-box">
           <strong>Observaciones:</strong>
-          <p>${this.state.cliente.notas}</p>
+          <p data-client-notes></p>
         </div>
       ` : ''}
     `;
+    this.summaryContainer.querySelector('[data-professional-name]').textContent = this.state.profesional?.nombre || '';
+    const notesEl = this.summaryContainer.querySelector('[data-client-notes]');
+    if (notesEl) notesEl.textContent = this.state.cliente?.notas || '';
   }
 
   // ==========================================
@@ -559,6 +592,7 @@ class BookingWizard {
 
     try {
       const nuevoTurno = await window.StorageService.saveTurno({
+        profesionalId: this.state.profesional?.id,
         servicioId: this.state.servicio.id,
         servicioNombre: this.state.servicio.nombre,
         fecha: this.state.fecha,
@@ -605,7 +639,7 @@ class BookingWizard {
         </div>
         <div>
           <span>Profesional:</span>
-          <strong>Mariano</strong>
+          <strong data-professional-name></strong>
         </div>
         <div>
           <span>Fecha y Hora:</span>
@@ -621,10 +655,11 @@ class BookingWizard {
         </div>
         <div>
           <span>Ubicación:</span>
-          <strong>Galería La Catedral, San Carlos de Bariloche – Salón Marian Estilista</strong>
+          <strong>Av. San Martín 450, Centro Comercial Galerías – Aura Studio</strong>
         </div>
       </div>
     `;
+    this.confirmationContainer.querySelector('[data-professional-name]').textContent = turno.profesionalNombre;
   }
 
   // ==========================================
@@ -642,6 +677,10 @@ class BookingWizard {
         break;
 
       case 2:
+        if (!this.state.profesional) {
+          this.showToast("Seleccioná un profesional para continuar.", "warning");
+          return;
+        }
         if (!this.state.fecha) {
           this.showToast("Por favor selecciona una fecha en el calendario.", "warning");
           return;
@@ -731,7 +770,7 @@ class BookingWizard {
       this.btnBack.style.visibility = "visible";
       this.btnNext.style.display = "inline-flex";
       this.btnNext.textContent = "Continuar →";
-      this.btnNext.disabled = !this.state.fecha;
+      this.btnNext.disabled = !this.state.profesional || !this.state.fecha;
     } else if (this.currentStep === 3) {
       this.btnBack.style.visibility = "visible";
       this.btnNext.style.display = "inline-flex";

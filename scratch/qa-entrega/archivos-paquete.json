@@ -1,0 +1,15 @@
+[
+  ".htaccess",
+  "abm/config/.htaccess",
+  "abm/config/database.example.php",
+  "abm/public/index.php",
+  "abm/public/login.php",
+  "abm/public/logout.php",
+  "abm/public/styles.css",
+  "abm/src/.htaccess",
+  "abm/src/auth.php",
+  "abm/src/bootstrap.php",
+  "abm/var/.htaccess",
+  "index.php",
+  "README.md"
+]

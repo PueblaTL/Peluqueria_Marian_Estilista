@@ -264,8 +264,27 @@ body {
 }
 
 /* --- PASO 2: CALENDARIO WIDGET --- */
-.calendar-widget {
-
+.booking-professional-field {
+  max-width: 540px;
+  margin: 0 auto 24px;
+}
+.booking-professional-field label { display: block; font-weight: 700; margin-bottom: 10px; }
+.booking-professional-field select {
+  width: 100%; min-height: 48px; padding: 12px; font: inherit;
+  color: #21140e; background: #fff; border: 1px solid #d6c4b3; border-radius: 12px;
+}
+.booking-professional-field select:focus-visible { outline: 3px solid #21140e; outline-offset: 2px; }
+.booking-professional-field p { margin-top: 8px; font-size: .85rem; color: #5c4b43; }
+.calendar-card {
+  --primary-dark: #21140e;
+  --primary-light: #f3e9df;
+  --primary: #b36b00;
+  --white: #fff;
+  --text-main: #21140e;
+  --text-muted: #5c4b43;
+  --text-light: #8a7c73;
+  --border-color: #d6c4b3;
+  width: 100%;
   max-width: 540px;
   margin: 0 auto;
   background: white;
@@ -275,8 +294,7 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
-.calendar-header {
-  background-color: rgba(255, 0, 0, 0.199);
+.calendar-nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -284,13 +302,19 @@ body {
 }
 
 .calendar-month-title {
+  margin: 0;
+  text-align: center;
   font-size: 1.35rem;
   color: var(--text-main);
 }
 
 .cal-nav-btn {
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  font: inherit;
+  font-size: 1.6rem;
+  line-height: 1;
   border-radius: var(--radius-full);
   background: var(--white);
   border: 1px solid var(--border-color);
@@ -314,7 +338,7 @@ body {
 
 .calendar-weekdays-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 8px;
   text-align: center;
   font-size: 0.82rem;
@@ -326,11 +350,16 @@ body {
 
 .calendar-days-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 8px;
 }
 
 .calendar-day-cell {
+  min-width: 0;
+  width: 100%;
+  padding: 0;
+  font-family: inherit;
+  border: 1px solid transparent;
   aspect-ratio: 1;
   display: flex;
   align-items: center;
@@ -361,8 +390,8 @@ body {
   cursor: pointer;
 }
 
-button.calendar-day-cell { font: inherit; border: 1px solid transparent; }
-button.calendar-day-cell:focus-visible { outline: 3px solid var(--primary-dark); outline-offset: 2px; }
+button.calendar-day-cell:focus-visible,
+.cal-nav-btn:focus-visible { outline: 3px solid var(--primary-dark); outline-offset: 2px; }
 
 .calendar-day-cell.available:hover {
   background-color: var(--primary-light);
@@ -379,9 +408,10 @@ button.calendar-day-cell:focus-visible { outline: 3px solid var(--primary-dark);
 
 .calendar-legend {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  gap: 10px 20px;
   margin-top: 24px;
   padding-top: 16px;
   border-top: 1px solid var(--border-color);
@@ -716,6 +746,28 @@ button.calendar-day-cell:focus-visible { outline: 3px solid var(--primary-dark);
 
 /* --- RESPONSIVE RESERVAS --- */
 @media (max-width: 768px) {
+  .calendar-card {
+    padding: 20px 12px;
+  }
+
+  .calendar-weekdays-grid,
+  .calendar-days-grid {
+    gap: 4px;
+  }
+
+  .calendar-weekdays-grid {
+    font-size: 0.7rem;
+  }
+
+  .calendar-month-title {
+    font-size: clamp(1rem, 4vw, 1.35rem);
+  }
+
+  .calendar-legend {
+    font-size: 0.75rem;
+    gap: 8px 12px;
+  }
+
   .booking-wizard-card {
     background-color: rgba(255, 255, 255, 0.95);
     padding: 24px 18px;

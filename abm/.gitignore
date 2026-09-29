@@ -1,2 +1,3 @@
 /var/*.sqlite*
 /config/database.php
+/var/sessions/

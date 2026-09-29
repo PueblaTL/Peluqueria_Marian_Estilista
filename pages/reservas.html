@@ -40,6 +40,7 @@
       </a>
 
       <div class="header-actions">
+        <a href="../abm/public/login.php" class="btn btn-secondary btn-sm login-access">Iniciar sesión</a>
         <a href="../index.html" class="btn btn-secondary btn-sm">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -114,10 +115,17 @@
         <div class="wizard-step-content" data-step-content="2">
           <div class="step-instruction">
             <span class="tag-badge">Paso 2 de 6</span>
-            <h2>Elige el día de tu visita</h2>
+            <h2>Elige profesional y fecha</h2>
             <p>Atendemos de martes a sábados de 09:00 a 19:00 hs con turno programado.</p>
           </div>
 
+          <div class="booking-professional-field">
+            <label for="booking-professional">¿Con quién querés atenderte?</label>
+            <select id="booking-professional" required aria-describedby="professional-help">
+              <option value="">Seleccioná un profesional</option>
+            </select>
+            <p id="professional-help">Elegí un profesional para consultar sus días y horarios.</p>
+          </div>
           <div class="calendar-card">
             <div class="calendar-nav">
               <button id="cal-prev-btn" class="cal-nav-btn" aria-label="Mes anterior">‹</button>

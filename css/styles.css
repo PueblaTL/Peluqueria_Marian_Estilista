@@ -2814,45 +2814,8 @@ h6 {
   font-weight: 500;
 }
 
-/* Botones de Canales Directos */
-.contact-channels-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
-}
-
-.channel-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 16px;
-  border-radius: 8px;
-  background-color: #f5f5f5;
-  color: var(--text-main);
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
-}
-
-.channel-btn:hover {
-  background-color: var(--dark-bg);
-  color: #ffffff;
-}
-
-.channel-btn.whatsapp:hover {
-  background-color: #25d366;
-  color: #ffffff;
-}
-
-.channel-btn.instagram:hover {
-  background-color: #e1306c;
-  color: #ffffff;
-}
-
-/* --- COLUMNA DERECHA: Mapa y Formulario --- */
-.map-form-col {
+/* --- COLUMNA DERECHA: Mapa --- */
+.contact-map-col {
   display: flex;
   flex-direction: column;
   gap: 25px;
@@ -2880,14 +2843,6 @@ h6 {
   flex-shrink: 0;
 }
 
-/* Formulario */
-.fast-contact-form {
-  background: var(--card-bg);
-  padding: 30px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow);
-}
 
 .form-group {
   margin-bottom: 20px;
@@ -4316,4 +4271,121 @@ textarea.form-control {
 
 .map-popup-link:hover {
   text-decoration: underline;
+}
+/* Acceso al panel, visible también en celulares. */
+@media(max-width:640px){.header-container{flex-wrap:wrap}.header-actions{flex-wrap:wrap}.login-access{padding:9px 12px;font-size:12px}}
+
+/* ============================================================
+   BOTÓN PANEL ADMIN - DEMO UNIVERSITARIA
+   ============================================================ */
+
+.demo-admin-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.btn-admin-demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-muted, #94a3b8);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.btn-admin-demo:hover {
+  background: rgba(139, 92, 246, 0.18);
+  color: #c4b5fd;
+  border-color: rgba(139, 92, 246, 0.4);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
+}
+
+/* Tooltip con credenciales demo */
+.demo-tooltip {
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 240px;
+  background: #1e1b4b;
+  border: 1px solid rgba(139, 92, 246, 0.5);
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  transition: opacity 0.2s, visibility 0.2s;
+  z-index: 9999;
+}
+
+/* Flecha del tooltip */
+.demo-tooltip::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 10px;
+  height: 10px;
+  background: #1e1b4b;
+  border-left: 1px solid rgba(139, 92, 246, 0.5);
+  border-top: 1px solid rgba(139, 92, 246, 0.5);
+}
+
+.demo-admin-wrapper:hover .demo-tooltip {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.demo-tooltip-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a78bfa;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.25);
+}
+
+.demo-tooltip-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 8px;
+}
+
+.demo-tooltip-row:last-child {
+  margin-bottom: 0;
+}
+
+.demo-tooltip-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+}
+
+.demo-tooltip-value {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.8rem;
+  color: #e2e8f0;
+  background: rgba(139, 92, 246, 0.1);
+  padding: 3px 7px;
+  border-radius: 4px;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  user-select: all;
 }
