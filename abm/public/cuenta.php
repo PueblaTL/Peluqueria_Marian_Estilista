@@ -1,0 +1,4 @@
+<?php
+require dirname(__DIR__).'/src/auth.php';
+try { if (!authenticated()) { header('Location: login.php',true,303); exit; } } catch(Throwable $e) { http_response_code(500); exit('No se pudo verificar la sesión.'); }
+?><!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mi cuenta · Aura Studio</title><link rel="stylesheet" href="styles.css"></head><body><main><h1>Hola, <?=e($_SESSION['nombre'])?></h1><p><?=e($_SESSION['email'])?> · <?=e($_SESSION['rol'])?></p><a class="button" href="../../pages/reservas.html">Reservar un turno</a><a href="../../index.html">Volver al inicio</a><form method="post" action="logout.php"><input type="hidden" name="csrf" value="<?=e($_SESSION['csrf'])?>"><button>Cerrar sesión</button></form></main></body></html>

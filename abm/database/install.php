@@ -7,5 +7,8 @@ if (!preg_match('/\A[a-zA-Z0-9_]+\z/', $name)) throw new RuntimeException('Nombr
 $db = database(false);
 $db->exec("CREATE DATABASE IF NOT EXISTS `$name` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
 $db->exec("USE `$name`");
-$db->exec(file_get_contents(__DIR__ . '/schema.sql'));
+$sql = file_get_contents(__DIR__ . '/schema.sql');
+$sql = preg_replace('/CREATE DATABASE IF NOT EXISTS aura_studio.*?;\s*USE aura_studio;/s', '', $sql);
+$db->exec($sql);
+require __DIR__ . '/migrate.php';
 echo "Base $name lista.\n";

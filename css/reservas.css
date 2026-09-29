@@ -478,6 +478,85 @@ button.calendar-day-cell:focus-visible,
   box-shadow: var(--shadow-sm);
 }
 
+/* --- TARJETA DE NO DISPONIBILIDAD / DÍA COMPLETO --- */
+.no-availability-card {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  padding: 36px 24px;
+  background: linear-gradient(145deg, #ffffff 0%, #faf8f5 100%);
+  border: 1.5px solid rgba(194, 155, 56, 0.35);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 24px rgba(194, 155, 56, 0.08);
+  animation: fadeInNoAvail 0.3s ease-out;
+}
+
+@keyframes fadeInNoAvail {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.no-availability-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  background: rgba(194, 155, 56, 0.12);
+  color: var(--primary-dark, #9a7a45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.no-availability-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  max-width: 440px;
+}
+
+.no-availability-title {
+  font-family: var(--font-heading, inherit);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-main, #1a1a1a);
+  margin: 0;
+}
+
+.no-availability-text {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-muted, #666666);
+  margin: 0 0 12px 0;
+}
+
+.no-availability-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: var(--white);
+  border: 1.5px solid var(--border-color);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.no-availability-action:hover {
+  background: var(--cream, #f7f4ee);
+  border-color: var(--primary, #c29b38);
+  color: var(--primary-dark, #9a7a45);
+  transform: translateY(-1px);
+}
+
 .time-slot-pill.available:hover {
   border-color: var(--primary);
   background-color: var(--primary-light);

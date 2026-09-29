@@ -48,7 +48,7 @@ final class Reservas
     public function buscar(int $id): ?array
     {
         $stmt = $this->db->prepare(
-            'SELECT r.*, p.nombre AS profesional_nombre, s.nombre AS servicio_nombre 
+            'SELECT r.*, p.nombre AS profesional_nombre, s.nombre AS servicio_nombre
              FROM reservas r
              JOIN profesionales p ON p.id = r.profesional_id
              JOIN servicios s ON s.id = r.servicio_id
@@ -68,6 +68,11 @@ final class Reservas
             return [];
         }
 
+        if ($fecha < (new DateTimeImmutable('today'))->format('Y-m-d')) return [];
+        $professional = $this->db->prepare('SELECT id FROM profesionales WHERE id=? AND activo=1');
+        $professional->execute([$profesionalId]);
+        if (!$professional->fetch()) return [];
+
         // Día de la semana (1 = Lunes, 7 = Domingo)
         $diaSemana = (int) $dt->format('N');
         // Salón abre de Martes (2) a Sábado (6)
@@ -77,18 +82,23 @@ final class Reservas
 
         // Buscar reservas existentes no canceladas para ese día y profesional
         $stmt = $this->db->prepare(
-            'SELECT hora, duracion_minutos 
-             FROM reservas 
+            'SELECT hora, duracion_minutos
+             FROM reservas
              WHERE profesional_id = ? AND fecha = ? AND estado <> "Cancelado"'
         );
         $stmt->execute([$profesionalId, $fecha]);
         $ocupados = $stmt->fetchAll();
 
+        // REGLA DEL NEGOCIO: Máximo 2 turnos activos por día por profesional (cancelados no consumen cupo)
+        if (count($ocupados) >= 2) {
+            return [];
+        }
+
         // Convertir turnos existentes a rangos de minutos desde las 00:00
         $rangosOcupados = [];
         foreach ($ocupados as $turno) {
             $partes = explode(':', (string) $turno['hora']);
-            $inicioMin = (int) $partes[0] * 60 + (int) $partes[1];
+            $inicioMin = (int) $partes[0] * 60 + (int) ($partes[1] ?? 0);
             $finMin = $inicioMin + (int) $turno['duracion_minutos'];
             $rangosOcupados[] = ['inicio' => $inicioMin, 'fin' => $finMin];
         }
@@ -113,7 +123,7 @@ final class Reservas
                 continue;
             }
 
-            // Verificar solapamiento
+            // Verificar solapamiento con turnos existentes
             $conflicto = false;
             foreach ($rangosOcupados as $ocupado) {
                 if ($min < $ocupado['fin'] && $slotFin > $ocupado['inicio']) {
@@ -139,7 +149,8 @@ final class Reservas
         $profesionalId = (int) ($input['profesional_id'] ?? $input['profesionalId'] ?? 0);
         $servicioId = (int) ($input['servicio_id'] ?? $input['servicioId'] ?? 0);
         $fecha = trim((string) ($input['fecha'] ?? ''));
-        $hora = trim((string) ($input['hora'] ?? ''));
+        $rawHora = trim((string) ($input['hora'] ?? ''));
+        $hora = substr($rawHora, 0, 5); // Normalizar a HH:mm
         $duracion = (int) ($input['duracion_minutos'] ?? $input['duracionMinutos'] ?? 60);
         $precio = (float) ($input['precio_estimado'] ?? $input['precio'] ?? 0);
 
@@ -173,7 +184,7 @@ final class Reservas
             return ['success' => false, 'errors' => $errors];
         }
 
-        // Transacción con verificación estricta de disponibilidad
+        // Transacción con verificación estricta de cupos y disponibilidad
         $this->db->beginTransaction();
         try {
             // Verificar servicio existente y tomar precio y duración oficiales si no vinieron
@@ -185,11 +196,11 @@ final class Reservas
                 return ['success' => false, 'errors' => ['servicio_id' => 'El servicio seleccionado no está disponible.']];
             }
 
-            if ($duracion <= 0) $duracion = (int) $srv['duracion_minutos'];
-            if ($precio <= 0) $precio = (float) $srv['precio_desde'];
+            $duracion = (int) $srv['duracion_minutos'];
+            $precio = (float) $srv['precio_desde'];
 
             // Verificar profesional existente
-            $stmtProf = $this->db->prepare('SELECT id, nombre FROM profesionales WHERE id = ? AND activo = 1');
+            $stmtProf = $this->db->prepare('SELECT id, nombre FROM profesionales WHERE id = ? AND activo = 1 FOR UPDATE');
             $stmtProf->execute([$profesionalId]);
             $prof = $stmtProf->fetch();
             if (!$prof) {
@@ -197,23 +208,44 @@ final class Reservas
                 return ['success' => false, 'errors' => ['profesional_id' => 'El profesional seleccionado no está disponible.']];
             }
 
-            // Verificar solapamiento de turno bloqueando con FOR UPDATE
+            $slots = $this->obtenerDisponibilidad($fecha, $duracion, $profesionalId);
+            if (!array_filter($slots, fn($slot) => $slot['hora'] === $hora && $slot['disponible'])) {
+                $this->db->rollBack();
+                return ['success'=>false,'errors'=>['hora'=>'El horario no está disponible. Elegí otro turno.']];
+            }
+            // REGLA DEL NEGOCIO: Verificar límite máximo de 2 reservas activas por día para el profesional
+            $stmtCount = $this->db->prepare(
+                'SELECT COUNT(*) FROM reservas
+                 WHERE profesional_id = ? AND fecha = ? AND estado <> "Cancelado"
+                 FOR UPDATE'
+            );
+            $stmtCount->execute([$profesionalId, $fecha]);
+            $totalActivas = (int) $stmtCount->fetchColumn();
+            if ($totalActivas >= 2) {
+                $this->db->rollBack();
+                return [
+                    'success' => false,
+                    'errors' => ['fecha' => 'Ya se alcanzó el límite máximo de reservas (2) para esta fecha. Seleccioná otro día.']
+                ];
+            }
+
+            // Verificar solapamiento de horario con reservas existentes
             $stmtTurnos = $this->db->prepare(
-                'SELECT id, hora, duracion_minutos 
-                 FROM reservas 
-                 WHERE profesional_id = ? AND fecha = ? AND estado <> "Cancelado" 
+                'SELECT id, hora, duracion_minutos
+                 FROM reservas
+                 WHERE profesional_id = ? AND fecha = ? AND estado <> "Cancelado"
                  FOR UPDATE'
             );
             $stmtTurnos->execute([$profesionalId, $fecha]);
             $existentes = $stmtTurnos->fetchAll();
 
             $partesHora = explode(':', $hora);
-            $inicioNuevo = (int) $partesHora[0] * 60 + (int) $partesHora[1];
+            $inicioNuevo = (int) $partesHora[0] * 60 + (int) ($partesHora[1] ?? 0);
             $finNuevo = $inicioNuevo + $duracion;
 
             foreach ($existentes as $ex) {
                 $p = explode(':', (string) $ex['hora']);
-                $iniEx = (int) $p[0] * 60 + (int) $p[1];
+                $iniEx = (int) $p[0] * 60 + (int) ($p[1] ?? 0);
                 $finEx = $iniEx + (int) $ex['duracion_minutos'];
 
                 if ($inicioNuevo < $finEx && $finNuevo > $iniEx) {
@@ -286,8 +318,17 @@ final class Reservas
         if (!in_array($nuevoEstado, ['Pendiente', 'Confirmado', 'Cancelado', 'Completado'], true)) {
             return false;
         }
-        $stmt = $this->db->prepare('UPDATE reservas SET estado = ? WHERE id = ?');
-        $stmt->execute([$nuevoEstado, $id]);
+        $actual = $this->buscar($id);
+        if (!$actual) {
+            return false;
+        }
+        if ($actual['estado'] === $nuevoEstado) {
+            return true;
+        }
+        $transiciones = ['Pendiente'=>['Confirmado','Cancelado'], 'Confirmado'=>['Completado','Cancelado'], 'Cancelado'=>[], 'Completado'=>[]];
+        if (!in_array($nuevoEstado, $transiciones[$actual['estado']] ?? [], true)) return false;
+        $stmt = $this->db->prepare('UPDATE reservas SET estado = ? WHERE id = ? AND estado = ?');
+        $stmt->execute([$nuevoEstado, $id, $actual['estado']]);
         return $stmt->rowCount() > 0;
     }
 }

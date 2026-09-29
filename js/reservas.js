@@ -3,6 +3,8 @@
  * Aura Studio - Sistema de Reservas Online
  */
 
+function escapeBooking(value) { return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
 class BookingWizard {
   constructor() {
     this.currentStep = 1;
@@ -40,7 +42,7 @@ class BookingWizard {
     this.cacheDom();
     this.bindEvents();
     await this.loadInitialData();
-    await this.checkUrlParams();
+    try { await this.checkUrlParams(); } catch (err) { this.showToast(err.message, "danger"); }
     this.updateStepUI();
   }
 
@@ -131,6 +133,7 @@ class BookingWizard {
       await this.renderServices();
     } catch (err) {
       console.error("Error al cargar datos iniciales:", err);
+      this.showToast(err.message || "No se pudo cargar el catálogo desde MySQL.", "danger");
     }
   }
 
@@ -141,13 +144,13 @@ class BookingWizard {
     const urlParams = new URLSearchParams(window.location.search);
     const serviceParam = urlParams.get("servicio");
     const professionalParam = urlParams.get("profesional");
-    if (professionalParam && this.equipo?.some(p => p.id === professionalParam && p.activo)) {
+    if (professionalParam && this.equipo?.some(p => (p.clave === professionalParam || String(p.id) === professionalParam) && p.activo)) {
       this.selectProfessional(professionalParam);
     }
 
     if (serviceParam) {
       const servicios = await window.StorageService.getServicios(true);
-      const matched = servicios.find(s => s.id === serviceParam);
+      const matched = servicios.find(s => (s.clave === serviceParam || String(s.id) === serviceParam));
       if (matched) {
         this.selectService(matched);
       }
@@ -205,21 +208,21 @@ class BookingWizard {
 
       card.innerHTML = `
       <div class="book-srv-img-wrap">
-        <img 
-          src="${imgSrc}" 
-          alt="${s.nombre}" 
+        <img
+          src="${escapeBooking(imgSrc)}"
+          alt="${escapeBooking(s.nombre)}"
           loading="lazy"
         />
 
         <span class="book-srv-badge">
-          ${s.categoria || "Servicio"}
+          ${escapeBooking(s.categoria || "Servicio")}
         </span>
       </div>
 
       <div class="book-srv-body">
 
         <div class="book-srv-header">
-          <h4>${s.nombre}</h4>
+          <h4>${escapeBooking(s.nombre)}</h4>
 
           <span class="book-srv-price">
             $${Number(s.precio).toLocaleString("es-AR")}
@@ -227,7 +230,7 @@ class BookingWizard {
         </div>
 
         <p class="book-srv-desc">
-          ${s.descripcion}
+          ${escapeBooking(s.descripcion)}
         </p>
 
         <div class="book-srv-meta">
@@ -312,7 +315,7 @@ class BookingWizard {
   // RENDERIZADO DEL PASO 2: CALENDARIO
   // ==========================================
   selectProfessional(id) {
-    const profesional = this.equipo.find(p => p.id === id && p.activo) || null;
+    const profesional = this.equipo.find(p => (p.clave === id || String(p.id) === String(id)) && p.activo) || null;
     if (this.state.profesional?.id !== profesional?.id) {
       this.state.fecha = null;
       this.state.hora = null;
@@ -447,7 +450,34 @@ class BookingWizard {
       this.slotsGrid.innerHTML = "";
 
       if (!slots || !slots.some(slot => slot.disponible)) {
-        this.slotsGrid.innerHTML = `<div class="no-slots-msg">No hay turnos disponibles para esta fecha. Por favor selecciona otro día.</div>`;
+        this.slotsGrid.innerHTML = `
+          <div class="no-availability-card">
+            <div class="no-availability-icon">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+                <line x1="10" y1="14" x2="14" y2="18"></line>
+                <line x1="14" y1="14" x2="10" y2="18"></line>
+              </svg>
+            </div>
+            <div class="no-availability-body">
+              <h3 class="no-availability-title">No hay turnos disponibles para este día</h3>
+              <p class="no-availability-text">Ya se alcanzó el límite de reservas para esta fecha. Seleccioná otro día del calendario para continuar.</p>
+              <button type="button" class="no-availability-action" id="btn-cambiar-fecha-sin-cupo">
+                📅 Elegir otro día en el calendario
+              </button>
+            </div>
+          </div>
+        `;
+        const btnVolver = this.slotsGrid.querySelector("#btn-cambiar-fecha-sin-cupo");
+        if (btnVolver) {
+          btnVolver.addEventListener("click", () => {
+            this.goToStep(2);
+          });
+        }
+        this.btnNext.disabled = true;
         return;
       }
 
@@ -534,9 +564,9 @@ class BookingWizard {
     this.summaryContainer.innerHTML = `
       <div class="ticket-row-main">
         <div class="ticket-service-badge">
-          <span class="ticket-srv-tag">${this.state.servicio?.categoria || 'Servicio'}</span>
-          <h3>${this.state.servicio?.nombre}</h3>
-          <p>${this.state.servicio?.descripcion}</p>
+          <span class="ticket-srv-tag">${escapeBooking(this.state.servicio?.categoria || 'Servicio')}</span>
+          <h3>${escapeBooking(this.state.servicio?.nombre)}</h3>
+          <p>${escapeBooking(this.state.servicio?.descripcion)}</p>
         </div>
         <div class="ticket-price-box">
           <span class="ticket-price-label">Precio</span>
@@ -559,15 +589,15 @@ class BookingWizard {
         </div>
         <div class="ticket-meta-block">
           <span class="ticket-meta-label">👤 Clienta</span>
-          <span class="ticket-meta-val">${this.state.cliente.nombre} ${this.state.cliente.apellido}</span>
+          <span class="ticket-meta-val">${escapeBooking(this.state.cliente.nombre)} ${escapeBooking(this.state.cliente.apellido)}</span>
         </div>
         <div class="ticket-meta-block">
           <span class="ticket-meta-label">📱 Teléfono</span>
-          <span class="ticket-meta-val">${this.state.cliente.telefono}</span>
+          <span class="ticket-meta-val">${escapeBooking(this.state.cliente.telefono)}</span>
         </div>
         <div class="ticket-meta-block">
           <span class="ticket-meta-label">✉️ Email</span>
-          <span class="ticket-meta-val">${this.state.cliente.email}</span>
+          <span class="ticket-meta-val">${escapeBooking(this.state.cliente.email)}</span>
         </div>
       </div>
 
@@ -635,7 +665,7 @@ class BookingWizard {
       <div class="conf-details-grid">
         <div>
           <span>Servicio:</span>
-          <strong>${turno.servicioNombre}</strong>
+          <strong>${escapeBooking(turno.servicioNombre)}</strong>
         </div>
         <div>
           <span>Profesional:</span>
@@ -647,7 +677,7 @@ class BookingWizard {
         </div>
         <div>
           <span>Clienta:</span>
-          <strong>${turno.cliente.nombre} ${turno.cliente.apellido}</strong>
+          <strong>${escapeBooking(turno.cliente.nombre)} ${escapeBooking(turno.cliente.apellido)}</strong>
         </div>
         <div>
           <span>Total Estimado:</span>

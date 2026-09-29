@@ -21,11 +21,12 @@ if (in_array($action, ['edit', 'delete'], true)) {
 $errors = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!is_string($_POST['csrf'] ?? null) || !hash_equals($_SESSION['csrf'], $_POST['csrf'])) { http_response_code(403); exit('Formulario vencido o inválido. Volvé a cargar la página.'); }
+    try {
     if ($action === 'reservas' && isset($_POST['reserva_id'], $_POST['nuevo_estado'])) {
         $resId = (int) $_POST['reserva_id'];
         $nEstado = (string) $_POST['nuevo_estado'];
         $repoRes = new Reservas($db);
-        $repoRes->cambiarEstado($resId, $nEstado);
+        if (!$repoRes->cambiarEstado($resId, $nEstado)) throw new DomainException('No se pudo cambiar el estado de la reserva.');
         $_SESSION['flash'] = 'Estado de la reserva actualizado a ' . e($nEstado) . '.';
         header('Location: index.php?action=reservas', true, 303);
         exit;
@@ -37,8 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         foreach ($data as $key => $value) if (isset($_POST[$key]) && is_string($_POST[$key])) $data[$key] = trim($_POST[$key]);
         if (!$errors) $_SESSION['flash'] = $action === 'create' ? 'Usuario creado correctamente.' : 'Cambios guardados correctamente.';
     } else { http_response_code(405); header('Allow: GET'); exit('Método no permitido.'); }
+    } catch (DomainException $ex) { $errors['general']=$ex->getMessage(); } catch (Throwable $ex) { error_log((string)$ex); $errors['general']='No se pudo guardar. Verificá las relaciones y los datos.'; }
     if (!$errors) { header('Location: index.php', true, 303); exit; }
-    http_response_code(422);
+    http_response_code(400);
 }
 $flash = $_SESSION['flash'] ?? null;
 unset($_SESSION['flash']);
@@ -53,6 +55,7 @@ $titles = ['list' => 'Usuarios', 'create' => 'Nuevo usuario', 'edit' => 'Editar 
 <header><a class="brand" href="index.php">A<span>Aura Studio<small>Administración · Gestión Integral</small></span></a><nav aria-label="Principal"><a href="index.php" <?= !in_array($action, ['roles', 'reservas'], true) ? 'aria-current="page"' : '' ?>>Usuarios</a><a href="?action=roles" <?= $action === 'roles' ? 'aria-current="page"' : '' ?>>Roles</a><a href="?action=reservas" <?= $action === 'reservas' ? 'aria-current="page"' : '' ?>>Reservas</a><form method="post" action="logout.php"><input type="hidden" name="csrf" value="<?= e($_SESSION['csrf']) ?>"><button type="submit">Cerrar sesión</button></form></nav></header>
 <main>
 <div class="heading"><div><p class="eyebrow">GESTIÓN DEL SALÓN</p><h1><?= e($titles[$action]) ?></h1><p class="muted"><?= $action === 'reservas' ? 'Turnos solicitados en tiempo real desde la web de Aura Studio.' : ($action === 'list' ? 'Administrá los datos y el rol de cada usuario.' : 'Cada usuario está asociado a un único rol.') ?></p></div><?php if ($action === 'list'): ?><a class="button" href="?action=create">+ Nuevo usuario</a><?php elseif ($action === 'reservas'): ?><a class="button" href="../../pages/reservas.html" target="_blank">Nueva reserva ↗</a><?php endif; ?></div>
+<?php if ($errors && in_array($action, ['delete','reservas'], true)): ?><div class="error-summary" role="alert"><?=e($errors['general'] ?? 'Datos inválidos')?></div><?php endif; ?>
 <?php if ($flash): ?><div class="notice" role="status"><?= e($flash) ?></div><?php endif; ?>
 <?php if ($action === 'list'): $usuarios = $repo->listar($query); ?>
 <section class="card"><form class="search" method="get"><label for="q">Buscar usuarios</label><div class="search-row"><input id="q" name="q" value="<?= e($query) ?>" placeholder="Nombre, apellido, nickname o email"><button type="submit">Buscar</button><?php if ($query !== ''): ?><a href="index.php">Limpiar</a><?php endif; ?></div></form>
@@ -60,7 +63,7 @@ $titles = ['list' => 'Usuarios', 'create' => 'Nuevo usuario', 'edit' => 'Editar 
 <?php if (!$usuarios): ?><div class="empty"><h2><?= $query !== '' ? 'No hay coincidencias' : 'Todavía no hay usuarios' ?></h2><p><?= $query !== '' ? 'Probá con otro nombre o email.' : 'Creá el primer usuario para comenzar.' ?></p><?php if ($query === ''): ?><a class="button" href="?action=create">Crear usuario</a><?php endif; ?></div><?php else: ?>
 <div class="table-wrap"><table><thead><tr><th>Nombre y apellido</th><th>Nickname</th><th>Email</th><th>Rol</th><th>Acciones</th></tr></thead><tbody><?php foreach ($usuarios as $u): ?><tr><td><strong><?= e($u['nombre'] . ' ' . $u['apellido']) ?></strong></td><td>@<?= e($u['nickname']) ?></td><td><?= e($u['email']) ?></td><td><span class="badge"><?= e($u['rol']) ?></span></td><td class="actions"><a href="?action=edit&amp;id=<?= $u['id'] ?>" aria-label="Editar a <?= e($u['nickname']) ?>">Editar</a><a class="danger-link" href="?action=delete&amp;id=<?= $u['id'] ?>" aria-label="Eliminar a <?= e($u['nickname']) ?>">Eliminar</a></td></tr><?php endforeach; ?></tbody></table></div><?php endif; ?></section>
 <?php elseif ($action === 'roles'): ?>
-<section class="card"><p class="role-intro">Catálogo de roles disponibles. Un rol puede estar asignado a varios usuarios. Estos roles describen a los usuarios. El acceso al panel requiere la cuenta de administrador independiente.</p><div class="table-wrap"><table><thead><tr><th>Nombre</th><th>Descripción</th></tr></thead><tbody><?php foreach ($roles as $rol): ?><tr><td><span class="badge"><?= e($rol['nombre']) ?></span></td><td><?= e($rol['descripcion']) ?></td></tr><?php endforeach; ?></tbody></table></div></section>
+<section class="card"><p class="role-intro">Catálogo de roles disponibles. Un rol puede estar asignado a varios usuarios. El acceso al panel requiere el rol Administrador, verificado en cada solicitud.</p><div class="table-wrap"><table><thead><tr><th>Nombre</th><th>Descripción</th></tr></thead><tbody><?php foreach ($roles as $rol): ?><tr><td><span class="badge"><?= e($rol['nombre']) ?></span></td><td><?= e($rol['descripcion']) ?></td></tr><?php endforeach; ?></tbody></table></div></section>
 <?php elseif ($action === 'reservas'): 
     $repoRes = new Reservas($db);
     $reservas = $repoRes->listar(['q' => $query]);
@@ -75,11 +78,11 @@ $titles = ['list' => 'Usuarios', 'create' => 'Nuevo usuario', 'edit' => 'Editar 
 <?php else: ?>
 <form method="post" class="card form-card"><input type="hidden" name="csrf" value="<?= e($_SESSION['csrf']) ?>">
 <?php if ($errors): ?><div class="error-summary" role="alert"><strong>No se pudo guardar el usuario.</strong><p>Revisá los campos indicados. <?= e($errors['general'] ?? '') ?></p></div><?php endif; ?>
-<p class="muted">Todos los campos son obligatorios.</p><div class="form-grid">
+<p class="muted">En edición, dejá la contraseña vacía para conservarla.</p><div class="form-grid">
 <?php foreach (['nombre' => 'Nombre', 'apellido' => 'Apellido', 'nickname' => 'Nickname / nombre de usuario', 'email' => 'Email'] as $campo => $label): ?>
 <div class="field"><label for="<?= $campo ?>"><?= $label ?></label><input id="<?= $campo ?>" name="<?= $campo ?>" type="<?= $campo === 'email' ? 'email' : 'text' ?>" value="<?= e($data[$campo]) ?>" required maxlength="<?= $campo === 'email' ? 254 : ($campo === 'nickname' ? 40 : 80) ?>" <?= $campo === 'nickname' ? 'minlength="3" pattern="[a-zA-Z0-9_.\-]{3,40}"' : '' ?> <?= isset($errors[$campo]) ? 'aria-invalid="true" aria-describedby="error-' . $campo . '"' : '' ?>><?php if (isset($errors[$campo])): ?><small class="error" id="error-<?= $campo ?>"><?= e($errors[$campo]) ?></small><?php endif; ?></div>
 <?php endforeach; ?>
-<div class="field full"><label for="rol_id">Rol</label><select id="rol_id" name="rol_id" required <?= isset($errors['rol_id']) ? 'aria-invalid="true" aria-describedby="error-rol_id"' : '' ?>><option value="">Seleccioná un rol</option><?php foreach ($roles as $rol): ?><option value="<?= $rol['id'] ?>" <?= (string) $data['rol_id'] === (string) $rol['id'] ? 'selected' : '' ?>><?= e($rol['nombre']) ?></option><?php endforeach; ?></select><?php if (isset($errors['rol_id'])): ?><small class="error" id="error-rol_id"><?= e($errors['rol_id']) ?></small><?php endif; ?></div></div>
+<div class="field full"><label for="password">Contraseña</label><input id="password" name="password" type="password" minlength="8" maxlength="72" autocomplete="new-password" <?= $action === 'create' ? 'required' : '' ?>><?php if(isset($errors['password'])): ?><small class="error"><?=e($errors['password'])?></small><?php endif; ?></div><div class="field full"><label for="rol_id">Rol</label><select id="rol_id" name="rol_id" required <?= isset($errors['rol_id']) ? 'aria-invalid="true" aria-describedby="error-rol_id"' : '' ?>><option value="">Seleccioná un rol</option><?php foreach ($roles as $rol): ?><option value="<?= $rol['id'] ?>" <?= (string) $data['rol_id'] === (string) $rol['id'] ? 'selected' : '' ?>><?= e($rol['nombre']) ?></option><?php endforeach; ?></select><?php if (isset($errors['rol_id'])): ?><small class="error" id="error-rol_id"><?= e($errors['rol_id']) ?></small><?php endif; ?></div></div>
 <div class="form-actions"><a class="secondary" href="index.php">Cancelar</a><button type="submit"><?= $action === 'create' ? 'Crear usuario' : 'Guardar cambios' ?></button></div></form>
 <?php endif; ?>
 <footer>Proyecto ABM · PHP + MySQL</footer></main></body></html>

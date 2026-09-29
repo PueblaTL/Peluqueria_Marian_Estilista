@@ -173,39 +173,6 @@ const SEED_DATA = {
   ],
 
 
-      {
-        titulo: "Técnicas de iluminación",
-        icono: "sparkles",
-        temas: [
-          "Balayage",
-          "Babylights",
-          "Mechas y reflejos"
-        ]
-      },
-      {
-        titulo: "Alisados y tratamientos",
-        icono: "feather",
-        temas: [
-          "Alisados",
-          "Botox capilar",
-          "Shock de keratina",
-          "Tratamientos de hidratación",
-          "Tratamientos de nutrición",
-          "Tratamientos de reconstrucción"
-        ]
-      },
-      {
-        titulo: "Diagnóstico y atención profesional",
-        icono: "user-check",
-        temas: [
-          "Diagnóstico capilar",
-          "Atención al cliente",
-          "Asesoramiento profesional"
-        ]
-      }
-    ]
-  },
-
   // Galería de Trabajos Reales
   galeria: [
     {

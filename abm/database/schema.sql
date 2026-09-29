@@ -1,4 +1,4 @@
-﻿-- =============================================================
+-- =============================================================
 -- Aura Studio  Schema de base de datos
 -- Motor: MySQL 5.7+ / MariaDB 10.4+  |  Charset: utf8mb4
 -- =============================================================
@@ -48,6 +48,9 @@ CREATE TABLE usuarios (
     nickname   VARCHAR(40)  NOT NULL UNIQUE,
     email      VARCHAR(254) NOT NULL UNIQUE,
     rol_id     INT UNSIGNED NOT NULL,
+    password_hash VARCHAR(255) NULL,
+    intentos INT NOT NULL DEFAULT 0,
+    bloqueado_hasta DATETIME NULL,
     creado_en  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT ck_usuario_nombre    CHECK (CHAR_LENGTH(TRIM(nombre))   >= 1),
     CONSTRAINT ck_usuario_apellido  CHECK (CHAR_LENGTH(TRIM(apellido)) >= 1),
@@ -62,6 +65,7 @@ CREATE TABLE usuarios (
 -- Estilistas y profesionales del salon.
 -- -------------------------------------------------------------
 CREATE TABLE profesionales (
+    clave VARCHAR(40) NULL UNIQUE,
     id           INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nombre       VARCHAR(160) NOT NULL,
     titulo       VARCHAR(160) NOT NULL DEFAULT '',
@@ -77,6 +81,7 @@ CREATE TABLE profesionales (
 -- Catalogo de servicios del salon con precios y duracion.
 -- -------------------------------------------------------------
 CREATE TABLE servicios (
+    clave VARCHAR(40) NULL UNIQUE,
     id                INT UNSIGNED      AUTO_INCREMENT PRIMARY KEY,
     nombre            VARCHAR(160)      NOT NULL,
     categoria         VARCHAR(80)       NOT NULL,
@@ -132,32 +137,19 @@ CREATE TABLE reservas (
 INSERT INTO roles (nombre, descripcion) VALUES
     ('Administrador', 'Acceso completo al sistema de administracion.'),
     ('Operador',      'Gestion de reservas, servicios y profesionales.'),
+    ('Usuario', 'Cuenta de cliente del portal.'),
     ('Consulta',      'Solo lectura de informacion del sistema.');
 
--- Profesionales del salon
-INSERT INTO profesionales (nombre, titulo, especialidad, descripcion, imagen, activo) VALUES
-    ('Marian Lopez',  'Estilista Senior',   'Colorimetria y cortes modernos',
-     'Con mas de 10 anos de experiencia, Marian es especialista en colorimetria y tecnicas de balayage.',
-     'assets/profesionales/marian.jpg', TRUE),
-    ('Carla Diaz',    'Tecnica en Belleza', 'Peinados y tratamientos capilares',
-     'Carla es experta en peinados de fiesta y tratamientos de hidratacion y keratina.',
-     'assets/profesionales/carla.jpg',  TRUE),
-    ('Sofia Romero',  'Estilista',          'Cortes y alisados',
-     'Sofia se especializa en cortes femeninos modernos y tratamientos de alisado brasileno.',
-     'assets/profesionales/sofia.jpg',  TRUE);
-
--- Servicios del catalogo
-INSERT INTO servicios (nombre, categoria, descripcion, precio_desde, precio_hasta, duracion_minutos, imagen, activo) VALUES
-    ('Corte de cabello',        'Cabello',    'Corte personalizado adaptado a tu forma de rostro y estilo de vida.',             4500.00,  NULL,     45,  'assets/servicios/corte.jpg',       TRUE),
-    ('Coloracion completa',     'Cabello',    'Coloracion de raiz a puntas con pigmentos de alta duracion.',                     12000.00, 18000.00, 90,  'assets/servicios/color.jpg',       TRUE),
-    ('Balayage y Mechas',       'Cabello',    'Tecnica de iluminacion degradada para un efecto natural y luminoso.',             15000.00, 22000.00, 120, 'assets/servicios/balayage.jpg',    TRUE),
-    ('Tratamiento de keratina', 'Tratamiento','Alisado progresivo que elimina el frizz y aporta brillo por hasta 3 meses.',     18000.00, NULL,     120, 'assets/servicios/keratina.jpg',    TRUE),
-    ('Hidratacion profunda',    'Tratamiento','Mascarilla nutritiva de alta penetracion para cabellos secos y danados.',         6000.00,  NULL,     60,  'assets/servicios/hidratacion.jpg', TRUE),
-    ('Peinado y brushing',      'Peinado',    'Secado y moldeado profesional con plancha o rulo para cualquier ocasion.',       5000.00,  8000.00,  60,  'assets/servicios/peinado.jpg',     TRUE),
-    ('Peinado de fiesta',       'Peinado',    'Peinado elaborado para eventos especiales, bodas o quinceaneras.',               12000.00, 20000.00, 90,  'assets/servicios/fiesta.jpg',      TRUE),
-    ('Manicura',                'Unas',       'Moldeado, limpieza de cuticulas y esmaltado de unas de las manos.',              3500.00,  NULL,     45,  'assets/servicios/manicura.jpg',    TRUE),
-    ('Pedicura',                'Unas',       'Tratamiento completo de unas de los pies con exfoliacion y esmaltado.',          4000.00,  NULL,     60,  'assets/servicios/pedicura.jpg',    TRUE),
-    ('Depilacion facial',       'Estetica',   'Depilacion de cejas, labio superior y menton con hilo o cera.',                 2500.00,  NULL,     30,  'assets/servicios/depilacion.jpg',  TRUE);
+-- Catálogo de Aura Studio: claves públicas estables, independientes de IDs MySQL.
+INSERT INTO profesionales (clave,nombre,titulo,especialidad,descripcion,imagen,activo) SELECT 'prof-1','Valeria Benítez','Directora Creativa & Master Colorist','Balayage, Colorimetría de Vanguardia y Visagismo','Líder del equipo técnico de Aura Studio. Especialista en visagismo y diseño de iluminación europea a mano alzada. Su pasión es crear tonalidades armoniosas que realcen las facciones y cuiden la salud del cabello.','assets/images/equipo_valeria.jpg',1 WHERE NOT EXISTS (SELECT 1 FROM profesionales WHERE clave='prof-1');
+INSERT INTO profesionales (clave,nombre,titulo,especialidad,descripcion,imagen,activo) SELECT 'prof-2','Mariano Echavarria','Estilista Senior & Diseñador de Cortes','Cortes de Autor, Visagismo y Texturizado','Especialista en cortes vanguardistas adaptados a la morfología facial y estilo de vida. Experto en técnicas de corte en seco y peinado de alta durabilidad.','assets/images/equipo_lucas.jpg',1 WHERE NOT EXISTS (SELECT 1 FROM profesionales WHERE clave='prof-2');
+INSERT INTO profesionales (clave,nombre,titulo,especialidad,descripcion,imagen,activo) SELECT 'prof-3','Sofía Carrizo','Especialista en Rubios & Babylights','Microiluminación, Babylights y Tonos Fríos','Dedicada a la creación de rubios luminosos y dimensionales. Trabaja con fórmulas orgánicas y protectores de enlaces capilares para un rubio radiante y sin daño.','assets/images/equipo_sofia.jpg',1 WHERE NOT EXISTS (SELECT 1 FROM profesionales WHERE clave='prof-3');
+INSERT INTO profesionales (clave,nombre,titulo,especialidad,descripcion,imagen,activo) SELECT 'prof-4','Camila Navarro','Terapeuta Capilar & Peinados de Gala','Alisados Láser 6D, Botox Capilar y Peinados de Novia','Especializada en salud capilar intensiva, alineación de fibra y peinados sofisticados para eventos, quinceañeras y celebraciones especiales.','assets/images/equipo_camila.jpg',1 WHERE NOT EXISTS (SELECT 1 FROM profesionales WHERE clave='prof-4');
+INSERT INTO servicios (clave,nombre,categoria,descripcion,precio_desde,precio_hasta,duracion_minutos,imagen,activo) SELECT 'srv-1','Alisado Láser 6D','Alisados','Técnica avanzada de alisado y disciplina capilar. Incluye tratamiento termoactivo, sellado de la fibra, reducción del frizz y acabado ultra liso con brillo intenso.',150000,NULL,150,'assets/images/alisado_6d.webp',1 WHERE NOT EXISTS (SELECT 1 FROM servicios WHERE clave='srv-1');
+INSERT INTO servicios (clave,nombre,categoria,descripcion,precio_desde,precio_hasta,duracion_minutos,imagen,activo) SELECT 'srv-2','Mechas Balayage','Iluminación','Técnica francesa de iluminación degradada a mano alzada. Incluye matización personalizada, baño de luz gloss, tratamiento nutritivo y peinado con ondas.',95000,NULL,180,'assets/images/mechas_balayage_2.png',1 WHERE NOT EXISTS (SELECT 1 FROM servicios WHERE clave='srv-2');
+INSERT INTO servicios (clave,nombre,categoria,descripcion,precio_desde,precio_hasta,duracion_minutos,imagen,activo) SELECT 'srv-3','Mechas Localizadas','Iluminación','Técnica de iluminación estratégica para realzar zonas específicas del cabello y potenciar los rasgos del rostro. Incluye aclaración personalizada, matización tonal, tratamiento nutritivo y peinado.',85000,NULL,120,'assets/images/mechas_localizadas_2.png',1 WHERE NOT EXISTS (SELECT 1 FROM servicios WHERE clave='srv-3');
+INSERT INTO servicios (clave,nombre,categoria,descripcion,precio_desde,precio_hasta,duracion_minutos,imagen,activo) SELECT 'srv-4','Mechas Babylight','Iluminación','Técnica de iluminación ultrafina inspirada en los reflejos naturales del cabello. Incluye aclaración delicada, matización personalizada, baño de luz gloss, tratamiento nutritivo y peinado.',88000,NULL,150,'assets/images/mechas_babylight_2.jpg',1 WHERE NOT EXISTS (SELECT 1 FROM servicios WHERE clave='srv-4');
+INSERT INTO servicios (clave,nombre,categoria,descripcion,precio_desde,precio_hasta,duracion_minutos,imagen,activo) SELECT 'srv-5','Peinados para Eventos','Peinados','Peinados personalizados para quinceañeras, bodas, fiestas, celebraciones y ocasiones especiales. Diseños pensados para complementar el estilo, el vestido y la personalidad de cada clienta.',48000,NULL,60,'assets/images/peinados_1.jpeg',1 WHERE NOT EXISTS (SELECT 1 FROM servicios WHERE clave='srv-5');
 
 -- =============================================================
 -- NOTAS
@@ -168,3 +160,6 @@ INSERT INTO servicios (nombre, categoria, descripcion, precio_desde, precio_hast
 -- crearse con password_hash() desde el setup del ABM.
 -- La academia/cursos fue eliminada del alcance del proyecto.
 -- =============================================================
+
+-- Demo sin contraseña conocida; el acceso controlado se realiza por POST.
+INSERT INTO usuarios (nombre,apellido,nickname,email,rol_id,password_hash) SELECT 'Administrador','Demo','admin_demo','admin@aurastudio.local',id,'$2y$10$0VfsuOXiDW6U7Ql7BDrNW.IJuS4jz/jOFB68o/BC9HaQoxQVaATfe' FROM roles WHERE nombre='Administrador';

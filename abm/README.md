@@ -1,73 +1,52 @@
-# Sprint 2 — ABM de usuarios
+# Aura Studio — Sprint 2
 
-Aplicación PHP con listado, búsqueda, alta, edición y eliminación de usuarios. Interfaz en español y adaptable a celulares. El portal estático existente se conserva; este módulo se ejecuta por separado.
+Requiere PHP 8.1+ con pdo_mysql y mbstring, y MySQL/MariaDB (XAMPP compatible). No usa Composer.
 
 ## Ejecutar
 
-Requisitos: PHP 8.1 o superior con PDO, pdo_mysql y mbstring. MySQL 8.0.16+ o MariaDB 10.4+ (incluido en XAMPP). No necesita Composer.
-
-Desde la raíz del repositorio:
+Desde la raíz del proyecto:
 
 ```powershell
 php abm/database/install.php
-php -S localhost:8080 -t abm/public
+php -S 127.0.0.1:18090 -t .
 ```
 
-Abrir http://localhost:8080. Iniciar MySQL en XAMPP antes de instalar. La instalación crea la base `peluqueria_abm`, las tablas y tres roles; puede repetirse sin borrar registros. La configuración local predeterminada es `127.0.0.1:3306`, usuario `root`, contraseña vacía. Para cambiarla, copiar `config/database.example.php` a `config/database.php` (ignorado por Git), o definir `ABM_DB_HOST`, `ABM_DB_PORT`, `ABM_DB_NAME`, `ABM_DB_USER`, `ABM_DB_PASSWORD`. No se migran automáticamente datos de una base SQLite previa.
+Usar install.php sólo en una base vacía. Para una instalación existente:
 
-El servidor de desarrollo debe usar **abm/public** como raíz, para que la base de datos y el código interno no queden expuestos. El ABM requiere una sesión de administrador. Los roles del ABM describen usuarios y no conceden acceso al panel.
-
-## Modelado de entidades
-
-```mermaid
-erDiagram
-    ROLES ||--o{ USUARIOS : tiene
-    ROLES {
-        integer id PK
-        text nombre UK
-        text descripcion
-    }
-    USUARIOS {
-        integer id PK
-        text nombre
-        text apellido
-        text nickname UK
-        text email UK
-        integer rol_id FK
-        text creado_en
-    }
+```powershell
+php abm/database/migrate.php
 ```
 
-Cada usuario debe tener exactamente un rol. Un rol puede tener cero o muchos usuarios. La clave foránea impide asignar roles inexistentes y eliminar roles que tengan usuarios. Nickname y email son únicos sin distinguir mayúsculas y minúsculas según la colación utf8mb4_unicode_ci. El catálogo de roles se consulta desde la interfaz; el ABM solicitado corresponde a usuarios.
+Configuración: abm/config/database.php si existe; en su defecto database.example.php. Variables ABM_DB_HOST, ABM_DB_PORT, ABM_DB_NAME, ABM_DB_USER y ABM_DB_PASSWORD. Base predeterminada: aura_studio. El instalador respeta ABM_DB_NAME; el SQL de entrega usa aura_studio.
 
-## Implementación
+Abrir /index.html, /abm/public/login.php o /abm/public/registro.php desde el servidor PHP. El panel está en /abm/public/index.php.
 
-- `database/schema.sql`: tablas, restricciones, índice y roles iniciales.
-- `src/bootstrap.php`: conexión PDO, consultas preparadas, validación y operaciones sobre usuarios.
-- `public/index.php`: controlador HTTP y vistas renderizadas en PHP; no requiere JavaScript.
-- `public/styles.css`: interfaz responsive.
-- `tests/run.php`: pruebas funcionales en una base MySQL temporal independiente, eliminada al finalizar (requiere permisos CREATE/DROP DATABASE).
+## Autenticación
 
-Las escrituras usan POST y token CSRF. El borrado tiene pantalla de confirmación. Los datos se escapan al mostrar HTML. Se conservan los valores del formulario ante errores y se usa redirección luego de guardar para evitar reenvíos al recargar.
+Registro público asigna Usuario consultando roles. Login por email o nickname. Sesiones PHP con rotación del identificador, CSRF, cookie HttpOnly/SameSite y vencimiento por 30 minutos de inactividad. Se vuelve a consultar el rol en cada acceso protegido. Cinco intentos incorrectos bloquean la cuenta cinco minutos. El panel y el cambio de estado requieren Administrador.
 
-## Validación
+El botón de administrador de prueba inicia una sesión real de admin@aurastudio.local. No tiene contraseña conocida ni credenciales en JavaScript. Se habilita por defecto sólo en localhost. AURA_DEMO_LOGIN=0 lo desactiva; AURA_DEMO_LOGIN=1 lo habilita expresamente para una demostración en otro entorno.
+
+La migración conserva la tabla administradores e importa su cuenta anterior cuando no hay conflictos. Los usuarios antiguos sin contraseña deben recibir una desde el ABM antes de poder iniciar sesión. El administrador no puede eliminarse ni cambiar su propio rol. Contraseña vacía al editar conserva el hash.
+
+## Reservas y catálogo
+
+Las reservas siguen permitiendo clientes sin cuenta y conservan sus campos de contacto. No se agrega una FK de usuario que rompa ese flujo. Las FK de servicio y profesional usan RESTRICT. Precio y duración se toman siempre de MySQL. Se comprueban apertura, días, anticipación, solapamiento y el límite existente de dos turnos diarios por profesional. El bloqueo transaccional del profesional serializa las altas concurrentes.
+
+Las claves públicas srv-* y prof-* vinculan los enlaces del landing con IDs reales, sin asumir IDs numéricos fijos. La migración añade el catálogo de Aura conservando los registros anteriores; esos registros pueden seguir apareciendo en el selector. El SQL desde cero incluye cinco servicios y cuatro profesionales de Aura.
+
+No se guardan reservas ni catálogos en localStorage. Si falla el servidor, la interfaz muestra error. La consulta de reservas con datos personales queda en el panel autenticado.
+
+Login, registro y ABM usan formularios PHP con redirección después de guardar. Las APIs de reservas consumidas por fetch devuelven JSON; no redirigen a HTML por falta de sesión.
+
+## Pruebas
 
 ```powershell
 php abm/tests/run.php
+node abm/tests/integration.cjs
+node --test tests/calendar.test.cjs
 ```
 
-Prueba manual: crear un usuario, buscarlo, editarlo y cambiar su rol; intentar repetir email y nickname; cancelar la eliminación; confirmar la eliminación. Verificar que los datos sobrevivan al reinicio del servidor.
+Las pruebas PHP/HTTP crean bases temporales separadas y las eliminan al terminar. La integración usa un servidor PHP temporal en 18089 y el módulo JavaScript real para guardar reservas en MySQL. Las pruebas unitarias del calendario y errores de red usan dobles de prueba y no sustituyen las pruebas de integración.
 
-## Calendario de reservas
-
-El portal se puede probar con `php -S localhost:8081` y abrir `/pages/reservas.html`. El calendario respeta días de apertura, descarta fechas y horarios pasados, reinicia el horario al cambiar servicio o fecha y vuelve a validar antes de guardar. Las reservas siguen usando localStorage del navegador: esta adaptación a MySQL corresponde al ABM de usuarios y roles; las reservas no están sincronizadas entre dispositivos.
-
-Pruebas del calendario: `node --test tests/calendar.test.cjs`.
-
-## Login de Aura Studio
-
-Ejecutar nuevamente `php abm/database/install.php` para agregar la tabla de acceso sin borrar los usuarios. Abrir `http://localhost:8080/login.php`: la primera vez permite crear una cuenta de administrador únicamente desde localhost. Elegir email y contraseña propios; no hay credenciales predeterminadas. Después del alta, esa pantalla se convierte en login.
-
-El administrador se guarda en `administradores`, separado de los usuarios gestionados por el ABM. Las contraseñas se guardan con password_hash y se verifican con password_verify. El acceso usa sesiones, CSRF, regeneración del identificador, vencimiento por inactividad (30 minutos) y bloqueo de 5 minutos tras 5 errores. Cerrar sesión usa POST e invalida la sesión.
-
-El botón superior del portal y de reservas apunta a `abm/public/login.php` relativo al proyecto; para el servidor dedicado del ABM usar `/login.php`. En un despliegue público configurar HTTPS y servir únicamente los directorios públicos.
+Ver docs/auditoria-aura/informe-sprint2.md para resultados y limitaciones de la verificación visual.

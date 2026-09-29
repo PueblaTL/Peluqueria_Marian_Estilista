@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+date_default_timezone_set('America/Argentina/Buenos_Aires');
 
 function database(bool $withDatabase = true): PDO
 {
@@ -76,16 +77,30 @@ final class Usuarios
             $stmt->execute(['valor' => $data[$campo], 'id' => $id ?? 0]);
             if ($stmt->fetch()) $errors[$campo] = 'Este valor ya está registrado por otro usuario.';
         }
+        $password = is_string($input['password'] ?? null) ? $input['password'] : '';
+        if (($id === null || $password !== '') && (strlen($password) < 8 || strlen($password) > 72)) $errors['password'] = 'La contraseña debe tener entre 8 y 72 bytes.';
+        if ($id !== null && $id === (int) ($_SESSION['usuario_id'] ?? 0)) {
+            $current = $this->buscar($id);
+            if ((string) $current['rol_id'] !== $data['rol_id']) $errors['rol_id'] = 'No podés cambiar tu propio rol.';
+        }
         if ($errors) return $errors;
         try {
             if ($id === null) {
-                $stmt = $this->db->prepare('INSERT INTO usuarios (nombre, apellido, nickname, email, rol_id) VALUES (:nombre, :apellido, :nickname, :email, :rol_id)');
+                $stmt = $this->db->prepare('INSERT INTO usuarios (nombre, apellido, nickname, email, rol_id, password_hash) VALUES (:nombre, :apellido, :nickname, :email, :rol_id, :password_hash)');
             } else {
                 $data['id'] = $id;
                 $stmt = $this->db->prepare('UPDATE usuarios SET nombre=:nombre, apellido=:apellido, nickname=:nickname, email=:email, rol_id=:rol_id WHERE id=:id');
             }
+            if ($id === null) $data['password_hash'] = password_hash($password, PASSWORD_DEFAULT);
+            $this->db->beginTransaction();
             $stmt->execute($data);
+            if ($id !== null && $password !== '') {
+                $pw = $this->db->prepare('UPDATE usuarios SET password_hash=? WHERE id=?');
+                $pw->execute([password_hash($password, PASSWORD_DEFAULT), $id]);
+            }
+            $this->db->commit();
         } catch (PDOException $ex) {
+            if ($this->db->inTransaction()) $this->db->rollBack();
             if ($ex->getCode() === '23000') return ['general' => 'No se pudo guardar: verificá que el email y el nickname no estén repetidos y que el rol exista.'];
             throw $ex;
         }
@@ -94,6 +109,7 @@ final class Usuarios
 
     public function eliminar(int $id): bool
     {
+        if ($id === (int) ($_SESSION['usuario_id'] ?? 0)) throw new DomainException('No podés eliminar tu propia cuenta.');
         $stmt = $this->db->prepare('DELETE FROM usuarios WHERE id = ?');
         $stmt->execute([$id]);
         return $stmt->rowCount() === 1;
