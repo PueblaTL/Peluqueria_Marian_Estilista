@@ -1,0 +1,980 @@
+{
+  ".codex/hooks.json": {
+    "mtime": 1792108005.9739344,
+    "seen": 1792120265.0383024,
+    "ast_hash": "9d80a4f7d48849c7804b047019c8ccf2",
+    "semantic_hash": ""
+  },
+  "backend/api/auth/forgot-password.php": {
+    "mtime": 1792108006.0391538,
+    "seen": 1792120265.038313,
+    "ast_hash": "16bea7b8e2fd5f29398efb00dc1a6cdd",
+    "semantic_hash": ""
+  },
+  "backend/api/auth/login.php": {
+    "mtime": 1792108006.0482347,
+    "seen": 1792120265.0383158,
+    "ast_hash": "fa8d27b88188a1ff45227cb6ff1ce2e4",
+    "semantic_hash": ""
+  },
+  "backend/api/auth/logout.php": {
+    "mtime": 1792108006.054855,
+    "seen": 1792120265.0383182,
+    "ast_hash": "8afa6a617cdb5a986f80ae72a268b721",
+    "semantic_hash": ""
+  },
+  "backend/api/auth/me.php": {
+    "mtime": 1792108006.0619204,
+    "seen": 1792120265.0383203,
+    "ast_hash": "00751e04ac8f0f3836bf778537760f2e",
+    "semantic_hash": ""
+  },
+  "backend/api/auth/register.php": {
+    "mtime": 1792108006.0679598,
+    "seen": 1792120265.0383222,
+    "ast_hash": "5bd0b889279bd5b4f8a37b26c816d220",
+    "semantic_hash": ""
+  },
+  "backend/api/auth/resend-verification.php": {
+    "mtime": 1792108006.0776882,
+    "seen": 1792120265.0383236,
+    "ast_hash": "4bf264bae6465e3cc0889df4be311490",
+    "semantic_hash": ""
+  },
+  "backend/api/auth/reset-password.php": {
+    "mtime": 1792108006.08535,
+    "seen": 1792120265.0383255,
+    "ast_hash": "144be36781f2e5baf0bfe33030b8e2e8",
+    "semantic_hash": ""
+  },
+  "backend/api/auth/verify.php": {
+    "mtime": 1792108006.0923963,
+    "seen": 1792120265.038327,
+    "ast_hash": "a52376e1f8ad99fcec346c55fa0a845b",
+    "semantic_hash": ""
+  },
+  "backend/api/inscripciones/create.php": {
+    "mtime": 1792108006.1303146,
+    "seen": 1792120265.0383372,
+    "ast_hash": "e2dd2ddef7c2fb5291ec2f9fc79b30bd",
+    "semantic_hash": ""
+  },
+  "backend/api/inscripciones/delete.php": {
+    "mtime": 1792108006.1364317,
+    "seen": 1792120265.0383391,
+    "ast_hash": "41e686fe184df16b166680111e61cd6b",
+    "semantic_hash": ""
+  },
+  "backend/api/inscripciones/list.php": {
+    "mtime": 1792108006.1449902,
+    "seen": 1792120265.0383408,
+    "ast_hash": "322abc586ddb545cbca7772fa61329a3",
+    "semantic_hash": ""
+  },
+  "backend/api/inscripciones/update_estado.php": {
+    "mtime": 1792108006.1536658,
+    "seen": 1792120265.0383427,
+    "ast_hash": "05b8eeda881308abc2047f257f2e1c6f",
+    "semantic_hash": ""
+  },
+  "backend/api/profesionales/get.php": {
+    "mtime": 1792108006.1623173,
+    "seen": 1792120265.0383441,
+    "ast_hash": "d3e0bea0130acc730e7d120b19b4e447",
+    "semantic_hash": ""
+  },
+  "backend/api/profesionales/list.php": {
+    "mtime": 1792108006.1683562,
+    "seen": 1792120265.038346,
+    "ast_hash": "fb09e76ddeae0e3f95211c9e35ba992f",
+    "semantic_hash": ""
+  },
+  "backend/api/reservas/create.php": {
+    "mtime": 1792108006.1799338,
+    "seen": 1792120265.0383477,
+    "ast_hash": "7cc0b3426127db1bf812dddfc7e928db",
+    "semantic_hash": ""
+  },
+  "backend/api/reservas/delete.php": {
+    "mtime": 1792108006.1880324,
+    "seen": 1792120265.0383494,
+    "ast_hash": "f678d63bf0fd956ad0e3d718170880c7",
+    "semantic_hash": ""
+  },
+  "backend/api/reservas/disponibilidad.php": {
+    "mtime": 1792108006.1981113,
+    "seen": 1792120265.038351,
+    "ast_hash": "587e0381e3f812134e06062b5cdda61d",
+    "semantic_hash": ""
+  },
+  "backend/api/reservas/list.php": {
+    "mtime": 1792108006.2061625,
+    "seen": 1792120265.0383527,
+    "ast_hash": "51befe639cc1b10d61c13256cc385de4",
+    "semantic_hash": ""
+  },
+  "backend/api/reservas/stats.php": {
+    "mtime": 1792108006.2147894,
+    "seen": 1792120265.0383544,
+    "ast_hash": "1762a4726db8497aba5e9cf0ba411997",
+    "semantic_hash": ""
+  },
+  "backend/api/reservas/update.php": {
+    "mtime": 1792108006.224923,
+    "seen": 1792120265.038356,
+    "ast_hash": "ba436ba71fe8acb22ace3ca1f17cec47",
+    "semantic_hash": ""
+  },
+  "backend/api/servicios/create.php": {
+    "mtime": 1792108006.2339754,
+    "seen": 1792120265.0383577,
+    "ast_hash": "b4a3a0af52e0a054494457b086adc0d5",
+    "semantic_hash": ""
+  },
+  "backend/api/servicios/delete.php": {
+    "mtime": 1792108006.2425148,
+    "seen": 1792120265.0383596,
+    "ast_hash": "8ac6681c8881092059b099bae018862d",
+    "semantic_hash": ""
+  },
+  "backend/api/servicios/get.php": {
+    "mtime": 1792108006.255606,
+    "seen": 1792120265.0383613,
+    "ast_hash": "19c1222105a57175184f84bd4cb5d8a6",
+    "semantic_hash": ""
+  },
+  "backend/api/servicios/list.php": {
+    "mtime": 1792108006.264739,
+    "seen": 1792120265.038363,
+    "ast_hash": "3e5e89959bfca50ff15035e3f494f3c6",
+    "semantic_hash": ""
+  },
+  "backend/api/servicios/update.php": {
+    "mtime": 1792108006.2733817,
+    "seen": 1792120265.0383646,
+    "ast_hash": "93c45ef7db9dc48d1f108b536227d9c6",
+    "semantic_hash": ""
+  },
+  "backend/api/usuarios/list.php": {
+    "mtime": 1792108006.2819524,
+    "seen": 1792120265.0383666,
+    "ast_hash": "5ac6d7bdea91da7e6738b177bcd1b948",
+    "semantic_hash": ""
+  },
+  "backend/composer.json": {
+    "mtime": 1792108006.3097012,
+    "seen": 1792120265.0383682,
+    "ast_hash": "633c14747e090c71f2d32298977a0e9a",
+    "semantic_hash": ""
+  },
+  "backend/config/Database.php": {
+    "mtime": 1792108006.3299406,
+    "seen": 1792120265.0383701,
+    "ast_hash": "8f5a208675541f842c01e9cc3ce618de",
+    "semantic_hash": ""
+  },
+  "backend/config/config.php": {
+    "mtime": 1792108006.3380723,
+    "seen": 1792120265.0383716,
+    "ast_hash": "514a96cc047ec13d77144c34ab71cfa8",
+    "semantic_hash": ""
+  },
+  "backend/config/fix_passwords.php": {
+    "mtime": 1792108006.354759,
+    "seen": 1792120265.0383747,
+    "ast_hash": "fedd479dee28977930d8d80c5e9ed716",
+    "semantic_hash": ""
+  },
+  "backend/config/helpers.php": {
+    "mtime": 1792108006.3645387,
+    "seen": 1792120265.038376,
+    "ast_hash": "16d3c682def555aafbbea8976ff20b4f",
+    "semantic_hash": ""
+  },
+  "backend/config/init_db.php": {
+    "mtime": 1792108006.3726003,
+    "seen": 1792120265.038378,
+    "ast_hash": "d028df0d3b07dceb4257d8e93144d937",
+    "semantic_hash": ""
+  },
+  "backend/config/setup_production_admin.php": {
+    "mtime": 1792108006.3796642,
+    "seen": 1792120265.0383797,
+    "ast_hash": "18e5d065eff69c5a2fe3a04ddb028fb2",
+    "semantic_hash": ""
+  },
+  "backend/controllers/AuthController.php": {
+    "mtime": 1792108006.388361,
+    "seen": 1792120265.0383813,
+    "ast_hash": "6fc2064128d175f79b9bc5e457eacbcf",
+    "semantic_hash": ""
+  },
+  "backend/controllers/InscripcionController.php": {
+    "mtime": 1792108006.4040627,
+    "seen": 1792120265.0383847,
+    "ast_hash": "63f0c48e4339d8f6f4235403e9b1771f",
+    "semantic_hash": ""
+  },
+  "backend/controllers/ProfesionalController.php": {
+    "mtime": 1792108006.4141412,
+    "seen": 1792120265.0383863,
+    "ast_hash": "ba3509edb1cb87607ad658848aeff87a",
+    "semantic_hash": ""
+  },
+  "backend/controllers/ReservaController.php": {
+    "mtime": 1792108006.4222536,
+    "seen": 1792120265.0383883,
+    "ast_hash": "e34439319606ce6b732b2f78bf795098",
+    "semantic_hash": ""
+  },
+  "backend/controllers/ServicioController.php": {
+    "mtime": 1792108006.428813,
+    "seen": 1792120265.0383894,
+    "ast_hash": "9f8ad4209a4e4ddef3df78d636de6301",
+    "semantic_hash": ""
+  },
+  "backend/controllers/UsuarioController.php": {
+    "mtime": 1792108006.436362,
+    "seen": 1792120265.0383914,
+    "ast_hash": "52f39369a7d792d3cf37b61bf7b311fe",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/font/courier.json": {
+    "mtime": 1792108006.4462912,
+    "seen": 1792120265.038393,
+    "ast_hash": "4fdacac946976830424388cb2f876623",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/font/courierb.json": {
+    "mtime": 1792108006.454877,
+    "seen": 1792120265.038395,
+    "ast_hash": "ab2c37e2c21fd51321190fe0eb09765f",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/font/helvetica.json": {
+    "mtime": 1792108006.4665406,
+    "seen": 1792120265.0383964,
+    "ast_hash": "bb6d8375b082505043f9c9098aec6735",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/font/helveticab.json": {
+    "mtime": 1792108006.4741685,
+    "seen": 1792120265.0383983,
+    "ast_hash": "90ef23a1eb2ddda18b62b1d3f24d26d5",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/font/helveticabi.json": {
+    "mtime": 1792108006.4837673,
+    "seen": 1792120265.0384,
+    "ast_hash": "d70298f8bbfa4d1837feb551a3d9b483",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/font/helveticai.json": {
+    "mtime": 1792108006.492385,
+    "seen": 1792120265.0384016,
+    "ast_hash": "47af42d95c3e8e9c2a451941013d72b1",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/font/times.json": {
+    "mtime": 1792108006.4999359,
+    "seen": 1792120265.038403,
+    "ast_hash": "ccab3f250363691afdf214ea3145f7c5",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/font/timesb.json": {
+    "mtime": 1792108006.5101113,
+    "seen": 1792120265.0384047,
+    "ast_hash": "735095ca97ea3b1fb9884a2149858387",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/font/timesbi.json": {
+    "mtime": 1792108006.518155,
+    "seen": 1792120265.0384064,
+    "ast_hash": "2f82835457a3fd47aabebe01dcb7a324",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/font/timesi.json": {
+    "mtime": 1792108006.5277936,
+    "seen": 1792120265.038408,
+    "ast_hash": "c3d0e0ec06a4acc888bb557111d28547",
+    "semantic_hash": ""
+  },
+  "backend/libs/FPDF/fpdf.php": {
+    "mtime": 1792108006.5364332,
+    "seen": 1792120265.0384095,
+    "ast_hash": "f091d2462e80e4538e6c873350322d7d",
+    "semantic_hash": ""
+  },
+  "backend/libs/PHPMailer/Exception.php": {
+    "mtime": 1792108006.5445132,
+    "seen": 1792120265.038411,
+    "ast_hash": "4eb895f1ff297d3e0716fccd5713e5bb",
+    "semantic_hash": ""
+  },
+  "backend/libs/PHPMailer/PHPMailer.php": {
+    "mtime": 1792108006.5555923,
+    "seen": 1792120265.0384128,
+    "ast_hash": "60d46a8e440dafc03644813a7fecd3ca",
+    "semantic_hash": ""
+  },
+  "backend/libs/PHPMailer/SMTP.php": {
+    "mtime": 1792108006.6283145,
+    "seen": 1792120265.0384142,
+    "ast_hash": "0db9fd883348a462c8102b294e275b9f",
+    "semantic_hash": ""
+  },
+  "backend/models/Inscripcion.php": {
+    "mtime": 1792108006.6504848,
+    "seen": 1792120265.0384178,
+    "ast_hash": "4a26d8586af3ea26725e721deba17e84",
+    "semantic_hash": ""
+  },
+  "backend/models/Profesional.php": {
+    "mtime": 1792108006.6621504,
+    "seen": 1792120265.0384192,
+    "ast_hash": "3759b48d6d0a548a6551c62d78708018",
+    "semantic_hash": ""
+  },
+  "backend/models/Reserva.php": {
+    "mtime": 1792108006.6717348,
+    "seen": 1792120265.038421,
+    "ast_hash": "5d603f3b1af8a5b4b44dc094c94035c5",
+    "semantic_hash": ""
+  },
+  "backend/models/Servicio.php": {
+    "mtime": 1792108006.6798599,
+    "seen": 1792120265.0384228,
+    "ast_hash": "6dc417d4a687f1f844de0722726a524a",
+    "semantic_hash": ""
+  },
+  "backend/models/Usuario.php": {
+    "mtime": 1792108006.6884327,
+    "seen": 1792120265.0384243,
+    "ast_hash": "8151eaa785925546927c82814056cd2c",
+    "semantic_hash": ""
+  },
+  "backend/repositories/InscripcionRepository.php": {
+    "mtime": 1792108006.703115,
+    "seen": 1792120265.0384278,
+    "ast_hash": "4fc7f1b1fd9d2c9d00e84fdd347be83b",
+    "semantic_hash": ""
+  },
+  "backend/repositories/ProfesionalRepository.php": {
+    "mtime": 1792108006.7127824,
+    "seen": 1792120265.0384295,
+    "ast_hash": "deab73ec2a985036f3d1403779faf4d8",
+    "semantic_hash": ""
+  },
+  "backend/repositories/ReservaRepository.php": {
+    "mtime": 1792108006.719985,
+    "seen": 1792120265.038431,
+    "ast_hash": "cb72388755650b689036bdbb98a91f24",
+    "semantic_hash": ""
+  },
+  "backend/repositories/ServicioRepository.php": {
+    "mtime": 1792108006.7266278,
+    "seen": 1792120265.0384328,
+    "ast_hash": "da5e60336f9ae0b11f0b81b4b6028535",
+    "semantic_hash": ""
+  },
+  "backend/repositories/UsuarioRepository.php": {
+    "mtime": 1792108006.7352014,
+    "seen": 1792120265.0384345,
+    "ast_hash": "3fb0e23d75b75d81caf345f15a1fde8a",
+    "semantic_hash": ""
+  },
+  "backend/services/AuthService.php": {
+    "mtime": 1792108006.7423518,
+    "seen": 1792120265.0384367,
+    "ast_hash": "888b55f6cf1d9485c09b0478ebf13c5c",
+    "semantic_hash": ""
+  },
+  "backend/services/InscripcionService.php": {
+    "mtime": 1792108006.7696474,
+    "seen": 1792120265.0384412,
+    "ast_hash": "efe04ab8c5c723cfa33a23ce921d2aaa",
+    "semantic_hash": ""
+  },
+  "backend/services/MailerService.php": {
+    "mtime": 1792108006.7787962,
+    "seen": 1792120265.038443,
+    "ast_hash": "1b55e8ac84b66d79d2bc49d06dc2da7d",
+    "semantic_hash": ""
+  },
+  "backend/services/PdfTicketService.php": {
+    "mtime": 1792108006.7863514,
+    "seen": 1792120265.0384452,
+    "ast_hash": "8a85e2353ceeeebb3f06abb1b5fb5421",
+    "semantic_hash": ""
+  },
+  "backend/services/ProfesionalService.php": {
+    "mtime": 1792108006.7949812,
+    "seen": 1792120265.0384471,
+    "ast_hash": "17ea0bcb849f1f0a1da58ba9edbaa729",
+    "semantic_hash": ""
+  },
+  "backend/services/ReservaService.php": {
+    "mtime": 1792108006.8025465,
+    "seen": 1792120265.0384488,
+    "ast_hash": "cda645135549186501906bcafdb3977a",
+    "semantic_hash": ""
+  },
+  "backend/services/ServicioService.php": {
+    "mtime": 1792108006.8252914,
+    "seen": 1792120265.0384507,
+    "ast_hash": "da115b98dd6e33a453dcffdfa97948b7",
+    "semantic_hash": ""
+  },
+  "frontend/js/admin.js": {
+    "mtime": 1792108007.7068696,
+    "seen": 1792120265.0384572,
+    "ast_hash": "1a42fbfe9c489d99bf682433801a8c9b",
+    "semantic_hash": ""
+  },
+  "frontend/js/alerts.js": {
+    "mtime": 1792108007.7153566,
+    "seen": 1792120265.038459,
+    "ast_hash": "03953416762cf5ac825ec0588f3de743",
+    "semantic_hash": ""
+  },
+  "frontend/js/api.js": {
+    "mtime": 1792108007.7255027,
+    "seen": 1792120265.0384614,
+    "ast_hash": "28808e62479805c8e317eae18cf02f94",
+    "semantic_hash": ""
+  },
+  "frontend/js/auth.js": {
+    "mtime": 1792108007.732063,
+    "seen": 1792120265.0384629,
+    "ast_hash": "607801d85ba7c12c905e4dde37e2e92d",
+    "semantic_hash": ""
+  },
+  "frontend/js/data.js": {
+    "mtime": 1792108007.764989,
+    "seen": 1792120265.038468,
+    "ast_hash": "1624ca5dabf6b17be75468329a4a58db",
+    "semantic_hash": ""
+  },
+  "frontend/js/main.js": {
+    "mtime": 1792177749.132644,
+    "seen": 1792177782.6099584,
+    "ast_hash": "672a367becc38b1e51666e6d0e9d78df",
+    "semantic_hash": ""
+  },
+  "frontend/js/reservas.js": {
+    "mtime": 1792108007.7853086,
+    "seen": 1792120265.0384712,
+    "ast_hash": "75c59d199da0196a77fd0d7791cc7d6c",
+    "semantic_hash": ""
+  },
+  "frontend/js/storage.js": {
+    "mtime": 1792108007.7953944,
+    "seen": 1792120265.0384727,
+    "ast_hash": "082ac3af15b4b34fb3d0dd7ecfe45bcc",
+    "semantic_hash": ""
+  },
+  "index.php": {
+    "mtime": 1792108008.6970294,
+    "seen": 1792120265.0384748,
+    "ast_hash": "2ce2686196db18e2bf02ae44e497316d",
+    "semantic_hash": ""
+  },
+  "verificar-email.php": {
+    "mtime": 1792108008.7116995,
+    "seen": 1792120265.0384765,
+    "ast_hash": "33fb843585a228c6e35f8d6649ad8b7c",
+    "semantic_hash": ""
+  },
+  "AGENTS.md": {
+    "mtime": 1792108006.0006025,
+    "seen": 1792120265.0384784,
+    "ast_hash": "21ceb6533048be51308e69e7b74a35cf",
+    "semantic_hash": ""
+  },
+  "backend/README.md": {
+    "mtime": 1792108006.0279858,
+    "seen": 1792120265.0384815,
+    "ast_hash": "570a4926f5106d9c13a7dd32cf9f005e",
+    "semantic_hash": ""
+  },
+  "frontend/index.html": {
+    "mtime": 1792177527.497071,
+    "seen": 1792177662.1977785,
+    "ast_hash": "3b5035e9d14e8ab3d4df3cd8f0b83d7f",
+    "semantic_hash": ""
+  },
+  "frontend/pages/admin.html": {
+    "mtime": 1792108007.8045194,
+    "seen": 1792120265.038487,
+    "ast_hash": "f4931b39a68dc5859b4118f8f6d6ec24",
+    "semantic_hash": ""
+  },
+  "frontend/pages/login.html": {
+    "mtime": 1792108007.8247445,
+    "seen": 1792120265.03849,
+    "ast_hash": "194918bb016b99f2b1ed0c11c9f3ad43",
+    "semantic_hash": ""
+  },
+  "frontend/pages/mis-reservas.html": {
+    "mtime": 1792108007.8349009,
+    "seen": 1792120265.0384924,
+    "ast_hash": "607ec75776c276f542237c997cb398e5",
+    "semantic_hash": ""
+  },
+  "frontend/pages/registro.html": {
+    "mtime": 1792108007.8434665,
+    "seen": 1792120265.0384939,
+    "ast_hash": "f60c6c9504909aba518b2c754da679bc",
+    "semantic_hash": ""
+  },
+  "frontend/pages/reservas.html": {
+    "mtime": 1792108007.853107,
+    "seen": 1792120265.0384958,
+    "ast_hash": "0ea46c7e25461d7900c9055c6296c515",
+    "semantic_hash": ""
+  },
+  "gemini.md": {
+    "mtime": 1792108007.8703072,
+    "seen": 1792120265.0384977,
+    "ast_hash": "fce42c901d8f06cc5a5c0b6cff8da7d1",
+    "semantic_hash": ""
+  },
+  "index.html": {
+    "mtime": 1792108008.6884532,
+    "seen": 1792120265.0385003,
+    "ast_hash": "62b69db75e8b89c4e88fa2b27dc54350",
+    "semantic_hash": ""
+  },
+  "assets/fondo_login.webp": {
+    "mtime": 1792108006.0122926,
+    "seen": 1792120265.0385025,
+    "ast_hash": "c28036bebe36189fad85c1f8da61c2a6",
+    "semantic_hash": ""
+  },
+  "frontend/assets/fondo_login.webp": {
+    "mtime": 1792108006.9218745,
+    "seen": 1792120265.0385077,
+    "ast_hash": "c28036bebe36189fad85c1f8da61c2a6",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/alisado_6d.webp": {
+    "mtime": 1792108006.9432938,
+    "seen": 1792120265.0385115,
+    "ast_hash": "a718ba86636679cb98795c0916990775",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/alisado_6d_3.webp": {
+    "mtime": 1792108006.9548852,
+    "seen": 1792120265.0385134,
+    "ast_hash": "a07966bfb36a879192faa53b1e902a45",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/alisado_6d_4.webp": {
+    "mtime": 1792108006.963539,
+    "seen": 1792120265.0385158,
+    "ast_hash": "7b4311f7f888834a7fa90975217ff800",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/alisado_6d_5.webp": {
+    "mtime": 1792108006.9802992,
+    "seen": 1792120265.0385177,
+    "ast_hash": "44a966c0a9ef72b3522d6c52521e8932",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/alisado_6d_6.webp": {
+    "mtime": 1792108006.9904706,
+    "seen": 1792120265.0385199,
+    "ast_hash": "4b7539c1eda76cec36714e421290521c",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/alisado_6d_7.webp": {
+    "mtime": 1792108007.0020716,
+    "seen": 1792120265.0385215,
+    "ast_hash": "cdf7e8fe1aa6e1553f582ba08b6187f6",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/cortes_1.webp": {
+    "mtime": 1792108007.0111823,
+    "seen": 1792120265.0385418,
+    "ast_hash": "c28aadcd16848aa9cad371af1c5c348c",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/curso_1.webp": {
+    "mtime": 1792108007.022439,
+    "seen": 1792120265.0385437,
+    "ast_hash": "2ed947cf1f81cb707649256b552c3b6c",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/curso_2.webp": {
+    "mtime": 1792108007.0332854,
+    "seen": 1792120265.0385454,
+    "ast_hash": "c32348c302848b7edae1fbea97337988",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/ejemplo_imagen.webp": {
+    "mtime": 1792108007.044942,
+    "seen": 1792120265.0385473,
+    "ast_hash": "789a2482a189cba95a7e708cff18af85",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/fondo_login.webp": {
+    "mtime": 1792108007.0485156,
+    "seen": 1792120265.038549,
+    "ast_hash": "c28036bebe36189fad85c1f8da61c2a6",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/foto_curso.webp": {
+    "mtime": 1792108007.0581543,
+    "seen": 1792120265.0385506,
+    "ast_hash": "2168e61b96f4490b24309232b92ce10e",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/foto_perfil.webp": {
+    "mtime": 1792108007.0784097,
+    "seen": 1792120265.038552,
+    "ast_hash": "92e0efe14a36e3363bcba18a0c0466bc",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/mechas_babylight_2.webp": {
+    "mtime": 1792108007.1237423,
+    "seen": 1792120265.0385559,
+    "ast_hash": "16d039dca0e085713feb88cc7bb01445",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/mechas_babylight_4.webp": {
+    "mtime": 1792108007.2896202,
+    "seen": 1792120265.0385578,
+    "ast_hash": "a6e6ee92bcf674414090d1387d61cf1c",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/mechas_balayage.webp": {
+    "mtime": 1792108007.305371,
+    "seen": 1792120265.0385594,
+    "ast_hash": "aa752123fe1c9a53cc753d618ee9039b",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/mechas_balayage_2.webp": {
+    "mtime": 1792108007.3198924,
+    "seen": 1792120265.0385616,
+    "ast_hash": "2768abf5c1ce0dbec462fc28b31f753b",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/mechas_balayage_3.webp": {
+    "mtime": 1792108007.3326223,
+    "seen": 1792120265.0385635,
+    "ast_hash": "4e5e6f99842c32337641350774a9ba25",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/mechas_localizadas.webp": {
+    "mtime": 1792108007.3518665,
+    "seen": 1792120265.0385654,
+    "ast_hash": "b713d06bb64a8c410de23e18fd4eb557",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/mechas_localizadas_2.webp": {
+    "mtime": 1792108007.3650382,
+    "seen": 1792120265.0385675,
+    "ast_hash": "c98c8f8c328639168273f683cc90eb68",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/mechas_localizadas_3.webp": {
+    "mtime": 1792108007.3781402,
+    "seen": 1792120265.0385695,
+    "ast_hash": "d74f9f4c83042fbf14bfe53f55c0c437",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/peinados/peinado_15anios.webp": {
+    "mtime": 1792108007.3999474,
+    "seen": 1792120265.0385711,
+    "ast_hash": "6175f7870be2f240ecf8c4a22cc03a38",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/peinados/peinado_novia.webp": {
+    "mtime": 1792108007.4332304,
+    "seen": 1792120265.0385733,
+    "ast_hash": "94bc95d3930fd4576274dd6efd5c63b4",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/peinados/peinado_ondas.webp": {
+    "mtime": 1792108007.4489844,
+    "seen": 1792120265.0385754,
+    "ast_hash": "e8f5e97bc00b89b427b62737236b8991",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/peinados/peinado_prueba.webp": {
+    "mtime": 1792108007.47991,
+    "seen": 1792120265.038577,
+    "ast_hash": "4b48d5b1743ca4e7e9223e53c397b857",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/peinados/peinado_recogido.webp": {
+    "mtime": 1792108007.4930637,
+    "seen": 1792120265.0385792,
+    "ast_hash": "ce8bad2e1b839bd81deb92a3f074f708",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/peinados/peinado_semirrecogido.webp": {
+    "mtime": 1792108007.5031419,
+    "seen": 1792120265.0385816,
+    "ast_hash": "432ac5a48371b1f911e41514e5387b10",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/peinados/peinado_social.webp": {
+    "mtime": 1792108007.514803,
+    "seen": 1792120265.0385835,
+    "ast_hash": "427b44a9b952aeaffd5bd99c5b97c82f",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/peinados_1.webp": {
+    "mtime": 1792108007.5249565,
+    "seen": 1792120265.0385857,
+    "ast_hash": "b79fe0af11437ed764e594f3b81be548",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/peinados_2.webp": {
+    "mtime": 1792108007.535095,
+    "seen": 1792120265.0385873,
+    "ast_hash": "aab7c6155a28770d54cfe45f269c6a14",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/peinados_3.webp": {
+    "mtime": 1792108007.5466735,
+    "seen": 1792120265.0385892,
+    "ast_hash": "5d96aa0e43b3644fed190ae6dd58a829",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/productos_1.webp": {
+    "mtime": 1792108007.556842,
+    "seen": 1792120265.0385914,
+    "ast_hash": "31f75132f3eb8bcb4ef021d5d77fedd2",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/salon_1.webp": {
+    "mtime": 1792108007.5715914,
+    "seen": 1792120265.0385938,
+    "ast_hash": "0fc74bd0b70e2cb9b9214555f8b9959a",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/salon_2.webp": {
+    "mtime": 1792108007.5862992,
+    "seen": 1792120265.0385957,
+    "ast_hash": "da7a0c2c226f4980e4fe0b2ac65d7262",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/salon_3.webp": {
+    "mtime": 1792108007.600496,
+    "seen": 1792120265.0385976,
+    "ast_hash": "47840dcc150e2863f8e9006996b6d199",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/salon_4.webp": {
+    "mtime": 1792108007.611596,
+    "seen": 1792120265.0385995,
+    "ast_hash": "c4b9dae965cc0d677d2572cf27e4d61c",
+    "semantic_hash": ""
+  },
+  "abm/config/database.php": {
+    "mtime": 1790721820.8344593,
+    "seen": 1792120265.038309,
+    "ast_hash": "ffd112d60c4f571194cef17a0ea10109",
+    "semantic_hash": ""
+  },
+  "backend/api/certificados/generar.php": {
+    "mtime": 1792108006.102553,
+    "seen": 1792120265.0383291,
+    "ast_hash": "c51465b73e028b6227af92115b5c59b3",
+    "semantic_hash": ""
+  },
+  "backend/api/certificados/obtener.php": {
+    "mtime": 1792108006.110094,
+    "seen": 1792120265.0383308,
+    "ast_hash": "78d5a4f559519113c6c6d64e01f7c05a",
+    "semantic_hash": ""
+  },
+  "backend/api/certificados/validar.php": {
+    "mtime": 1792108006.1202376,
+    "seen": 1792120265.0383346,
+    "ast_hash": "c80c48423f0814e84f7f5e4f46cfc5b2",
+    "semantic_hash": ""
+  },
+  "backend/config/cursos.php": {
+    "mtime": 1792108006.3476477,
+    "seen": 1792120265.0383732,
+    "ast_hash": "223dbeaec4ae91375d2c9da6585c0625",
+    "semantic_hash": ""
+  },
+  "backend/controllers/CertificadoController.php": {
+    "mtime": 1792108006.3970022,
+    "seen": 1792120265.0383828,
+    "ast_hash": "c5040411050b9bc41eddf03281802a7f",
+    "semantic_hash": ""
+  },
+  "backend/models/Certificado.php": {
+    "mtime": 1792108006.6378934,
+    "seen": 1792120265.038416,
+    "ast_hash": "e8c05ab8f32b91a27669474633c23409",
+    "semantic_hash": ""
+  },
+  "backend/repositories/CertificadoRepository.php": {
+    "mtime": 1792108006.6970844,
+    "seen": 1792120265.038426,
+    "ast_hash": "b9967cbcccc4209b4a3d7ceaa436f31d",
+    "semantic_hash": ""
+  },
+  "backend/services/CertificadoPdfService.php": {
+    "mtime": 1792108006.7519407,
+    "seen": 1792120265.038438,
+    "ast_hash": "c3ff2ec5c8bee0eba0b27f3d5b77b36f",
+    "semantic_hash": ""
+  },
+  "backend/services/CertificadoService.php": {
+    "mtime": 1792108006.7620978,
+    "seen": 1792120265.0384398,
+    "ast_hash": "d44527029a50e85493531834fa415e3e",
+    "semantic_hash": ""
+  },
+  "backend/tests/certificados_frontend.mjs": {
+    "mtime": 1792108006.8885214,
+    "seen": 1792120265.0384521,
+    "ast_hash": "9d1447d389e9448b3da9261976093ee2",
+    "semantic_hash": ""
+  },
+  "backend/tests/certificados_http.mjs": {
+    "mtime": 1792108006.9016976,
+    "seen": 1792120265.0384536,
+    "ast_hash": "0360af4f7605e2ef03d938ac00bf2939",
+    "semantic_hash": ""
+  },
+  "backend/tests/certificados_integration.php": {
+    "mtime": 1792108006.910279,
+    "seen": 1792120265.0384552,
+    "ast_hash": "d82e42b2f6a204d164c01f2faabcaa7c",
+    "semantic_hash": ""
+  },
+  "frontend/js/certificado.js": {
+    "mtime": 1792108007.742218,
+    "seen": 1792120265.0384645,
+    "ast_hash": "a30899c2da9ad5a4119f98a67b82fa3f",
+    "semantic_hash": ""
+  },
+  "frontend/js/curso.js": {
+    "mtime": 1792108007.7533176,
+    "seen": 1792120265.0384662,
+    "ast_hash": "5da95aeac8f26ae3532ff3e04ae550a0",
+    "semantic_hash": ""
+  },
+  "backend/CERTIFICADOS.md": {
+    "mtime": 1792108006.0198517,
+    "seen": 1792120265.0384798,
+    "ast_hash": "acb4c840337c2712e8fa33ba835fae26",
+    "semantic_hash": ""
+  },
+  "certificado.html": {
+    "mtime": 1792108006.9203627,
+    "seen": 1792120265.038483,
+    "ast_hash": "38465e06cf0b8c1bcbbc2a965c780053",
+    "semantic_hash": ""
+  },
+  "frontend/pages/curso.html": {
+    "mtime": 1792108007.8145924,
+    "seen": 1792120265.0384884,
+    "ast_hash": "7b1066db8766cedce1c52cbb402cfc46",
+    "semantic_hash": ""
+  },
+  "backend/assets/logo-certificado.jpg": {
+    "mtime": 1792108006.292585,
+    "seen": 1792120265.038504,
+    "ast_hash": "38d14d113935e2506a00da0a7b3b178e",
+    "semantic_hash": ""
+  },
+  "backend/assets/logo-certificado.png": {
+    "mtime": 1792108006.3021479,
+    "seen": 1792120265.0385056,
+    "ast_hash": "629840850ecfda9d9b16474dce889563",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/FirmaDigitalMariano.png": {
+    "mtime": 1792108006.9346366,
+    "seen": 1792120265.0385094,
+    "ast_hash": "ce9747ea87486ab5c7c8b7ab7c27c684",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/certificados_cursos/alumna_con_certificado (1).jpeg": {
+    "mtime": 1792119552.0339696,
+    "seen": 1792120265.0385234,
+    "ast_hash": "064b0d88b610d858be4aaf4418d8605e",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/certificados_cursos/alumna_con_certificado (2).webp": {
+    "mtime": 1792120210.518291,
+    "seen": 1792120265.038528,
+    "ast_hash": "589ac1fb0aea6b4caa117e3b5c4b0528",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/certificados_cursos/alumna_con_certificado (3).jpeg": {
+    "mtime": 1792119552.031404,
+    "seen": 1792120265.0385299,
+    "ast_hash": "221376af02abd770e881e6045464211e",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/certificados_cursos/alumna_con_certificado (5).webp": {
+    "mtime": 1792120217.01843,
+    "seen": 1792120265.0385375,
+    "ast_hash": "b93d7d20d126d2373f3f1bd13617f1d3",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/certificados_cursos/presentacion_certificado.webp": {
+    "mtime": 1792120217.6227098,
+    "seen": 1792120265.0385401,
+    "ast_hash": "575a1687bc80bbe3f77006259d3849f0",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/logo_marianEstilista.png": {
+    "mtime": 1792108007.1033783,
+    "seen": 1792120265.0385537,
+    "ast_hash": "f4e5b1114bd3ded1081e69129ec8082e",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/certificados_cursos/alumna_con_certificado (1).webp": {
+    "mtime": 1792120208.4543717,
+    "seen": 1792177782.6211708,
+    "ast_hash": "d19685e3f771139aeba4cb92e5fca5d5",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/certificados_cursos/alumna_con_certificado (2).jpeg": {
+    "mtime": 1792119552.0360239,
+    "seen": 1792177782.6211731,
+    "ast_hash": "21676f8958644e59d1c189d8d7021930",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/certificados_cursos/alumna_con_certificado (3).webp": {
+    "mtime": 1792120212.422677,
+    "seen": 1792177782.621991,
+    "ast_hash": "7339e2d467d40e7bdc48fd7c55e542ab",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/certificados_cursos/alumna_con_certificado (4).jpeg": {
+    "mtime": 1792119552.040131,
+    "seen": 1792177782.6219935,
+    "ast_hash": "9dff70337c032e48ff14fcef56c57a8b",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/certificados_cursos/alumna_con_certificado (4).webp": {
+    "mtime": 1792120214.5434265,
+    "seen": 1792177782.6219964,
+    "ast_hash": "30777dda0b9d92b726e839c204936b61",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/certificados_cursos/alumna_con_certificado (5).jpeg": {
+    "mtime": 1792119552.038064,
+    "seen": 1792177782.6219983,
+    "ast_hash": "51d53ac234ce198119309fc0c77a2a86",
+    "semantic_hash": ""
+  },
+  "frontend/assets/images/certificados_cursos/presentacion_certificado.jpeg": {
+    "mtime": 1792119745.1126006,
+    "seen": 1792177782.6223826,
+    "ast_hash": "f0c86467129074e6c9b052115328bc37",
+    "semantic_hash": ""
+  }
+}

@@ -10,12 +10,107 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   initNavbar();
   initHeroCarousel();
+  initGraduatesCarousel();
   initServicesSection();
   initSalonMap();
   initGalleryFiltersAndLightbox();
   initCourseSection();
   initSmoothScroll();
 });
+
+/* --- ALUMNAS & CERTIFICADOS --- */
+function initGraduatesCarousel() {
+  const carousel = document.querySelector(".graduates-carousel");
+  if (!carousel) return;
+
+  const track = carousel.querySelector(".graduates-track");
+  const slides = [...track.querySelectorAll(".graduates-slide")];
+  const controls = carousel.querySelector(".graduates-controls");
+  const prev = carousel.querySelector("[data-graduates-prev]");
+  const next = carousel.querySelector("[data-graduates-next]");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  if (slides.length < 2) return;
+
+  let index = 0;
+  let timer;
+  let inView = false;
+  let touchStart = null;
+  let ignoreClicksUntil = 0;
+
+  const render = () => {
+    slides.forEach((slide, i) => {
+      // Distancias circulares: anterior y siguiente también en los extremos.
+      let position = (i - index + slides.length) % slides.length;
+      if (position > slides.length / 2) position -= slides.length;
+      slide.style.setProperty("--slide-position", position);
+      slide.classList.toggle("is-centered", position === 0);
+      slide.classList.toggle("is-side", Math.abs(position) === 1);
+      slide.setAttribute("aria-hidden", String(Math.abs(position) > 1));
+      slide.setAttribute("role", "group");
+      slide.setAttribute("aria-roledescription", "diapositiva");
+      slide.setAttribute("aria-label", `${i + 1} de ${slides.length}`);
+      const button = slide.querySelector("button");
+      button.tabIndex = Math.abs(position) <= 1 ? 0 : -1;
+      button.setAttribute("aria-label", position === 0 ? "Ver siguiente foto" : `Ver foto ${i + 1} de ${slides.length}`);
+    });
+  };
+
+  const schedule = () => {
+    window.clearTimeout(timer);
+    if (!inView || document.hidden || reducedMotion.matches || touchStart) return;
+    timer = window.setTimeout(() => move(1), 4500);
+  };
+
+  const move = (direction) => {
+    index = (index + direction + slides.length) % slides.length;
+    render();
+    schedule();
+  };
+
+  prev.addEventListener("click", () => move(-1));
+  next.addEventListener("click", () => move(1));
+  slides.forEach((slide, i) => {
+    slide.querySelector("button").addEventListener("click", () => {
+      if (Date.now() < ignoreClicksUntil) return;
+      move(i === index ? 1 : i - index);
+    });
+  });
+  document.addEventListener("visibilitychange", schedule);
+  reducedMotion.addEventListener("change", schedule);
+
+  track.addEventListener("keydown", (event) => {
+    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+      event.preventDefault();
+      move(event.key === "ArrowLeft" ? -1 : 1);
+    }
+  });
+
+  track.addEventListener("touchstart", (event) => {
+    touchStart = event.touches.length === 1
+      ? { x: event.touches[0].clientX, y: event.touches[0].clientY } : null;
+    schedule();
+  }, { passive: true });
+  track.addEventListener("touchend", (event) => {
+    if (!touchStart) return;
+    const dx = event.changedTouches[0].clientX - touchStart.x;
+    const dy = event.changedTouches[0].clientY - touchStart.y;
+    touchStart = null;
+    if (Math.abs(dx) > 10 || Math.abs(dy) > 10) ignoreClicksUntil = Date.now() + 500;
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) move(dx < 0 ? 1 : -1);
+    else schedule();
+  }, { passive: true });
+  track.addEventListener("touchcancel", () => { touchStart = null; schedule(); }, { passive: true });
+
+  new IntersectionObserver(([entry]) => {
+    inView = entry.isIntersecting;
+    // Precargar la secuencia al acercarse: las fotos laterales no deben
+    // esperar al próximo cambio para salir del lazy loading del navegador.
+    if (inView) slides.forEach((slide) => { slide.querySelector("img").loading = "eager"; });
+    schedule();
+  }, { threshold: .2 }).observe(carousel);
+  controls.hidden = false;
+  render();
+}
 
 /* --- CONFIGURACIÓN DE UBICACIÓN CENTRALIZADA --- */
 const SALON_LOCATION = {
