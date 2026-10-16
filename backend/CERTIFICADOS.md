@@ -14,10 +14,22 @@ El PDF utiliza `backend/assets/logo-certificado.png`, una copia RGBA optimizada 
 
 El diseño usa un degradado vectorial marfil/beige claro, marco fino, título serif, nombre destacado y separadores suaves. El QR mantiene 37 mm, negro sobre blanco y cuatro módulos de margen. Este rediseño se aplica únicamente a nuevas emisiones: los PDF históricos almacenados permanecen intactos.
 
+## Fecha de finalización elegida por el administrador
+
+La columna existente `inscripciones_curso.fecha_finalizacion DATETIME NULL` se reutiliza sin migración ni conversión de datos históricos. Las nuevas fechas se reciben como `YYYY-MM-DD` y MySQL las guarda a medianoche. No volver a ejecutar la migración de certificados en una instalación que ya tiene esta columna.
+
+Al seleccionar Completado, el panel muestra un campo de fecha obligatorio y el botón **Guardar fecha y estado**. No se propone automáticamente la fecha actual. Se aceptan fechas pasadas o el día actual de Argentina; el backend también valida el formato, la existencia del día y el límite. El alta manual en estado Completado exige la misma fecha.
+
+`POST /backend/api/inscripciones/update_estado.php` recibe `id`, `estado` y, para Completado, `fecha_finalizacion` obligatoria. La creación manual usa el mismo campo. El listado mantiene `fechaFinalizacion` para consultar y editar una inscripción completada. Al pasar a otro estado se conserva la fecha, y al volver a Completado debe confirmarse explícitamente.
+
+El PDF y la validación pública utilizan la fecha copiada de la inscripción al emitir el certificado, nunca la fecha de emisión como reemplazo. Corregir la inscripción no reescribe certificados históricos: el PDF almacenado y la página pública conservan juntos la fecha original, como aclara el panel. La reemisión de certificados históricos queda fuera de este cambio.
+
+Publicar juntos `backend/controllers/InscripcionController.php`, `backend/services/InscripcionService.php`, `backend/repositories/InscripcionRepository.php`, `frontend/js/admin.js`, `frontend/js/api.js`, `frontend/js/storage.js`, `frontend/css/admin.css` y `frontend/pages/admin.html`. No hay dependencias nuevas de Composer.
+
 ## Comportamiento
 
 - El selector **Estado actual** conserva Pendiente, Contactado e Inscripto y agrega **Completado**. En API y base se guarda exactamente `completado`; también se admite `Completado` como entrada de compatibilidad.
-- Al entrar en ese estado se registra la fecha de finalización. Repetir el mismo estado conserva la fecha; salir de él borra la fecha de la inscripción actual. Los certificados ya emitidos mantienen sus fechas y datos originales.
+- Al entrar en ese estado se exige la fecha de finalización seleccionada. Repetir el mismo estado permite corregirla; salir de él conserva la fecha de la inscripción. Los certificados ya emitidos mantienen sus fechas y datos originales.
 - La generación toma un bloqueo `SELECT ... FOR UPDATE` sobre la inscripción, comprueba nuevamente `estado === 'completado'` y emite dentro de una transacción. La restricción UNIQUE sobre `inscripcion_id` impide duplicados. Una repetición devuelve el certificado existente; una petición con otro estado se rechaza incluso si ya existe uno.
 - Se almacena el PDF junto con el nombre del alumno, curso, instructor y fechas. Así las descargas futuras reproducen el documento original. El alumno se vincula mediante la inscripción: este esquema no tiene una relación previa entre inscripciones y usuarios.
 - El código visible utiliza año y 16 caracteres hexadecimales aleatorios, con índice único. La validación usa un token independiente de 32 bytes criptográficos, no el ID interno ni el código visible.

@@ -2039,7 +2039,7 @@ h6 {
 .course-meta-item:hover {
   transform: translateY(-2px);
   border-color: rgba(197, 168, 128, 0.45);
-  background: rgba(197, 168, 128, 0.035);
+  background: var(--landing-card-hover, rgba(197, 168, 128, 0.035));
 }
 
 .course-meta-icon {
@@ -4533,4 +4533,203 @@ textarea.form-control {
   padding: 10px 14px;
   font-size: .85rem;
   white-space: normal;
+}
+
+/* Superficies cálidas de la portada, sin alterar las páginas interiores. */
+body:has(.graduates-carousel) {
+  --landing-card-bg: color-mix(in srgb, var(--color-beige, #DDBDA0) 75%, var(--color-champagne, #EEDDCA));
+  --landing-heading-bg: #d2b697;
+  --landing-ink: var(--color-charcoal, #362218);
+  --landing-border: #b99a79;
+}
+
+:where(body:has(.graduates-carousel)) :is(.peinado-card, .course-meta-item, .course-offer, .about-products-spotlight) {
+  background: var(--landing-card-bg);
+  --landing-card-hover: color-mix(in srgb, var(--landing-card-bg) 90%, var(--color-beige, #DDBDA0));
+  --text-muted: var(--color-gray-dark, #5C4B43);
+}
+
+:where(body:has(.graduates-carousel)) :is(.section-title, .course-title):not(#contacto *) {
+  width: fit-content;
+  max-width: 100%;
+  padding: clamp(16px, 2vw, 26px) clamp(18px, 2.5vw, 32px);
+  background: var(--landing-heading-bg);
+  color: var(--landing-ink);
+  border: 1px solid var(--landing-border);
+  border-inline-start: 3px solid #8e6b4d;
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: 0 5px 18px rgba(54, 34, 24, .07);
+  font-weight: 700;
+  letter-spacing: -.025em;
+  text-wrap: balance;
+}
+
+:where(body:has(.graduates-carousel)) .section-header .section-title:not(#contacto *) {
+  margin-inline: auto;
+  margin-bottom: 24px;
+}
+
+/* Formularios de la portada: superficies blancas y campos claros. */
+.fast-contact-form .form-control,
+#modal-inscripcion-curso .form-control,
+#modal-inscripcion-curso .modal-container {
+  background-color: #fff;
+}
+
+/* Alumnas y certificados: coverflow sin marcos ni desplazamiento nativo. */
+.graduates-section {
+  background: var(--color-champagne);
+  border-block: 1px solid var(--color-border);
+}
+
+.graduates-section .section-header {
+  max-width: 800px;
+  margin-bottom: 40px;
+}
+
+.graduates-carousel {
+  position: relative;
+  min-width: 0;
+  --graduates-offset: clamp(230px, 29vw, 350px);
+}
+
+.graduates-track {
+  position: relative;
+  height: clamp(400px, 43vw, 530px);
+  overflow: hidden;
+  overflow: clip;
+  touch-action: pan-y pinch-zoom;
+}
+
+.graduates-slide {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(38%, 390px);
+  height: calc(100% - 48px);
+  min-width: 0;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(calc(-50% + var(--slide-position, 0) * var(--graduates-offset)), -50%) scale(.72);
+  transition: transform .8s cubic-bezier(.22, .61, .36, 1), opacity .8s ease;
+}
+
+.graduates-slide.is-side {
+  z-index: 1;
+  opacity: .68;
+  pointer-events: auto;
+}
+
+.graduates-slide.is-centered {
+  z-index: 2;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.graduates-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.graduates-slide img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 8px 20px rgba(54, 34, 24, .12);
+  user-select: none;
+  -webkit-user-drag: none;
+  transition: box-shadow .8s ease;
+}
+
+.graduates-slide.is-centered img {
+  box-shadow: 0 14px 30px rgba(54, 34, 24, .2);
+}
+
+.graduates-controls:not([hidden]) {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+}
+
+.graduates-arrow {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-off-white);
+  color: var(--text-main);
+  font-size: 1.5rem;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: background-color .2s ease, color .2s ease;
+}
+
+.graduates-arrow:hover:not(:disabled) {
+  background: var(--color-black-soft);
+  color: var(--color-off-white);
+}
+
+.graduates-arrow:focus-visible,
+.graduates-image:focus-visible,
+.graduates-track:focus-visible {
+  outline: 3px solid var(--color-gold);
+  outline-offset: 3px;
+}
+
+@media (max-width: 1024px) {
+  .graduates-carousel {
+    --graduates-offset: 29vw;
+  }
+}
+
+@media (max-width: 600px) {
+  :where(body:has(.graduates-carousel)) :is(.section-title, .course-title):not(#contacto *) {
+    font-size: clamp(1.45rem, 6.4vw, 1.9rem);
+    padding: 16px 18px;
+  }
+
+  .graduates-section {
+    padding-block: 64px;
+  }
+
+  .graduates-carousel {
+    --graduates-offset: 62vw;
+  }
+
+  .graduates-track {
+    height: clamp(360px, 115vw, 500px);
+  }
+
+  .graduates-slide {
+    width: 78%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .graduates-slide,
+  .graduates-slide img {
+    transition: none;
+  }
 }

@@ -519,14 +519,14 @@ class StorageService {
     throw new Error("No hay conexión con la API de inscripciones.");
   }
 
-  static async updateInscripcionEstado(id, nuevoEstado) {
+  static async updateInscripcionEstado(id, nuevoEstado, fechaFinalizacion = null) {
     if (typeof window.apiUpdateInscripcionEstado === "function") {
-      return await window.apiUpdateInscripcionEstado(id, nuevoEstado);
+      return await window.apiUpdateInscripcionEstado(id, nuevoEstado, fechaFinalizacion);
     }
     if (typeof window.requestApi === "function") {
       const res = await window.requestApi("/inscripciones/update_estado.php", {
         method: "POST",
-        body: { id: Number(id), estado: nuevoEstado }
+        body: { id: Number(id), estado: nuevoEstado, fecha_finalizacion: fechaFinalizacion }
       });
       return res.data;
     }

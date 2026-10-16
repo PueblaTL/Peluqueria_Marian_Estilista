@@ -10,6 +10,20 @@ require_once __DIR__ . '/../config/helpers.php';
 class InscripcionService {
     private InscripcionRepository $repository;
 
+    public static function validarFechaFinalizacion($value): string {
+        if (!is_string($value) || !preg_match('/^\d{4}-\d{2}-\d{2}$/D', $value)) {
+            throw new DomainException('Seleccioná una fecha de finalización válida.', 400);
+        }
+        $fecha = DateTimeImmutable::createFromFormat('!Y-m-d', $value);
+        if (!$fecha || $fecha->format('Y-m-d') !== $value || $value < '1000-01-01') {
+            throw new DomainException('La fecha de finalización no es válida.', 400);
+        }
+        if ($value > date('Y-m-d')) {
+            throw new DomainException('La fecha de finalización no puede ser futura.', 400);
+        }
+        return $value;
+    }
+
     public function __construct() {
         $this->repository = new InscripcionRepository();
     }
@@ -79,6 +93,9 @@ class InscripcionService {
         if (!in_array($estado, $estadosValidos, true)) {
             $estado = 'Pendiente';
         }
+        $fechaFinalizacion = $estado === 'completado'
+            ? self::validarFechaFinalizacion($data['fecha_finalizacion'] ?? null)
+            : null;
 
         // 2. Control de duplicados por email y curso
         $existente = $this->repository->findByEmailAndCurso($email, $cursoId);
@@ -94,6 +111,7 @@ class InscripcionService {
             'telefono' => $telefono,
             'email'    => $email,
             'estado'   => $estado,
+            'fecha_finalizacion' => $fechaFinalizacion,
             'fecha'    => date('Y-m-d H:i:s')
         ]);
 
@@ -109,7 +127,7 @@ class InscripcionService {
      * @return array
      * @throws Exception
      */
-    public function updateEstado(int $id, string $nuevoEstado): array {
+    public function updateEstado(int $id, string $nuevoEstado, $fechaFinalizacion = null): array {
         $ins = $this->repository->getById($id);
         if (!$ins) {
             throw new Exception("Inscripción no encontrada.", 404);
@@ -121,7 +139,10 @@ class InscripcionService {
             throw new Exception("Estado de inscripción no válido.", 400);
         }
 
-        $this->repository->updateEstado($id, $nuevoEstado);
+        $fecha = $nuevoEstado === 'completado'
+            ? self::validarFechaFinalizacion($fechaFinalizacion)
+            : null;
+        $this->repository->updateEstado($id, $nuevoEstado, $fecha);
         return $this->getById($id);
     }
 

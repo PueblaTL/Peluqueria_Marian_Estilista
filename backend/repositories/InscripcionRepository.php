@@ -87,7 +87,7 @@ class InscripcionRepository {
             ':email'    => $inscripcion->email,
             ':estado'   => $inscripcion->estado,
             ':fecha'    => $inscripcion->fecha,
-            ':fecha_finalizacion' => $inscripcion->estado === 'completado' ? date('Y-m-d H:i:s') : null
+            ':fecha_finalizacion' => $inscripcion->fechaFinalizacion
         ]);
 
         return (int)$this->db->lastInsertId();
@@ -100,15 +100,16 @@ class InscripcionRepository {
      * @param string $nuevoEstado
      * @return bool
      */
-    public function updateEstado(int $id, string $nuevoEstado): bool {
+    public function updateEstado(int $id, string $nuevoEstado, ?string $fechaFinalizacion = null): bool {
         if (!in_array($nuevoEstado, Inscripcion::ESTADOS, true)) {
             throw new InvalidArgumentException('Estado de inscripción no válido.', 400);
         }
-        $sql = "UPDATE inscripciones_curso SET fecha_finalizacion = CASE WHEN :completado = 1 THEN COALESCE(fecha_finalizacion, NOW()) ELSE NULL END, estado = :estado WHERE id = :id";
+        $sql = "UPDATE inscripciones_curso SET fecha_finalizacion = CASE WHEN :completado = 1 THEN :fecha_finalizacion ELSE fecha_finalizacion END, estado = :estado WHERE id = :id";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             ':estado' => $nuevoEstado,
             ':completado' => $nuevoEstado === 'completado' ? 1 : 0,
+            ':fecha_finalizacion' => $fechaFinalizacion,
             ':id'     => $id
         ]);
     }

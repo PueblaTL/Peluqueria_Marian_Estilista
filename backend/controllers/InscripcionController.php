@@ -81,7 +81,7 @@ class InscripcionController {
                 jsonResponse(false, "El nuevo estado es obligatorio.", null, 400, 'INVALID_STATE');
             }
 
-            $actualizada = $this->service->updateEstado($id, $nuevoEstado);
+            $actualizada = $this->service->updateEstado($id, $nuevoEstado, $data['fecha_finalizacion'] ?? null);
             $mensaje = $actualizada['estado'] === 'completado'
                 ? 'El alumno completó el curso. Ya podés generar su certificado.'
                 : 'Estado de inscripción actualizado correctamente.';

@@ -439,10 +439,10 @@ async function apiCreateInscripcion(datosInscripcion) {
   return res.data;
 }
 
-async function apiUpdateInscripcionEstado(id, nuevoEstado) {
+async function apiUpdateInscripcionEstado(id, nuevoEstado, fechaFinalizacion = null) {
   const res = await requestApi("/inscripciones/update_estado.php", {
     method: "POST",
-    body: { id: Number(id), estado: nuevoEstado }
+    body: { id: Number(id), estado: nuevoEstado, fecha_finalizacion: fechaFinalizacion }
   });
   return res.data;
 }
